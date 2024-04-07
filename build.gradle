@@ -1,0 +1,62 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.4'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.ttokttak'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    // Spring Boot 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 코드 단순화 도구 (Lombok)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // DataBase
+//    implementation 'mysql:mysql-connector-java:8.0.32'
+    runtimeOnly 'com.h2database:h2' // H2 인메모리 데이터베이스 (테스트 시 활용)
+
+    // Spring Cloud Starter AWS
+//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    //Swagger
+//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+    // 테스트 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // 통합 테스트 지원
+    testImplementation 'org.springframework.security:spring-security-test' // 스프링 시큐리티 테스트
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
