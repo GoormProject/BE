@@ -26,7 +26,7 @@ public class DiaryPostEntity {
     private String walk;
 
     @Column(length = 50)
-    private String toilet_record;
+    private String toiletRecord;
 
     @Column(length = 50)
     private String shower;
@@ -35,7 +35,7 @@ public class DiaryPostEntity {
     private String weight;
 
     @Column(length = 50)
-    private String special_note;
+    private String specialNote;
 
     @Column(length = 50)
     private String weather;
