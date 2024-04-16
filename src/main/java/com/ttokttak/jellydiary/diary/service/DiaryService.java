@@ -20,11 +20,10 @@ public class DiaryService {
     private final DiaryProfileRepository diaryProfileRepository;
     private final DiaryPostRepository diaryPostRepository;
 
-    @Autowired
     private DiaryProfileMapper diaryProfileMapper;
 
-    @Autowired
     private DiaryPostMapper diaryPostMapper;
+
     @Autowired
     public DiaryService(DiaryProfileRepository diaryProfileRepository, DiaryPostRepository diaryPostRepository) {
         this.diaryProfileRepository = diaryProfileRepository;

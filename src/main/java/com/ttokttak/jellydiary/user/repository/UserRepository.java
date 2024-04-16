@@ -1,4 +1,4 @@
-package com.ttokttak.jellydiary.user.respository;
+package com.ttokttak.jellydiary.user.repository;
 
 import com.ttokttak.jellydiary.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

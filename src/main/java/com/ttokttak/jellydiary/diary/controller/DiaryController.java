@@ -17,6 +17,13 @@ public class DiaryController {
         this.diaryService = diaryService;
     }
 
+    //다이어리 권한 확인
+    @GetMapping("/{diaryId}")
+    public String checkDiaryAuth(@PathVariable Long diaryId) {
+        // 로직 구현
+        return "Diary auth check";
+    }
+
     // 다이어리 생성
     @PostMapping
     public ResponseEntity<?> createDiary(@RequestBody DiaryProfileDto diaryProfileDto) {
@@ -38,7 +45,14 @@ public class DiaryController {
         return ResponseEntity.ok(diaryProfile);
     }
 
-    // 내가 쓴 글들을 전체 다이어리 리스트로 조회
+    // 다이어리 프로필 이미지 수정
+    @PatchMapping("/profile/image/{diaryId}")
+    public String updateDiaryProfileImage(@PathVariable Long diaryId) {
+        // 로직 구현
+        return "Diary profile image updated";
+    }
+
+    // 내가 구독 중 또는 참여 중인 다이어리 리스트 조회
     @GetMapping("/mydiarylist")
     public String getMyDiaries() {
         // 로직 구현
@@ -52,9 +66,16 @@ public class DiaryController {
         return "Diary post list";
     }
 
-    // 다이어리 사용자, 작성자 포스트 리스트 조회
-    @GetMapping("/userlist")
-    public String getUserPosts() {
+    // 다이어리 생성자, 참여자 유저 리스트 조회
+    @GetMapping("/userlist/{diaryId}")
+    public String getUserList() {
+        // 로직 구현
+        return "User post list";
+    }
+
+    // 다이어리 생성자, 참여자 유저 수정
+    @PatchMapping("/userlist/{diaryId}")
+    public String updateUserList() {
         // 로직 구현
         return "User post list";
     }
