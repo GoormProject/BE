@@ -6,7 +6,7 @@ import org.mapstruct.factory.Mappers;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface DiaryProfileMapper {
     DiaryProfileMapper INSTANCE = Mappers.getMapper(DiaryProfileMapper.class);
 
