@@ -4,22 +4,25 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user")
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column(nullable = false)
-    private Long oauthId;
+    private String oauthId;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+    private ProviderType oauthType;
 
     @Column(nullable = false)
     private String userName;
