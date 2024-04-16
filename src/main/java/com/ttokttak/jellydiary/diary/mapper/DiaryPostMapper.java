@@ -5,7 +5,7 @@ import org.mapstruct.factory.Mappers;
 import com.ttokttak.jellydiary.diary.dto.DiaryPostDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryPostEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface DiaryPostMapper {
     DiaryPostMapper INSTANCE = Mappers.getMapper(DiaryPostMapper.class);
 
