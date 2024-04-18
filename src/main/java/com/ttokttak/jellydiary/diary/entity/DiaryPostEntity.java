@@ -54,7 +54,7 @@ public class DiaryPostEntity {
     private Boolean isPublic;
 
     @Column(nullable = false)
-    private Boolean isDelete;
+    private Boolean isDeleted;
 
     @Column(nullable = false)
     private Long diaryId;
