@@ -12,15 +12,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "post_like")
-public class LikeEntity {
+public class PostLikeEntity {
     @EmbeddedId
     private PostLikeCompositeKey id;
 
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @MapsId("diaryPostId")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private DiaryPostEntity diaryPost;
 }
