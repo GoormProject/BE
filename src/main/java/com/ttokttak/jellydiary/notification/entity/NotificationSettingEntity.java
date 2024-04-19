@@ -1,8 +1,7 @@
 package com.ttokttak.jellydiary.notification.entity;
 
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +13,7 @@ public class NotificationSettingEntity {
     @Id
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @Column(nullable = false)
     private Boolean postLike;
