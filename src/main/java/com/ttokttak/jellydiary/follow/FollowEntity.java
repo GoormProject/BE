@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.follow;
 
-import com.ttokttak.jellydiary.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
