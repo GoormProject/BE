@@ -1,7 +1,7 @@
 package com.ttokttak.jellydiary.like.entity;
 
 import com.ttokttak.jellydiary.diary.entity.DiaryPostEntity;
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class PostLikeEntity {
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @MapsId("diaryPostId")
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,7 +1,7 @@
 package com.ttokttak.jellydiary.comment.entity;
 
 import com.ttokttak.jellydiary.diary.entity.DiaryPostEntity;
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class CommentEntity extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

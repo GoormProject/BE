@@ -1,6 +1,6 @@
 package com.ttokttak.jellydiary.comment.entity;
 
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class CommentTagEntity {
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @MapsId("commentId")
     @ManyToOne(fetch = FetchType.LAZY)
