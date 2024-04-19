@@ -1,10 +1,10 @@
 package com.ttokttak.jellydiary.user.repository;
 
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
 
-    User findByUserName(String username);
-
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    Optional<UserEntity> findByOauthId(String oauthId);
 }
