@@ -1,6 +1,6 @@
 package com.ttokttak.jellydiary.chat.entity;
 
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +22,6 @@ public class ChatUserEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private UserEntity userId;
 
 }

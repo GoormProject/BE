@@ -1,6 +1,6 @@
 package com.ttokttak.jellydiary.chat.entity;
 
-import com.ttokttak.jellydiary.user.entity.User;
+import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,6 +28,6 @@ public class ChatMessageEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private UserEntity userId;
 
 }
