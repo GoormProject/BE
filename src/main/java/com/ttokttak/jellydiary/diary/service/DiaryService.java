@@ -2,11 +2,9 @@ package com.ttokttak.jellydiary.diary.service;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
-import com.ttokttak.jellydiary.diary.mapper.DiaryPostMapper;
+import com.ttokttak.jellydiary.diarypost.mapper.DiaryPostMapper;
 import com.ttokttak.jellydiary.diary.mapper.DiaryProfileMapper;
-import com.ttokttak.jellydiary.diary.repository.DiaryPostRepository;
-import com.ttokttak.jellydiary.diary.dto.DiaryPostDto;
-import com.ttokttak.jellydiary.diary.entity.DiaryPostEntity;
+import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
