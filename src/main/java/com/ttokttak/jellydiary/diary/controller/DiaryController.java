@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.diary.controller;
 
-import com.ttokttak.jellydiary.diary.dto.DiaryPostDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

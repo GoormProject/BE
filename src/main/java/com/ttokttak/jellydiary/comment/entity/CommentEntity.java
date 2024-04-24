@@ -1,6 +1,6 @@
 package com.ttokttak.jellydiary.comment.entity;
 
-import com.ttokttak.jellydiary.diary.entity.DiaryPostEntity;
+import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
