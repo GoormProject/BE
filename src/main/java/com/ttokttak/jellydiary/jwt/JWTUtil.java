@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.jwt;
 
-import com.ttokttak.jellydiary.user.entity.Authority;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,8 +28,8 @@ public class JWTUtil {
     }
 
     // JWT 토큰에서 사용자의 역할 추출
-    public Authority getAuthority(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("authority", Authority.class);
+    public String getAuthority(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("authority", String.class);
     }
 
     // JWT 토큰의 만료 여부 확인

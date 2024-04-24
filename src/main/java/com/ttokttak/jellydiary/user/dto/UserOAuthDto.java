@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.user.dto;
 
-import com.ttokttak.jellydiary.user.entity.Authority;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import lombok.Getter;
 
@@ -8,15 +7,15 @@ import lombok.Getter;
 public class UserOAuthDto {
     private Long userId;
     private String userName;
-    private Authority authority;
+    private String authority;
 
     public UserOAuthDto(UserEntity userEntity){
         this.userId = userEntity.getUserId();
         this.userName = userEntity.getUserName();
-        this.authority = userEntity.getAuthority();
+        this.authority = String.valueOf(userEntity.getAuthority());
     }
 
-    public UserOAuthDto(Long userId, String userName,Authority authority){
+    public UserOAuthDto(Long userId, String userName, String authority){
         this.userId = userId;
         this.userName = userName;
         this.authority = authority;

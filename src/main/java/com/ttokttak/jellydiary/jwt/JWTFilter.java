@@ -65,7 +65,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // 토큰에서 username과 role 획득
         Long userId = jwtUtil.getUserId(token);
         String userName = jwtUtil.getUserName(token);
-        Authority authority = jwtUtil.getAuthority(token);
+        String authority = jwtUtil.getAuthority(token);
 
         // UserOAuthDto를 생성하여 값 set
         UserOAuthDto userOAuthDto = new UserOAuthDto(userId, userName, authority);
