@@ -2,6 +2,7 @@ package com.ttokttak.jellydiary.diary.service;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileResponseDto;
+import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserRoleEnum;
@@ -56,6 +57,21 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .statusCode(CREATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
                 .message(CREATE_DIARY_PROFILE_SUCCESS.getDetail())
                 .data(diaryProfileMapper.entityToDiaryProfileResponseDto(savedEntity))
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> updateDiaryProfile(Long diaryId, DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto) {
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        diaryProfileEntity.DiaryProfileUpdate(diaryProfileUpdateRequestDto.getDiaryName(), diaryProfileUpdateRequestDto.getDiaryDescription());
+        diaryProfileRepository.save(diaryProfileEntity);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_DIARY_PROFILE_SUCCESS.getDetail())
+                .data(diaryProfileMapper.entityToDiaryProfileUpdateResponseDto(diaryProfileEntity))
                 .build();
     }
 

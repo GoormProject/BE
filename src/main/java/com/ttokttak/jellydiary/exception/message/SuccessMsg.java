@@ -15,6 +15,7 @@ public enum SuccessMsg {
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),
 
+    UPDATE_DIARY_PROFILE_SUCCESS(OK, "다이어리 프로필 수정 완료"),
 //    UPDATE_PROJECT_SUCCESS(OK, "프로젝트 수정 완료"),
 //    DELETE_PROJECT_SUCCESS(OK, "프로젝트 삭제 완료"),
 //    SEARCH_PROJECT_SUCCESS(OK, "내 프로젝트 목록 검색 완료");

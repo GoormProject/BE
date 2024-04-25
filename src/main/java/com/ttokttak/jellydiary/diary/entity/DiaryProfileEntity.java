@@ -26,6 +26,9 @@ public class DiaryProfileEntity {
     @JoinColumn(name = "chat_room_id")
     private ChatRoomEntity chatRoomId;
 
+    public DiaryProfileEntity() {
+    }
+
     @Builder
     public DiaryProfileEntity(Long diaryId, String diaryName, String diaryDescription, String diaryProfileImage, Boolean isDiaryDeleted, ChatRoomEntity chatRoomId) {
         this.diaryId = diaryId;
@@ -34,6 +37,11 @@ public class DiaryProfileEntity {
         this.diaryProfileImage = diaryProfileImage;
         this.isDiaryDeleted = isDiaryDeleted == null ? false : isDiaryDeleted;
         this.chatRoomId = chatRoomId;
+    }
+
+    public void DiaryProfileUpdate(String diaryName, String diaryDescription) {
+        this.diaryName = diaryName;
+        this.diaryDescription = diaryDescription;
     }
 
 }

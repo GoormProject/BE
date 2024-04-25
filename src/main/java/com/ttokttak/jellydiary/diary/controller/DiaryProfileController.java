@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.diary.controller;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
+import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.diary.service.DiaryProfileService;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
@@ -9,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/diary")
@@ -25,6 +23,12 @@ public class DiaryProfileController {
     @PostMapping
     public ResponseEntity<ResponseDto<?>> createDiaryProfile(@RequestBody DiaryProfileRequestDto diaryProfileRequestDto, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(diaryProfileService.createDiaryProfile(diaryProfileRequestDto, customOAuth2User));
+    }
+
+    @Operation(summary = "다이어리 정보 수정", description = "[다이어리 정보 수정] api")
+    @PatchMapping("/profile/{diaryId}")
+    public ResponseEntity<ResponseDto<?>> updateDiaryProfile(@PathVariable("diaryId")Long diaryId, @RequestBody DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto) {
+        return ResponseEntity.ok(diaryProfileService.updateDiaryProfile(diaryId, diaryProfileUpdateRequestDto));
     }
 
 }

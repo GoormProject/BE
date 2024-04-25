@@ -2,6 +2,7 @@ package com.ttokttak.jellydiary.diary.mapper;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileResponseDto;
+import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -16,5 +17,7 @@ public interface DiaryProfileMapper {
 
     @Mapping(target = "chatRoomId", source = "chatRoomId.chatRoomId")
     DiaryProfileResponseDto entityToDiaryProfileResponseDto(DiaryProfileEntity entity);
+
+    DiaryProfileUpdateResponseDto entityToDiaryProfileUpdateResponseDto(DiaryProfileEntity entity);
 
 }
