@@ -31,4 +31,10 @@ public class DiaryProfileController {
         return ResponseEntity.ok(diaryProfileService.updateDiaryProfile(diaryId, diaryProfileUpdateRequestDto));
     }
 
+    @Operation(summary = "다이어리 프로필 조회", description = "[다이어리 프로필 조회] api")
+    @GetMapping("/profile/{diaryId}")
+    public ResponseEntity<ResponseDto<?>> getDiaryProfileInfo(@PathVariable("diaryId")Long diaryId) {
+        return ResponseEntity.ok(diaryProfileService.getDiaryProfileInfo(diaryId));
+    }
+
 }

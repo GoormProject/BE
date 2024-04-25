@@ -75,4 +75,16 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .build();
     }
 
+    @Override
+    public ResponseDto<?> getDiaryProfileInfo(Long diaryId) {
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        return ResponseDto.builder()
+                .statusCode(CREATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
+                .message(CREATE_DIARY_PROFILE_SUCCESS.getDetail())
+                .data(diaryProfileMapper.entityToDiaryProfileResponseDto(diaryProfileEntity))
+                .build();
+    }
+
 }

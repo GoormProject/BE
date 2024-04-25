@@ -13,4 +13,6 @@ public interface DiaryProfileService {
 
     ResponseDto<?> updateDiaryProfile(Long diaryId, DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto);
 
+    ResponseDto<?> getDiaryProfileInfo(Long diaryId);
+
 }
