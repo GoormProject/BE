@@ -1,17 +1,20 @@
 package com.ttokttak.jellydiary.diary.mapper;
 
+import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
+import com.ttokttak.jellydiary.diary.dto.DiaryProfileResponseDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import com.ttokttak.jellydiary.diary.dto.DiaryProfileDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface DiaryProfileMapper {
     DiaryProfileMapper INSTANCE = Mappers.getMapper(DiaryProfileMapper.class);
 
-    DiaryProfileDto entityToDto(DiaryProfileEntity entity);
-    DiaryProfileEntity dtoToEntity(DiaryProfileDto dto);
+    @Mapping(target = "isDiaryDeleted", constant = "false")
+    DiaryProfileEntity diaryProfileRequestDtoToEntity(DiaryProfileRequestDto dto);
 
-    void updateEntityFromDto(DiaryProfileDto dto, @MappingTarget DiaryProfileEntity entity);
+    @Mapping(target = "chatRoomId", source = "chatRoomId.chatRoomId")
+    DiaryProfileResponseDto entityToDiaryProfileResponseDto(DiaryProfileEntity entity);
+
 }

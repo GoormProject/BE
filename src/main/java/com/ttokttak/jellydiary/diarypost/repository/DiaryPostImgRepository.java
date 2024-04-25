@@ -1,6 +1,6 @@
-package com.ttokttak.jellydiary.diary.repository;
+package com.ttokttak.jellydiary.diarypost.repository;
 
-import com.ttokttak.jellydiary.diary.entity.DiaryPostEntity;
+import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

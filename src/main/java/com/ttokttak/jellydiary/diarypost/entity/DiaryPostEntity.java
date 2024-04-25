@@ -1,37 +1,43 @@
-package com.ttokttak.jellydiary.diary.entity;
+package com.ttokttak.jellydiary.diarypost.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
-@Getter
+@Data
 @Table(name = "diary_post")
 public class DiaryPostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 70)
     private String postTitle;
 
+    @Column(length = 50)
     private String meal;
 
+    @Column(length = 50)
     private String water;
 
+    @Column(length = 50)
     private String walk;
 
-    private String toilet_record;
+    @Column(length = 50)
+    private String toiletRecord;
 
+    @Column(length = 50)
     private String shower;
 
+    @Column(length = 50)
     private String weight;
 
-    private String special_note;
+    @Column(length = 50)
+    private String specialNote;
 
+    @Column(length = 50)
     private String weather;
 
     @Column(columnDefinition = "TEXT")
@@ -48,7 +54,7 @@ public class DiaryPostEntity {
     private Boolean isPublic;
 
     @Column(nullable = false)
-    private Boolean isDelete;
+    private Boolean isDeleted;
 
     @Column(nullable = false)
     private Long diaryId;

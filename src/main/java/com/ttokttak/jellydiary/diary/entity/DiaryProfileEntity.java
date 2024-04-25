@@ -1,9 +1,8 @@
 package com.ttokttak.jellydiary.diary.entity;
 
+import com.ttokttak.jellydiary.chat.entity.ChatRoomEntity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
@@ -23,7 +22,18 @@ public class DiaryProfileEntity {
     @Column(nullable = false)
     private Boolean isDiaryDeleted;
 
-    @Column
-    private Long chatRoomId;
+    @OneToOne
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoomEntity chatRoomId;
+
+    @Builder
+    public DiaryProfileEntity(Long diaryId, String diaryName, String diaryDescription, String diaryProfileImage, Boolean isDiaryDeleted, ChatRoomEntity chatRoomId) {
+        this.diaryId = diaryId;
+        this.diaryName = diaryName;
+        this.diaryDescription = diaryDescription;
+        this.diaryProfileImage = diaryProfileImage;
+        this.isDiaryDeleted = isDiaryDeleted == null ? false : isDiaryDeleted;
+        this.chatRoomId = chatRoomId;
+    }
 
 }

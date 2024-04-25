@@ -1,4 +1,4 @@
-package com.ttokttak.jellydiary.diary.dto;
+package com.ttokttak.jellydiary.diarypost.dto;
 
 import lombok.Data;
 import lombok.Getter;

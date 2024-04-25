@@ -1,16 +1,16 @@
 package com.ttokttak.jellydiary.diary.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-public class DiaryProfileDto {
+public class DiaryProfileResponseDto {
+
     private Long diaryId;
     private String diaryName;
     private String diaryDescription;
     private String diaryProfileImage;
     private Boolean isDiaryDeleted;
     private Long chatRoomId;
+
 }

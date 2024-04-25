@@ -1,4 +1,4 @@
-package com.ttokttak.jellydiary.diary.entity;
+package com.ttokttak.jellydiary.diarypost.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
