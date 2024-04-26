@@ -1,7 +1,6 @@
 package com.ttokttak.jellydiary.diary.service;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
-import com.ttokttak.jellydiary.diary.dto.DiaryProfileResponseDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
@@ -14,10 +13,10 @@ import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -35,6 +34,7 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
 
     private final DiaryProfileMapper diaryProfileMapper;
 
+    @Transactional
     @Override
     public ResponseDto<?> createDiaryProfile(DiaryProfileRequestDto diaryProfileRequestDto, CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
@@ -60,10 +60,20 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .build();
     }
 
+    @Transactional
     @Override
-    public ResponseDto<?> updateDiaryProfile(Long diaryId, DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto) {
+    public ResponseDto<?> updateDiaryProfile(Long diaryId, DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        DiaryUserEntity byDiaryIdAndUserId = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
+
+        if(byDiaryIdAndUserId == null || !byDiaryIdAndUserId.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
 
         diaryProfileEntity.DiaryProfileUpdate(diaryProfileUpdateRequestDto.getDiaryName(), diaryProfileUpdateRequestDto.getDiaryDescription());
         diaryProfileRepository.save(diaryProfileEntity);
@@ -75,6 +85,7 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .build();
     }
 
+    @Transactional
     @Override
     public ResponseDto<?> getDiaryProfileInfo(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
