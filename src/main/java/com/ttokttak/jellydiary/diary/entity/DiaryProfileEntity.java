@@ -6,6 +6,7 @@ import lombok.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "diary_profile")
 public class DiaryProfileEntity {
     @Id
@@ -26,16 +27,13 @@ public class DiaryProfileEntity {
     @JoinColumn(name = "chat_room_id")
     private ChatRoomEntity chatRoomId;
 
-    public DiaryProfileEntity() {
-    }
-
     @Builder
     public DiaryProfileEntity(Long diaryId, String diaryName, String diaryDescription, String diaryProfileImage, Boolean isDiaryDeleted, ChatRoomEntity chatRoomId) {
         this.diaryId = diaryId;
         this.diaryName = diaryName;
         this.diaryDescription = diaryDescription;
         this.diaryProfileImage = diaryProfileImage;
-        this.isDiaryDeleted = isDiaryDeleted == null ? false : isDiaryDeleted;
+        this.isDiaryDeleted = false;
         this.chatRoomId = chatRoomId;
     }
 
