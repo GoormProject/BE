@@ -1,29 +1,47 @@
 package com.ttokttak.jellydiary.diary.entity;
 
+import com.ttokttak.jellydiary.chat.entity.ChatRoomEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
 @Table(name = "diary_profile")
 public class DiaryProfileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long diaryId;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String diaryName;
 
-    @Column(length = 300)
     private String diaryDescription;
 
-    @Column(length = 50)
     private String diaryProfileImage;
 
     @Column(nullable = false)
     private Boolean isDiaryDeleted;
 
-    @Column
-    private Long chatRoomId;
+    @OneToOne
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoomEntity chatRoomId;
+
+    public DiaryProfileEntity() {
+    }
+
+    @Builder
+    public DiaryProfileEntity(Long diaryId, String diaryName, String diaryDescription, String diaryProfileImage, Boolean isDiaryDeleted, ChatRoomEntity chatRoomId) {
+        this.diaryId = diaryId;
+        this.diaryName = diaryName;
+        this.diaryDescription = diaryDescription;
+        this.diaryProfileImage = diaryProfileImage;
+        this.isDiaryDeleted = isDiaryDeleted == null ? false : isDiaryDeleted;
+        this.chatRoomId = chatRoomId;
+    }
+
+    public void DiaryProfileUpdate(String diaryName, String diaryDescription) {
+        this.diaryName = diaryName;
+        this.diaryDescription = diaryDescription;
+    }
 
 }

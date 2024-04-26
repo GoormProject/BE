@@ -1,10 +1,13 @@
 package com.ttokttak.jellydiary.diarypost.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class DiaryPostDto {
     private Long postId;
     private String postTitle;
@@ -24,3 +27,4 @@ public class DiaryPostDto {
     private Long diaryId;
     private Long userId;
 }
+
