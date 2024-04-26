@@ -14,7 +14,7 @@ import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class DiaryProfileServiceImpl implements DiaryProfileService{
 
