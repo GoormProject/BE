@@ -14,7 +14,7 @@ import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class DiaryProfileServiceImpl implements DiaryProfileService{
 
@@ -69,9 +69,10 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
-        DiaryUserEntity byDiaryIdAndUserId = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
+        DiaryUserEntity byDiaryIdAndUserId = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
 
-        if(byDiaryIdAndUserId == null || !byDiaryIdAndUserId.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+        if(!byDiaryIdAndUserId.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
             throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
         }
 
