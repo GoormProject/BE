@@ -12,7 +12,9 @@ import static org.springframework.http.HttpStatus.OK;
 public enum SuccessMsg {
     /* 200 OK : 성공 */
     LOGIN_SUCCESS(OK, "로그인 완료"),
-    SEARCH_DIARY_USER_LIST_SUCCESS(OK, "다이어리 참여자, 생성자 유저 검색 성공"),
+    SEARCH_DIARY_SUCCESS(OK, "다이어리 정보 조회 완료"),
+    SEARCH_DIARY_USER_LIST_SUCCESS(OK, "다이어리 참여자, 생성자 유저 조회 완료"),
+
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),
 
