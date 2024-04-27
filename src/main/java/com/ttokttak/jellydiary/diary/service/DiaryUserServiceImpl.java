@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.diary.service;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryUserRequestDto;
+import com.ttokttak.jellydiary.diary.dto.DiaryUserUpdateRoleRequestDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserRoleEnum;
@@ -83,6 +84,36 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
                 .message(CREATE_DIARY_USER_SUCCESS.getDetail())
                 .data(diaryUserMapper.entityToDiaryUserResponseDto(diaryUserEntity))
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> updateDiaryParticipantsRolesList(Long diaryId, List<DiaryUserUpdateRoleRequestDto> updateRequestDtoList, CustomOAuth2User customOAuth2User) {
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+        if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        for(DiaryUserUpdateRoleRequestDto dto : updateRequestDtoList){
+            DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(dto.getDiaryUserId())
+                    .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+            diaryUserEntity.DiaryUserRoleUpdate(DiaryUserRoleEnum.valueOf(dto.getDiaryRole()));
+            diaryUserRepository.save(diaryUserEntity);
+        }
+
+        List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndDiaryRoleNot(diaryProfileEntity, DiaryUserRoleEnum.SUBSCRIBE);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_DIARY_USER_ROLE_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_DIARY_USER_ROLE_SUCCESS.getDetail())
+                .data(diaryUserMapper.entityToDiaryUserResponseDtoList(diaryUserEntities))
                 .build();
     }
 

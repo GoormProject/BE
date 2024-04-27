@@ -39,4 +39,9 @@ public class DiaryUserEntity {
         this.diaryId = diaryId;
         this.userId = userId;
     }
+
+    public void DiaryUserRoleUpdate(DiaryUserRoleEnum diaryRole){
+        this.diaryRole = diaryRole;
+    }
+
 }
