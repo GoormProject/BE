@@ -15,7 +15,9 @@ public interface DiaryUserMapper {
     DiaryUserMapper INSTANCE = Mappers.getMapper(DiaryUserMapper.class);
     @Mapping(target = "diaryId", source = "diaryId.diaryId")
     @Mapping(target = "userId", source = "userId.userId")
-    List<DiaryUserResponseDto> entityToDiaryUserResponseDto(List<DiaryUserEntity> entity);
+    List<DiaryUserResponseDto> entityToDiaryUserResponseDtoList(List<DiaryUserEntity> entity);
+
+    DiaryUserResponseDto entityToDiaryUserResponseDto(DiaryUserEntity entity);
 
     default Long mapDiaryProfileToLong(DiaryProfileEntity entity) {
         return entity.getDiaryId();
