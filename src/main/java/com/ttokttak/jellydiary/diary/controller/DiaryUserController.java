@@ -44,4 +44,10 @@ public class DiaryUserController {
         return ResponseEntity.ok(diaryUserService.updateDiaryUserIsInvited(diaryUserId));
     }
 
+    @Operation(summary = "다이어리 유저 삭제", description = "[다이어리 유저 삭제] api")
+    @DeleteMapping("/{diaryUserId}")
+    public ResponseEntity<ResponseDto<?>> deleteDiaryUser(@PathVariable("diaryUserId")Long diaryUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryUserService.deleteDiaryUser(diaryUserId, customOAuth2User));
+    }
+
 }

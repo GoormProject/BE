@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
@@ -132,6 +133,40 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 .statusCode(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getHttpStatus().value())
                 .message(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getDetail())
                 .data(diaryUserMapper.entityToDiaryUserResponseDto(diaryUserEntity))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> deleteDiaryUser(Long diaryUserId, CustomOAuth2User customOAuth2User) {
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserEntity.getDiaryId().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+
+        if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)
+            && !Objects.equals(loginUserEntity.getUserId(), diaryUserEntity.getUserId().getUserId())){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        if(loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)
+                && Objects.equals(loginUserEntity.getUserId(), diaryUserEntity.getUserId().getUserId())){
+            throw new CustomException(DIARY_CREATOR_CANNOT_BE_DELETED);
+        }
+
+        diaryUserRepository.delete(diaryUserEntity);
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_DIARY_USER_SUCCESS.getHttpStatus().value())
+                .message(DELETE_DIARY_USER_SUCCESS.getDetail())
                 .build();
     }
 
