@@ -13,6 +13,7 @@ import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     private final DiaryUserMapper diaryUserMapper;
 
     @Override
+    @Transactional
     public ResponseDto<?> getDiaryParticipantsList(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
@@ -51,6 +53,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> createDiaryUser(DiaryUserRequestDto diaryUserRequestDto, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserRequestDto.getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
@@ -88,6 +91,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> updateDiaryParticipantsRolesList(Long diaryId, List<DiaryUserUpdateRoleRequestDto> updateRequestDtoList, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
@@ -105,7 +109,6 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                     .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
             diaryUserEntity.DiaryUserRoleUpdate(DiaryUserRoleEnum.valueOf(dto.getDiaryRole()));
-            diaryUserRepository.save(diaryUserEntity);
         }
 
         List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndDiaryRoleNot(diaryProfileEntity, DiaryUserRoleEnum.SUBSCRIBE);
@@ -114,6 +117,21 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 .statusCode(UPDATE_DIARY_USER_ROLE_SUCCESS.getHttpStatus().value())
                 .message(UPDATE_DIARY_USER_ROLE_SUCCESS.getDetail())
                 .data(diaryUserMapper.entityToDiaryUserResponseDtoList(diaryUserEntities))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId) {
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        diaryUserEntity.isInvitedUpdate(true);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getDetail())
+                .data(diaryUserMapper.entityToDiaryUserResponseDto(diaryUserEntity))
                 .build();
     }
 

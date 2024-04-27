@@ -44,4 +44,8 @@ public class DiaryUserEntity {
         this.diaryRole = diaryRole;
     }
 
+    public void isInvitedUpdate(Boolean isInvited){
+        this.isInvited = isInvited;
+    }
+
 }
