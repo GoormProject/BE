@@ -15,6 +15,7 @@ public enum SuccessMsg {
     SEARCH_DIARY_SUCCESS(OK, "다이어리 정보 조회 완료"),
     SEARCH_DIARY_USER_LIST_SUCCESS(OK, "다이어리 참여자, 생성자 유저 조회 완료"),
     SEARCH_DIARY_USER_ROLE(OK, "다이어리 유저(권한) 조회 완료"),
+    SEARCH_MY_DIARY_LIST_SUCCESS(OK, "내가 구독 또는 참여 중인 다이어리 리스트 조회 완료"),
 
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),

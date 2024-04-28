@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface DiaryProfileMapper {
     DiaryProfileMapper INSTANCE = Mappers.getMapper(DiaryProfileMapper.class);
@@ -19,5 +21,7 @@ public interface DiaryProfileMapper {
     DiaryProfileResponseDto entityToDiaryProfileResponseDto(DiaryProfileEntity entity);
 
     DiaryProfileUpdateResponseDto entityToDiaryProfileUpdateResponseDto(DiaryProfileEntity entity);
+
+    List<DiaryProfileResponseDto> entityToDiaryProfileResponseDtoList(List<DiaryProfileEntity> entity);
 
 }
