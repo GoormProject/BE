@@ -170,4 +170,24 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 .build();
     }
 
+    @Override
+    @Transactional
+    public ResponseDto<?> getUserRoleInDiary(Long diaryId, CustomOAuth2User customOAuth2User) {
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+
+        return ResponseDto.builder()
+                .statusCode(SEARCH_DIARY_USER_ROLE.getHttpStatus().value())
+                .message(SEARCH_DIARY_USER_ROLE.getDetail())
+                .data(diaryUserMapper.entityToDiaryUserResponseDto(loginUserInDiary))
+                .build();
+    }
+
 }

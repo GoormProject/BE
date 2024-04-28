@@ -19,4 +19,6 @@ public interface DiaryUserService {
 
     ResponseDto<?> deleteDiaryUser(Long diaryUserId, CustomOAuth2User customOAuth2User);
 
+    ResponseDto<?> getUserRoleInDiary(Long diaryId, CustomOAuth2User customOAuth2User);
+
 }

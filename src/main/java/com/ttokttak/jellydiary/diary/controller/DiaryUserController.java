@@ -50,4 +50,10 @@ public class DiaryUserController {
         return ResponseEntity.ok(diaryUserService.deleteDiaryUser(diaryUserId, customOAuth2User));
     }
 
+    @Operation(summary = "다이어리 유저(권한) 조회", description = "[다이어리 유저(권한) 조회] api")
+    @GetMapping("/{diaryId}")
+    public ResponseEntity<ResponseDto<?>> getUserRoleInDiary(@PathVariable("diaryId")Long diaryId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryUserService.getUserRoleInDiary(diaryId, customOAuth2User));
+    }
+
 }
