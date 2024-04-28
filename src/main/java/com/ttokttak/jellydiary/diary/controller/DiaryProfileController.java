@@ -36,4 +36,10 @@ public class DiaryProfileController {
         return ResponseEntity.ok(diaryProfileService.getDiaryProfileInfo(diaryId));
     }
 
+    @Operation(summary = "내가 구독 또는 참여 중인 다이어리 리스트 조회", description = "[내가 구독 또는 참여 중인 다이어리 리스트 조회] api")
+    @GetMapping("/mydiaryList")
+    public ResponseEntity<ResponseDto<?>> getMySubscribedOrParticipatingDiariesList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryProfileService.getMySubscribedOrParticipatingDiariesList(customOAuth2User));
+    }
+
 }

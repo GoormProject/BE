@@ -4,8 +4,6 @@ import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
 public interface DiaryProfileService {
 
@@ -14,5 +12,7 @@ public interface DiaryProfileService {
     ResponseDto<?> updateDiaryProfile(Long diaryId, DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto, CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> getDiaryProfileInfo(Long diaryId);
+
+    ResponseDto<?> getMySubscribedOrParticipatingDiariesList(CustomOAuth2User customOAuth2User);
 
 }

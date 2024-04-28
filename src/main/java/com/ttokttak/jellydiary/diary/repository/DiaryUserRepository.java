@@ -15,4 +15,6 @@ public interface DiaryUserRepository extends JpaRepository<DiaryUserEntity, Long
 
     List<DiaryUserEntity> findByDiaryIdAndDiaryRoleNot(DiaryProfileEntity diaryId, DiaryUserRoleEnum diaryRole);
 
+    List<DiaryUserEntity> findByUserId(UserEntity userId);
+
 }
