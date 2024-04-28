@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.diary.service;
 
 import com.ttokttak.jellydiary.diary.dto.DiaryUserRequestDto;
+import com.ttokttak.jellydiary.diary.dto.DiaryUserUpdateRoleRequestDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserRoleEnum;
@@ -12,11 +13,13 @@ import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
@@ -36,6 +39,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     private final DiaryUserMapper diaryUserMapper;
 
     @Override
+    @Transactional
     public ResponseDto<?> getDiaryParticipantsList(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
@@ -50,6 +54,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> createDiaryUser(DiaryUserRequestDto diaryUserRequestDto, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserRequestDto.getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
@@ -83,6 +88,85 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
                 .message(CREATE_DIARY_USER_SUCCESS.getDetail())
                 .data(diaryUserMapper.entityToDiaryUserResponseDto(diaryUserEntity))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> updateDiaryParticipantsRolesList(Long diaryId, List<DiaryUserUpdateRoleRequestDto> updateRequestDtoList, CustomOAuth2User customOAuth2User) {
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+        if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        for(DiaryUserUpdateRoleRequestDto dto : updateRequestDtoList){
+            DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(dto.getDiaryUserId())
+                    .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+            diaryUserEntity.DiaryUserRoleUpdate(DiaryUserRoleEnum.valueOf(dto.getDiaryRole()));
+        }
+
+        List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndDiaryRoleNot(diaryProfileEntity, DiaryUserRoleEnum.SUBSCRIBE);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_DIARY_USER_ROLE_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_DIARY_USER_ROLE_SUCCESS.getDetail())
+                .data(diaryUserMapper.entityToDiaryUserResponseDtoList(diaryUserEntities))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId) {
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        diaryUserEntity.isInvitedUpdate(true);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getDetail())
+                .data(diaryUserMapper.entityToDiaryUserResponseDto(diaryUserEntity))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> deleteDiaryUser(Long diaryUserId, CustomOAuth2User customOAuth2User) {
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserEntity.getDiaryId().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+
+        if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)
+            && !Objects.equals(loginUserEntity.getUserId(), diaryUserEntity.getUserId().getUserId())){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        if(loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)
+                && Objects.equals(loginUserEntity.getUserId(), diaryUserEntity.getUserId().getUserId())){
+            throw new CustomException(DIARY_CREATOR_CANNOT_BE_DELETED);
+        }
+
+        diaryUserRepository.delete(diaryUserEntity);
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_DIARY_USER_SUCCESS.getHttpStatus().value())
+                .message(DELETE_DIARY_USER_SUCCESS.getDetail())
                 .build();
     }
 

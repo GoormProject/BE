@@ -19,6 +19,10 @@ public enum SuccessMsg {
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),
 
     UPDATE_DIARY_PROFILE_SUCCESS(OK, "다이어리 프로필 수정 완료"),
+    UPDATE_DIARY_USER_ROLE_SUCCESS(OK, "다이어리 유저 role 수정 완료"),
+    UPDATE_DIARY_USER_IS_INVITED_SUCCESS(OK, "다이어리 유저 isInvited 수정(초대 승인) 완료"),
+
+    DELETE_DIARY_USER_SUCCESS(OK, "다이어리 유저 삭제 완료"),
 //    UPDATE_PROJECT_SUCCESS(OK, "프로젝트 수정 완료"),
 //    DELETE_PROJECT_SUCCESS(OK, "프로젝트 삭제 완료"),
 //    SEARCH_PROJECT_SUCCESS(OK, "내 프로젝트 목록 검색 완료");

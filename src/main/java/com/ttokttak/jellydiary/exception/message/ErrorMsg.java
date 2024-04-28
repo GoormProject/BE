@@ -11,6 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorMsg {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     IMAGE_INVALID(BAD_REQUEST,"이미지가 잘못 되었습니다."),
+    DIARY_CREATOR_CANNOT_BE_DELETED(BAD_REQUEST, "다이어리 생성자는 삭제 대상이 아닙니다."),
 //    INVALID_SEARCH_TERM(BAD_REQUEST, "검색어가 유효하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -18,7 +19,7 @@ public enum ErrorMsg {
     NOT_LOGGED_ID(UNAUTHORIZED, "로그인이 되어있지 않습니다."),
 
     /* 403 FORBIDDEN : 권한 없음 */
-    YOU_ARE_NOT_A_DIARY_CREATOR(FORBIDDEN, " 다이어리 생성자가 아니므로 다이어리 프로필 업데이트, 참여자 추가 권한이 없습니다."),
+    YOU_ARE_NOT_A_DIARY_CREATOR(FORBIDDEN, " 다이어리 생성자가 아니므로 다이어리 프로필 업데이트, 참여자 추가, 삭제 권한이 없습니다."),
 //    YOU_ARE_NOT_A_MEMBER_OF_THE_PROJECT_TEAM_AND_THEREFORE_CANNOT_PERFORM_THIS_ACTION(FORBIDDEN, "당신은 이 프로젝트 담당하는 팀의 구성원이 아님으로 권한이 없습니다."),
 //    NO_AUTHORITY_TO_UPDATE_PROJECT(FORBIDDEN, " 리더가 아님으로 프로젝트 업데이트 권한이 없습니다."),
 //    NO_AUTHORITY_TO_DELETE_PROJECT(FORBIDDEN, "프로젝트 삭제 권한이 없습니다."),
@@ -30,6 +31,7 @@ public enum ErrorMsg {
     USER_NOT_FOUND(NOT_FOUND, "사용자가 존재하지 않습니다."),
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "채팅방이 존재하지 않습니다."),
     DIARY_NOT_FOUND(NOT_FOUND, "다이어리가 존재하지 않습니다."),
+    DIARY_USER_NOT_FOUND(NOT_FOUND, "다이어리 유저가 존재하지 않습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),
