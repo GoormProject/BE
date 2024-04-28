@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
@@ -77,7 +79,6 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
         }
 
         diaryProfileEntity.DiaryProfileUpdate(diaryProfileUpdateRequestDto.getDiaryName(), diaryProfileUpdateRequestDto.getDiaryDescription());
-        diaryProfileRepository.save(diaryProfileEntity);
 
         return ResponseDto.builder()
                 .statusCode(UPDATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
@@ -93,9 +94,28 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
         return ResponseDto.builder()
-                .statusCode(CREATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
-                .message(CREATE_DIARY_PROFILE_SUCCESS.getDetail())
+                .statusCode(SEARCH_DIARY_SUCCESS.getHttpStatus().value())
+                .message(SEARCH_DIARY_SUCCESS.getDetail())
                 .data(diaryProfileMapper.entityToDiaryProfileResponseDto(diaryProfileEntity))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> getMySubscribedOrParticipatingDiariesList(CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        List<DiaryUserEntity> diaryUsers = diaryUserRepository.findByUserId(userEntity);
+        List<DiaryProfileEntity> diaryProfileEntityList = diaryUsers.stream()
+                .map(DiaryUserEntity::getDiaryId)
+                .filter(diaryProfileEntity -> !diaryProfileEntity.getIsDiaryDeleted())
+                .toList();
+
+        return ResponseDto.builder()
+                .statusCode(SEARCH_MY_DIARY_LIST_SUCCESS.getHttpStatus().value())
+                .message(SEARCH_MY_DIARY_LIST_SUCCESS.getDetail())
+                .data(diaryProfileMapper.entityToDiaryProfileResponseDtoList(diaryProfileEntityList))
                 .build();
     }
 
