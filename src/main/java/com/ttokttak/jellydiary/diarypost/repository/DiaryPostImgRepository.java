@@ -1,10 +1,9 @@
 package com.ttokttak.jellydiary.diarypost.repository;
 
-import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
+import com.ttokttak.jellydiary.diarypost.entity.DiaryPostImgEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-public interface DiaryPostImgRepository extends JpaRepository<DiaryPostEntity, Long> {
+public interface DiaryPostImgRepository extends JpaRepository<DiaryPostImgEntity, Long> {
 
 }
 

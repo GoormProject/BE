@@ -2,12 +2,11 @@ package com.ttokttak.jellydiary.diarypost.dto;
 
 import lombok.Getter;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class DiaryPostDto {
-    private Long postId;
+public class DiaryPostCreateRequestDto {
     private String postDate;
     private String postTitle;
     private String meal;
@@ -20,12 +19,5 @@ public class DiaryPostDto {
     private String specialNote;
     private String weather;
     private String postContent;
-
-    private Date createdAt;
-    private Date modifiedAt;
     private Boolean isPublic;
-    private Boolean isDeleted;
-    private Long diaryId;
-    private Long userId;
 }
-
