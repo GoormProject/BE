@@ -75,14 +75,17 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         DiaryPostEntity diaryPostEntity = diaryPostMapper.diaryPostCreateRequestDtoToEntity(diaryPostCreateRequestDto, userEntity, diaryProfileEntity);
         diaryPostRepository.save(diaryPostEntity);
 
-        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
-        //게시물 이미지 저장
-        for (MultipartFile postImg : postImgs) {
-            DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(postImg, diaryPostEntity);
-            diaryPostImgRepository.save(diaryPostImgEntity);
 
-            DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
-            diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+        //게시물 이미지 저장
+        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
+        if (postImgs != null && !postImgs.isEmpty()) {
+            for (MultipartFile postImg : postImgs) {
+                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(postImg, diaryPostEntity);
+                diaryPostImgRepository.save(diaryPostImgEntity);
+
+                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
+                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+            }
         }
 
 
