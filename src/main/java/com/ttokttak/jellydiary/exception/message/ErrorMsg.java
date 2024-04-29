@@ -35,6 +35,8 @@ public enum ErrorMsg {
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "채팅방이 존재하지 않습니다."),
     DIARY_NOT_FOUND(NOT_FOUND, "다이어리가 존재하지 않습니다."),
     DIARY_USER_NOT_FOUND(NOT_FOUND, "다이어리에 유저 정보가 존재하지 않습니다."),
+    POST_NOT_FOUND(NOT_FOUND, "게시물이 존재하지 않습니다."),
+    IMG_NOT_FOUND(NOT_FOUND, "이미지가 존재하지 않습니다."),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

@@ -32,6 +32,7 @@ import java.util.List;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.CREATE_POST_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.UPDATE_POST_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     private final DiaryPostImgMapper diaryPostImgMapper;
 
 
+    //게시글 생성
     @Transactional
     @Override
     public ResponseDto<?> createDiaryPost(Long diaryId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<MultipartFile> postImgs, CustomOAuth2User customOAuth2User) {
@@ -71,23 +73,14 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         if(LocalDate.now().compareTo(LocalDate.parse(diaryPostCreateRequestDto.getPostDate(), DateTimeFormatter.ISO_DATE)) < 0) {
             throw new CustomException(POST_DATE_IS_FROM_THE_PAST_TO_TODAY);
         }
+
         //게시물 저장
         DiaryPostEntity diaryPostEntity = diaryPostMapper.diaryPostCreateRequestDtoToEntity(diaryPostCreateRequestDto, userEntity, diaryProfileEntity);
         diaryPostRepository.save(diaryPostEntity);
 
 
         //게시물 이미지 저장
-        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
-        if (postImgs != null && !postImgs.isEmpty()) {
-            for (MultipartFile postImg : postImgs) {
-                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(postImg, diaryPostEntity);
-                diaryPostImgRepository.save(diaryPostImgEntity);
-
-                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
-                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
-            }
-        }
-
+        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = getDiaryPostImgListResponseDtos(postImgs, diaryPostEntity);
 
         DiaryPostCreateResponseDto diaryPostCreateResponseDto = diaryPostMapper.entityToDiaryPostCreateResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity);
 
@@ -98,6 +91,85 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                 .build();
     }
 
+    //게시글 생성
+    @Transactional
+    @Override
+    public ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        //다이어리 권한이 읽기 권한 or 구독자인 경우, 초대 승인 대기 중인 사용자는 게시물을 수정하지 못하도록 에러 처리
+        if ((diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE || diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.READ) && !diaryUserEntity.getIsInvited()) {
+            throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_WRITE_AND_UPDATE);
+        }
+
+        if(LocalDate.now().compareTo(LocalDate.parse(diaryPostCreateRequestDto.getPostDate(), DateTimeFormatter.ISO_DATE)) < 0) {
+            throw new CustomException(POST_DATE_IS_FROM_THE_PAST_TO_TODAY);
+        }
+
+        //diaryPostEntity에 변경사항 업데이트
+        diaryPostEntity.diaryPostUpdate(diaryPostCreateRequestDto);
+
+        //TODO: [작성자: 김주희] S3 업로드 추가
+        List<DiaryPostImgEntity> dbDiaryPostImg = diaryPostImgRepository.findAllByDiaryPost(diaryPostEntity);
+        // 기존 이미지 중 삭제할 이미지 삭제
+        if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
+            for (Long deleteImageId : deleteImageIds) {
+                // 삭제할 이미지 검색
+                DiaryPostImgEntity deleteImage = dbDiaryPostImg.stream()
+                        .filter(img -> img.getPostImgId().equals(deleteImageId))
+                        .findFirst()
+                        .orElseThrow(() -> new CustomException(IMG_NOT_FOUND));
+
+                // 이미지 삭제
+                diaryPostImgRepository.delete(deleteImage);
+            }
+            // 삭제한 이미지 목록에서 제거
+            dbDiaryPostImg.removeIf(img -> deleteImageIds.contains(img.getPostImgId()));
+        }
+
+        //response를 위하여 기존 이미지 dto에 추가
+        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
+        for (DiaryPostImgEntity diaryPostImg : dbDiaryPostImg) {
+            DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImg);
+            diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+        }
+
+        //새 이미지 추가 및 responseDto로 변환
+        List<DiaryPostImgListResponseDto> newDiaryPostImgListResponseDtos = getDiaryPostImgListResponseDtos(newPostImgs, diaryPostEntity);
+
+        diaryPostImgListResponseDtos.addAll(newDiaryPostImgListResponseDtos);
+        DiaryPostCreateResponseDto diaryPostCreateResponseDto = diaryPostMapper.entityToDiaryPostCreateResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_POST_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_POST_SUCCESS.getDetail())
+                .data(diaryPostCreateResponseDto)
+                .build();
+    }
+
+    //새 이미지 추가 후 responseDto를 반환해주는 메서드
+    private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) {
+        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
+        if (postImgs != null && !postImgs.isEmpty()) {
+            for (MultipartFile postImg : postImgs) {
+                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(postImg, diaryPostEntity);
+                diaryPostImgRepository.save(diaryPostImgEntity);
+
+                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
+                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+            }
+        }
+        return diaryPostImgListResponseDtos;
+    }
 
 }

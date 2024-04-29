@@ -25,4 +25,10 @@ public class DiaryPostController {
         return ResponseEntity.ok(diaryPostService.createDiaryPost(diaryId, diaryPostCreateRequestDto, postImgs, customOAuth2User));
     }
 
+    @Operation(summary = "게시물 수정", description = "[게시물 수정] api")
+    @PatchMapping("/{postId}")
+    public ResponseEntity<ResponseDto<?>> updateDiaryPost(@PathVariable Long postId, @RequestPart DiaryPostCreateRequestDto diaryPostCreateRequestDto, @RequestPart(value = "deleteImageIds", required = false) List<Long> deleteImageIds, @RequestPart(value = "postImgs", required = false) List<MultipartFile> newPostImgs, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryPostService.updateDiaryPost(postId, diaryPostCreateRequestDto, deleteImageIds, newPostImgs, customOAuth2User));
+    }
+
 }
