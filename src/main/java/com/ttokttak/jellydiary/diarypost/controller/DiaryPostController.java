@@ -21,7 +21,7 @@ public class DiaryPostController {
 
     @Operation(summary = "게시물 생성", description = "[게시물 생성] api")
     @PostMapping("/{diaryId}")
-    public ResponseEntity<ResponseDto<?>> createDiaryPost(@PathVariable Long diaryId, @RequestPart DiaryPostCreateRequestDto diaryPostCreateRequestDto, @RequestPart List<MultipartFile> postImgs, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    public ResponseEntity<ResponseDto<?>> createDiaryPost(@PathVariable Long diaryId, @RequestPart DiaryPostCreateRequestDto diaryPostCreateRequestDto, @RequestPart(value = "postImgs", required = false) List<MultipartFile> postImgs, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(diaryPostService.createDiaryPost(diaryId, diaryPostCreateRequestDto, postImgs, customOAuth2User));
     }
 

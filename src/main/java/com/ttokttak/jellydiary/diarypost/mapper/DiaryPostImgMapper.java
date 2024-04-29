@@ -15,7 +15,7 @@ import java.util.List;
 public interface DiaryPostImgMapper {
     DiaryPostImgMapper INSTANCE = Mappers.getMapper(DiaryPostImgMapper.class);
 
-    @Mapping(target = "imageLink", expression = "java(postImg.getName())")
+    @Mapping(target = "imageLink", expression = "java(postImg.getOriginalFilename())")
     DiaryPostImgEntity diaryPostImgRequestToEntity(MultipartFile postImg, DiaryPostEntity diaryPost);
 
     @Mapping(target = "diaryPostImg", source = "diaryPostImg.imageLink")
