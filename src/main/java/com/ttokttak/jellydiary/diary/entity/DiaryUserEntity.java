@@ -40,7 +40,7 @@ public class DiaryUserEntity {
         this.userId = userId;
     }
 
-    public void DiaryUserRoleUpdate(DiaryUserRoleEnum diaryRole){
+    public void diaryUserRoleUpdate(DiaryUserRoleEnum diaryRole){
         this.diaryRole = diaryRole;
     }
 

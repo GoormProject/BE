@@ -62,27 +62,56 @@ public class DiaryUserServiceImpl implements DiaryUserService{
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
-                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
-        if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
-            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
-        }
-
         UserEntity invitedUserEntity = userRepository.findById(diaryUserRequestDto.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        Optional<DiaryUserEntity> invitedUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, invitedUserEntity);
-        if(invitedUserInDiary.isPresent()){
-            throw new CustomException(DUPLICATE_DIARY_USER);
+        Optional<DiaryUserEntity> loginUserInDiaryOpt = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity);
+        Optional<DiaryUserEntity> invitedUserInDiaryOpt = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, invitedUserEntity);
+
+        DiaryUserEntity.DiaryUserEntityBuilder diaryUserEntityBuilder = DiaryUserEntity.builder()
+                .diaryId(diaryProfileEntity)
+                .userId(invitedUserEntity);
+
+        //구독 버튼 클릭
+        if(loginUserEntity.equals(invitedUserEntity)){
+            if(loginUserInDiaryOpt.isPresent()){
+                DiaryUserEntity loginUserInDiary = loginUserInDiaryOpt.get();
+                if(loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.SUBSCRIBE)){
+                    throw new CustomException(ALREADY_SUBSCRIBED_DIARY);
+                }
+                throw new CustomException(DUPLICATE_DIARY_USER);
+            }
+            diaryUserEntityBuilder.isInvited(null)
+                    .diaryRole(DiaryUserRoleEnum.SUBSCRIBE);
+        }else{ //초대 버튼 클릭
+            DiaryUserEntity loginUserInDiary = loginUserInDiaryOpt.orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+            if(loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+                if(invitedUserInDiaryOpt.isPresent()){
+                    DiaryUserEntity invitedUserInDiary = invitedUserInDiaryOpt.get();
+                    if(Boolean.FALSE.equals(invitedUserInDiary.getIsInvited())){
+                        throw new CustomException(ALREADY_SENT_INVITATION);
+                    }
+                    if(!invitedUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.SUBSCRIBE)){
+                        throw new CustomException(DUPLICATE_DIARY_USER);
+                    }else{
+                        invitedUserInDiaryOpt.get().isInvitedUpdate(false);
+                        return ResponseDto.builder()
+                                .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
+                                .message(CREATE_DIARY_USER_SUCCESS.getDetail())
+                                .data(diaryUserMapper.entityToDiaryUserResponseDto(invitedUserInDiaryOpt.get()))
+                                .build();
+                    }
+                }
+                    diaryUserEntityBuilder.isInvited(false)
+                            .diaryRole(DiaryUserRoleEnum.READ);
+
+            }else{
+                throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+            }
         }
 
-        DiaryUserEntity diaryUserEntity = DiaryUserEntity.builder()
-                .diaryId(diaryProfileEntity)
-                .userId(invitedUserEntity)
-                .isInvited(false)
-                .diaryRole(DiaryUserRoleEnum.READ)
-                .build();
-        diaryUserRepository.save(diaryUserEntity);
+        DiaryUserEntity diaryUserEntity = diaryUserEntityBuilder.build();
+            diaryUserRepository.save(diaryUserEntity);
 
         return ResponseDto.builder()
                 .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
@@ -109,7 +138,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
             DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(dto.getDiaryUserId())
                     .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
-            diaryUserEntity.DiaryUserRoleUpdate(DiaryUserRoleEnum.valueOf(dto.getDiaryRole()));
+            diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.valueOf(dto.getDiaryRole()));
         }
 
         List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndDiaryRoleNot(diaryProfileEntity, DiaryUserRoleEnum.SUBSCRIBE);
@@ -128,6 +157,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
         diaryUserEntity.isInvitedUpdate(true);
+        diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
 
         return ResponseDto.builder()
                 .statusCode(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getHttpStatus().value())
