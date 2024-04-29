@@ -152,12 +152,21 @@ public class DiaryUserServiceImpl implements DiaryUserService{
 
     @Override
     @Transactional
-    public ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId) {
+    public ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId, CustomOAuth2User customOAuth2User) {
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
-        diaryUserEntity.isInvitedUpdate(true);
-        diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if(!diaryUserEntity.getUserId().getUserId().equals(loginUserEntity.getUserId()) ){
+            throw new CustomException(NO_PERMISSION_TO_APPROVE_INVITATION);
+        }
+
+        if(Boolean.FALSE.equals(diaryUserEntity.getIsInvited())){
+            diaryUserEntity.isInvitedUpdate(true);
+            diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
+        }
 
         return ResponseDto.builder()
                 .statusCode(UPDATE_DIARY_USER_IS_INVITED_SUCCESS.getHttpStatus().value())

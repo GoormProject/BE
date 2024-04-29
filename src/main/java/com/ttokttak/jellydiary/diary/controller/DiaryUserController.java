@@ -40,8 +40,8 @@ public class DiaryUserController {
 
     @Operation(summary = "다이어리 유저 isInvited 수정(초대 승인)", description = "[다이어리 유저 isInvited 수정(초대 승인)] api")
     @PatchMapping("/{diaryUserId}")
-    public ResponseEntity<ResponseDto<?>> updateDiaryUserIsInvited(@PathVariable("diaryUserId")Long diaryUserId) {
-        return ResponseEntity.ok(diaryUserService.updateDiaryUserIsInvited(diaryUserId));
+    public ResponseEntity<ResponseDto<?>> updateDiaryUserIsInvited(@PathVariable("diaryUserId")Long diaryUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryUserService.updateDiaryUserIsInvited(diaryUserId, customOAuth2User));
     }
 
     @Operation(summary = "다이어리 유저 삭제", description = "[다이어리 유저 삭제] api")
