@@ -15,7 +15,7 @@ public interface DiaryUserService {
 
     ResponseDto<?> updateDiaryParticipantsRolesList(Long diaryId, List<DiaryUserUpdateRoleRequestDto> updateRequestDtoList, CustomOAuth2User customOAuth2User);
 
-    ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId);
+    ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId,  CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> deleteDiaryUser(Long diaryUserId, CustomOAuth2User customOAuth2User);
 
