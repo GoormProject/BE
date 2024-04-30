@@ -8,6 +8,7 @@ import com.ttokttak.jellydiary.diary.repository.DiaryUserRepository;
 import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateRequestDto;
 import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateResponseDto;
 import com.ttokttak.jellydiary.diarypost.dto.DiaryPostImgListResponseDto;
+import com.ttokttak.jellydiary.diarypost.dto.DiaryPostListResponseDto;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostImgEntity;
 import com.ttokttak.jellydiary.diarypost.mapper.DiaryPostImgMapper;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
@@ -186,6 +188,38 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         return ResponseDto.builder()
                 .statusCode(DELETE_POST_SUCCESS.getHttpStatus().value())
                 .message(DELETE_POST_SUCCESS.getDetail())
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> getDiaryPostList(Long diaryId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        List<DiaryPostEntity> getDiaryPostList = new ArrayList<>();
+
+        if (diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE) {
+            getDiaryPostList.addAll(diaryPostRepository.findAllByDiaryProfileAndIsPublic(diaryProfileEntity, true));
+        } else {
+            getDiaryPostList.addAll(diaryPostRepository.findAllByDiaryProfile(diaryProfileEntity));
+        }
+
+        List<DiaryPostListResponseDto> diaryPostListResponseDtos = new ArrayList<>();
+        for (DiaryPostEntity diaryPostEntity : getDiaryPostList) {
+            diaryPostListResponseDtos.add(diaryPostMapper.entityToDiaryPostListResponseDto(diaryPostEntity, diaryProfileEntity, userEntity));
+        }
+
+        diaryPostListResponseDtos = diaryPostListResponseDtos.stream().sorted(Comparator.comparing(DiaryPostListResponseDto::getCreatedAt).reversed()).toList();
+        return ResponseDto.builder()
+                .statusCode(GET_LIST_POST_SUCCESS.getHttpStatus().value())
+                .message(GET_LIST_POST_SUCCESS.getDetail())
+                .data(diaryPostListResponseDtos)
                 .build();
     }
 

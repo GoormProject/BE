@@ -4,6 +4,7 @@ import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateRequestDto;
 import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateResponseDto;
 import com.ttokttak.jellydiary.diarypost.dto.DiaryPostImgListResponseDto;
+import com.ttokttak.jellydiary.diarypost.dto.DiaryPostListResponseDto;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import org.mapstruct.Mapper;
@@ -26,4 +27,9 @@ public interface DiaryPostMapper {
     @Mapping(target = "diaryId", source = "diaryProfile.diaryId")
     @Mapping(target = "userId", source = "user.userId")
     DiaryPostCreateResponseDto entityToDiaryPostCreateResponseDto(DiaryPostEntity diaryPost, List<DiaryPostImgListResponseDto> postImgs, DiaryProfileEntity diaryProfile, UserEntity user);
+
+    @Mapping(target = "diaryId", source = "diaryProfile.diaryId")
+    @Mapping(target = "userId", source = "user.userId")
+    DiaryPostListResponseDto entityToDiaryPostListResponseDto(DiaryPostEntity diaryPost, DiaryProfileEntity diaryProfile, UserEntity user);
+
 }
