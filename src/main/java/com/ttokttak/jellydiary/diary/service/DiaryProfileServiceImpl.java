@@ -70,6 +70,8 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
 
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         DiaryUserEntity byDiaryIdAndUserId = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
                 .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
@@ -78,7 +80,7 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
             throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
         }
 
-        diaryProfileEntity.DiaryProfileUpdate(diaryProfileUpdateRequestDto.getDiaryName(), diaryProfileUpdateRequestDto.getDiaryDescription());
+        diaryProfileEntity.diaryProfileUpdate(diaryProfileUpdateRequestDto.getDiaryName(), diaryProfileUpdateRequestDto.getDiaryDescription());
 
         return ResponseDto.builder()
                 .statusCode(UPDATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
@@ -92,6 +94,8 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
     public ResponseDto<?> getDiaryProfileInfo(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         return ResponseDto.builder()
                 .statusCode(SEARCH_DIARY_SUCCESS.getHttpStatus().value())
@@ -116,6 +120,32 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .statusCode(SEARCH_MY_DIARY_LIST_SUCCESS.getHttpStatus().value())
                 .message(SEARCH_MY_DIARY_LIST_SUCCESS.getDetail())
                 .data(diaryProfileMapper.entityToDiaryProfileResponseDtoList(diaryProfileEntityList))
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public ResponseDto<?> deleteDiaryProfile(Long diaryId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
+
+        DiaryUserEntity byDiaryIdAndUserId = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+
+        if(!byDiaryIdAndUserId.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        diaryProfileRepository.delete(diaryProfileEntity);
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
+                .message(DELETE_DIARY_PROFILE_SUCCESS.getDetail())
                 .build();
     }
 

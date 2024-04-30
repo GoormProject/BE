@@ -25,6 +25,7 @@ public enum SuccessMsg {
     UPDATE_DIARY_USER_IS_INVITED_SUCCESS(OK, "다이어리 유저 isInvited 수정(초대 승인) 완료"),
 
     DELETE_DIARY_USER_SUCCESS(OK, "다이어리 유저 삭제 완료"),
+    DELETE_DIARY_PROFILE_SUCCESS(OK, "다이어리 프로필 삭제 완료"),
 //    UPDATE_PROJECT_SUCCESS(OK, "프로젝트 수정 완료"),
 //    DELETE_PROJECT_SUCCESS(OK, "프로젝트 삭제 완료"),
 //    SEARCH_PROJECT_SUCCESS(OK, "내 프로젝트 목록 검색 완료");
@@ -32,6 +33,7 @@ public enum SuccessMsg {
     UPDATE_POST_SUCCESS(OK, "게시물 수정 완료"),
     DELETE_POST_SUCCESS(OK, "게시물 삭제 완료"),
     GET_LIST_POST_SUCCESS(OK, "게시물 리스트 조회 완료"),
+
 
     /* 201 CREATED : 생성 */
     CREATE_DIARY_PROFILE_SUCCESS(CREATED, "다이어리 프로필 생성 완료"),

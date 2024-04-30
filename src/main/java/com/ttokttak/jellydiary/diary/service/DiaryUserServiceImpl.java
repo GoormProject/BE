@@ -43,6 +43,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     public ResponseDto<?> getDiaryParticipantsList(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndValidUsers(diaryProfileEntity);
 
@@ -58,6 +60,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     public ResponseDto<?> createDiaryUser(DiaryUserRequestDto diaryUserRequestDto, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserRequestDto.getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -122,6 +126,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     @Transactional
     public ResponseDto<?> updateDiaryParticipantsRolesList(Long diaryId, List<DiaryUserUpdateRoleRequestDto> updateRequestDtoList, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId).orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -135,6 +141,9 @@ public class DiaryUserServiceImpl implements DiaryUserService{
         for(DiaryUserUpdateRoleRequestDto dto : updateRequestDtoList){
             DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(dto.getDiaryUserId())
                     .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+            if(!diaryUserEntity.getDiaryId().getDiaryId().equals(diaryId)){
+                throw new CustomException(DIARY_USER_NOT_FOUND);
+            }
 
             diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.valueOf(dto.getDiaryRole()));
         }
@@ -153,6 +162,11 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     public ResponseDto<?> updateDiaryUserIsInvited(Long diaryUserId, CustomOAuth2User customOAuth2User) {
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserEntity.getDiaryId().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -181,6 +195,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
 
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserEntityToDelete.getDiaryId().getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -207,6 +223,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     public ResponseDto<?> getUserRoleInDiary(Long diaryId, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
