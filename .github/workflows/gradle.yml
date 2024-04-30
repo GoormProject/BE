@@ -8,7 +8,7 @@ on:
 
 # 테스트 결과 작성을 위해 쓰기권한 추가
 permissions:
-  contents: write-all
+  contents: write
 
 # 해당 Workflow의 Job 목록
 jobs:
