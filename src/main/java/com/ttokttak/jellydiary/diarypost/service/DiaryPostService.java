@@ -14,4 +14,6 @@ public interface DiaryPostService {
     ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> deleteDiaryPost(Long postId, CustomOAuth2User customOAuth2User);
+
+    ResponseDto<?> getDiaryPostList(Long diaryId, CustomOAuth2User customOAuth2User);
 }

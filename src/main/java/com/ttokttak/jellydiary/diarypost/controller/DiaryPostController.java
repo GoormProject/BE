@@ -37,4 +37,11 @@ public class DiaryPostController {
         return ResponseEntity.ok(diaryPostService.deleteDiaryPost(postId, customOAuth2User));
     }
 
+    @Operation(summary = "게시물 리스트 조회", description = "[게시물 리스트 조] api")
+    @GetMapping("/postList/{diaryId}")
+    public ResponseEntity<ResponseDto<?>> getDiaryPostList(@PathVariable Long diaryId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryPostService.getDiaryPostList(diaryId, customOAuth2User));
+    }
+
+
 }
