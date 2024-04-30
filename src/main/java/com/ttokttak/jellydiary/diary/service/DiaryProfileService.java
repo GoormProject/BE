@@ -15,4 +15,6 @@ public interface DiaryProfileService {
 
     ResponseDto<?> getMySubscribedOrParticipatingDiariesList(CustomOAuth2User customOAuth2User);
 
+    ResponseDto<?> deleteDiaryProfile(Long diaryId, CustomOAuth2User customOAuth2User);
+
 }

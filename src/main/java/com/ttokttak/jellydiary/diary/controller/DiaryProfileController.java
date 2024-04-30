@@ -42,4 +42,10 @@ public class DiaryProfileController {
         return ResponseEntity.ok(diaryProfileService.getMySubscribedOrParticipatingDiariesList(customOAuth2User));
     }
 
+    @Operation(summary = "다이어리 삭제", description = "[다이어리 삭제] api")
+    @DeleteMapping("/profile/{diaryId}")
+    public ResponseEntity<ResponseDto<?>> deleteDiaryProfile(@PathVariable("diaryId")Long diaryId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryProfileService.deleteDiaryProfile(diaryId, customOAuth2User));
+    }
+
 }

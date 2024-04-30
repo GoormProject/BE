@@ -3,10 +3,12 @@ package com.ttokttak.jellydiary.diary.entity;
 import com.ttokttak.jellydiary.chat.entity.ChatRoomEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE diary_profile SET is_diary_deleted = true WHERE diary_id = ?")
 @Table(name = "diary_profile")
 public class DiaryProfileEntity {
     @Id
@@ -37,7 +39,7 @@ public class DiaryProfileEntity {
         this.chatRoomId = chatRoomId;
     }
 
-    public void DiaryProfileUpdate(String diaryName, String diaryDescription) {
+    public void diaryProfileUpdate(String diaryName, String diaryDescription) {
         this.diaryName = diaryName;
         this.diaryDescription = diaryDescription;
     }
