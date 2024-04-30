@@ -44,7 +44,7 @@ public class DiaryUserServiceImpl implements DiaryUserService{
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
-        List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndDiaryRoleNot(diaryProfileEntity, DiaryUserRoleEnum.SUBSCRIBE);
+        List<DiaryUserEntity> diaryUserEntities = diaryUserRepository.findByDiaryIdAndValidUsers(diaryProfileEntity);
 
         return ResponseDto.builder()
                 .statusCode(SEARCH_DIARY_USER_LIST_SUCCESS.getHttpStatus().value())
