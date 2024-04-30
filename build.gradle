@@ -49,8 +49,8 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
     // DataBase
-//    implementation 'mysql:mysql-connector-java:8.0.32'
-    runtimeOnly 'com.h2database:h2' // H2 인메모리 데이터베이스 (테스트 시 활용)
+    implementation 'mysql:mysql-connector-java:8.0.32'
+//    runtimeOnly 'com.h2database:h2' // H2 인메모리 데이터베이스 (테스트 시 활용)
 
     // Spring Cloud Starter AWS
 //    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
@@ -63,6 +63,6 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test' // 스프링 시큐리티 테스트
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+test {
+    useJUnitPlatform()
 }
