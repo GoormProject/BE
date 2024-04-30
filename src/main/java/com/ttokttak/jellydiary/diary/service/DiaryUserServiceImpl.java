@@ -85,29 +85,27 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                     .diaryRole(DiaryUserRoleEnum.SUBSCRIBE);
         }else{ //초대 버튼 클릭
             DiaryUserEntity loginUserInDiary = loginUserInDiaryOpt.orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
-            if(loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
-                if(invitedUserInDiaryOpt.isPresent()){
-                    DiaryUserEntity invitedUserInDiary = invitedUserInDiaryOpt.get();
-                    if(Boolean.FALSE.equals(invitedUserInDiary.getIsInvited())){
-                        throw new CustomException(ALREADY_SENT_INVITATION);
-                    }
-                    if(!invitedUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.SUBSCRIBE)){
-                        throw new CustomException(DUPLICATE_DIARY_USER);
-                    }else{
-                        invitedUserInDiaryOpt.get().isInvitedUpdate(false);
-                        return ResponseDto.builder()
-                                .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
-                                .message(CREATE_DIARY_USER_SUCCESS.getDetail())
-                                .data(diaryUserMapper.entityToDiaryUserResponseDto(invitedUserInDiaryOpt.get()))
-                                .build();
-                    }
-                }
-                    diaryUserEntityBuilder.isInvited(false)
-                            .diaryRole(DiaryUserRoleEnum.READ);
-
-            }else{
+            if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
                 throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
             }
+            if(invitedUserInDiaryOpt.isPresent()){
+                DiaryUserEntity invitedUserInDiary = invitedUserInDiaryOpt.get();
+                if(Boolean.FALSE.equals(invitedUserInDiary.getIsInvited())){
+                    throw new CustomException(ALREADY_SENT_INVITATION);
+                }
+                if(!invitedUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.SUBSCRIBE)){
+                    throw new CustomException(DUPLICATE_DIARY_USER);
+                }else{
+                    invitedUserInDiary.isInvitedUpdate(false);
+                    return ResponseDto.builder()
+                            .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
+                            .message(CREATE_DIARY_USER_SUCCESS.getDetail())
+                            .data(diaryUserMapper.entityToDiaryUserResponseDto(invitedUserInDiary))
+                            .build();
+                }
+            }
+            diaryUserEntityBuilder.isInvited(false)
+                    .diaryRole(DiaryUserRoleEnum.READ);
         }
 
         DiaryUserEntity diaryUserEntity = diaryUserEntityBuilder.build();
@@ -178,30 +176,25 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     @Override
     @Transactional
     public ResponseDto<?> deleteDiaryUser(Long diaryUserId, CustomOAuth2User customOAuth2User) {
-        DiaryUserEntity diaryUserEntity = diaryUserRepository.findById(diaryUserId)
+        DiaryUserEntity diaryUserEntityToDelete = diaryUserRepository.findById(diaryUserId)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
-        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserEntity.getDiaryId().getDiaryId())
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryUserEntityToDelete.getDiaryId().getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
-        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
-                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
-
-
-        if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)
-            && !Objects.equals(loginUserEntity.getUserId(), diaryUserEntity.getUserId().getUserId())){
-            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        if(diaryUserEntityToDelete.getUserId().getUserId().equals(loginUserEntity.getUserId())){
+            if(diaryUserEntityToDelete.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR))
+                throw new CustomException(DIARY_CREATOR_CANNOT_BE_DELETED);
+        }else{
+            DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                    .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+            if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR))
+                throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
         }
 
-        if(loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)
-                && Objects.equals(loginUserEntity.getUserId(), diaryUserEntity.getUserId().getUserId())){
-            throw new CustomException(DIARY_CREATOR_CANNOT_BE_DELETED);
-        }
-
-        diaryUserRepository.delete(diaryUserEntity);
+        diaryUserRepository.delete(diaryUserEntityToDelete);
 
         return ResponseDto.builder()
                 .statusCode(DELETE_DIARY_USER_SUCCESS.getHttpStatus().value())
