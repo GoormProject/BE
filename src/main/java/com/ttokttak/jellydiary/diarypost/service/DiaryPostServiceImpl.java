@@ -91,7 +91,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                 .build();
     }
 
-    //게시글 생성
+    //게시글 수정
     @Transactional
     @Override
     public ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User) {
@@ -131,7 +131,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                         .orElseThrow(() -> new CustomException(IMG_NOT_FOUND));
 
                 // 이미지 삭제
-                diaryPostImgRepository.delete(deleteImage);
+                diaryPostImgRepository.deleteById(deleteImage.getPostImgId());
             }
             // 삭제한 이미지 목록에서 제거
             dbDiaryPostImg.removeIf(img -> deleteImageIds.contains(img.getPostImgId()));
