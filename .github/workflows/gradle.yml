@@ -6,16 +6,15 @@ on:
   pull_request:
     branches: [ "develop", "main" ]
 
-# 테스트 결과 작성을 위해 쓰기권한 추가
-permissions:
-  contents: write
-
 # 해당 Workflow의 Job 목록
 jobs:
   # Job 이름으로, build 라는 이름으로 Job이 표시된다.
   build:
     # Runner가 실행되는 환경을 정의
     runs-on: ubuntu-latest
+    # 테스트 결과 작성을 위해 쓰기권한 추가
+    permissions:
+      contents: write
 
     # build Job 내의 step 목록
     steps:
