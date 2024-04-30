@@ -30,6 +30,7 @@ public enum SuccessMsg {
 //    SEARCH_PROJECT_SUCCESS(OK, "내 프로젝트 목록 검색 완료");
 
     UPDATE_POST_SUCCESS(OK, "게시물 수정 완료"),
+    DELETE_POST_SUCCESS(OK, "게시물 삭제 완료"),
 
     /* 201 CREATED : 생성 */
     CREATE_DIARY_PROFILE_SUCCESS(CREATED, "다이어리 프로필 생성 완료"),

@@ -31,4 +31,10 @@ public class DiaryPostController {
         return ResponseEntity.ok(diaryPostService.updateDiaryPost(postId, diaryPostCreateRequestDto, deleteImageIds, newPostImgs, customOAuth2User));
     }
 
+    @Operation(summary = "게시물 삭제", description = "[게시물 삭제] api")
+    @DeleteMapping("{postId}")
+    public ResponseEntity<ResponseDto<?>> deleteDiaryPost(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryPostService.deleteDiaryPost(postId, customOAuth2User));
+    }
+
 }
