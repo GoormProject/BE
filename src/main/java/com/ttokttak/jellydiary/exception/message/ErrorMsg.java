@@ -22,6 +22,7 @@ public enum ErrorMsg {
     /* 403 FORBIDDEN : 권한 없음 */
     YOU_ARE_NOT_A_DIARY_CREATOR(FORBIDDEN, " 다이어리 생성자가 아니므로 다이어리 프로필 업데이트, 참여자 추가, 삭제 권한이 없습니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_WRITE_AND_UPDATE(FORBIDDEN, " 다이어리 생성자 이거나 쓰기 권한이 있는 사용자만이 게시물 생성 및 수정이 가능합니다."),
+    YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE(FORBIDDEN, " 다이어리 생성자만이 게시물 삭제가 가능합니다."),
     NO_PERMISSION_TO_APPROVE_INVITATION(FORBIDDEN, "해당 초대 요청을 승인할 권한이 없습니다."),
 //    YOU_ARE_NOT_A_MEMBER_OF_THE_PROJECT_TEAM_AND_THEREFORE_CANNOT_PERFORM_THIS_ACTION(FORBIDDEN, "당신은 이 프로젝트 담당하는 팀의 구성원이 아님으로 권한이 없습니다."),
 //    NO_AUTHORITY_TO_UPDATE_PROJECT(FORBIDDEN, " 리더가 아님으로 프로젝트 업데이트 권한이 없습니다."),

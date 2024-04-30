@@ -31,8 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.CREATE_POST_SUCCESS;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.UPDATE_POST_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
 @Service
 @RequiredArgsConstructor
@@ -60,13 +59,10 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
-        //다이어리 권한이 읽기 권한 or 구독자인 경우, 초대 승인 대기 중인 사용자는 게시물을 생성하지 못하도록 에러 처리
-        if ((diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE || diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.READ) && !diaryUserEntity.getIsInvited()) {
+        //다이어리 권한이 읽기 권한 or 구독자인 경우, 초대 승인 대기 중인 사용자는 게시물을 수정하지 못하도록 에러 처리
+        if ((diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE || diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.READ) && (diaryUserEntity.getIsInvited() == null || !diaryUserEntity.getIsInvited())) {
             throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_WRITE_AND_UPDATE);
         }
-
-        System.out.println(LocalDate.now().compareTo(LocalDate.parse(diaryPostCreateRequestDto.getPostDate(), DateTimeFormatter.ISO_DATE)));
-        System.out.println(LocalDate.now());
 
         //입력받은 날짜를 LocalDate로 변환하여 오늘 날짜와 비교.
         //오늘 날짜보다 앞 선 날짜라면 예외처리
@@ -108,7 +104,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
 
         //다이어리 권한이 읽기 권한 or 구독자인 경우, 초대 승인 대기 중인 사용자는 게시물을 수정하지 못하도록 에러 처리
-        if ((diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE || diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.READ) && !diaryUserEntity.getIsInvited()) {
+        if ((diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE || diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.READ) && (diaryUserEntity.getIsInvited() == null || !diaryUserEntity.getIsInvited())) {
             throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_WRITE_AND_UPDATE);
         }
 
@@ -154,6 +150,42 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                 .statusCode(UPDATE_POST_SUCCESS.getHttpStatus().value())
                 .message(UPDATE_POST_SUCCESS.getDetail())
                 .data(diaryPostCreateResponseDto)
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public ResponseDto<?> deleteDiaryPost(Long postId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
+                .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
+
+        //다이어리 권한이 생성자가 아닌 경우 게시물을 삭제하지 못하도록 에러 처리
+        if ((diaryUserEntity.getDiaryRole() != DiaryUserRoleEnum.CREATOR)) {
+            throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE);
+        }
+
+        List<DiaryPostImgEntity> dbDiaryPostImgs = diaryPostImgRepository.findAllByDiaryPost(diaryPostEntity);
+        List<Long> dbDiaryPostImgsIdList = new ArrayList<>();
+        for (DiaryPostImgEntity dbDiaryPostImg : dbDiaryPostImgs) {
+            dbDiaryPostImgsIdList.add(dbDiaryPostImg.getPostImgId());
+        }
+        //게시물 이미지 softDelete
+        diaryPostImgRepository.deleteAllById(dbDiaryPostImgsIdList);
+        //게시물 softDelete
+        diaryPostRepository.deleteById(diaryPostEntity.getPostId());
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_POST_SUCCESS.getHttpStatus().value())
+                .message(DELETE_POST_SUCCESS.getDetail())
                 .build();
     }
 
