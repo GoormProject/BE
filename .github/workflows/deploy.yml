@@ -52,3 +52,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/jelly:latest
             sudo docker-compose -f /root/compose/docker-compose.yml up -d
             sudo docker image prune -f
+            
