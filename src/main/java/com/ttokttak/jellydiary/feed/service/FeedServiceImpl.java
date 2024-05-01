@@ -89,5 +89,20 @@ public class FeedServiceImpl implements FeedService {
                 .build();
     }
 
+    @Override
+    public ResponseDto<?> getTargetUserFollowList(Long targetUserId) {
+        userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        List<FollowEntity> followEntityList = followRepository.findByIdFollowRequestId(targetUserId);
+        List<UserEntity> followerUserInfoList = followEntityList.stream().map(FollowEntity::getFollowResponse).toList();
+
+        return ResponseDto.builder()
+                .statusCode(SEARCH_TARGET_USER_FOLLOW_LIST_SUCCESS.getHttpStatus().value())
+                .message(SEARCH_TARGET_USER_FOLLOW_LIST_SUCCESS.getDetail())
+                .data(feedMapper.entityToTargetUserFollowersDto(followerUserInfoList))
+                .build();
+    }
+
 
 }

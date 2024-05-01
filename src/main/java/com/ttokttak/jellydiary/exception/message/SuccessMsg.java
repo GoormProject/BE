@@ -19,6 +19,7 @@ public enum SuccessMsg {
     SEARCH_TARGET_USER_FEED_INFO_SUCCESS(OK, "타켓 유저 피드 정보 조회 완료"),
     FOLLOW_REQUEST_SUCCESS(OK, "팔로우 신청 완료"),
     SEARCH_TARGET_USER_FOLLOWER_LIST_SUCCESS(OK, "타켓 유저의 팔로워 리스트 조회 완료"),
+    SEARCH_TARGET_USER_FOLLOW_LIST_SUCCESS(OK, "타켓 유저의 팔로우 리스트 조회 완료"),
 
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),

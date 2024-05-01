@@ -11,4 +11,6 @@ public interface FeedService {
 
     ResponseDto<?> getTargetUserFollowerList(Long targetUserId);
 
+    ResponseDto<?> getTargetUserFollowList(Long targetUserId);
+
 }
