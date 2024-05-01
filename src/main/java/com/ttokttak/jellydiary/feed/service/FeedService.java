@@ -9,4 +9,6 @@ public interface FeedService {
 
     ResponseDto<?> createFollowRequest(Long targetUserId, CustomOAuth2User customOAuth2User);
 
+    ResponseDto<?> getTargetUserFollowerList(Long targetUserId);
+
 }

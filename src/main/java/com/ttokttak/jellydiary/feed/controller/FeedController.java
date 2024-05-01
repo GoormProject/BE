@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.feed.controller;
 
-import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
 import com.ttokttak.jellydiary.feed.service.FeedService;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
@@ -27,6 +26,12 @@ public class FeedController {
     @PostMapping("/follow/{targetUserId}")
     public ResponseEntity<ResponseDto<?>> createFollowRequest(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(feedService.createFollowRequest(targetUserId, customOAuth2User));
+    }
+
+    @Operation(summary = "타겟 유저의 팔로워 리스트 조회", description = "[타겟 유저의 팔로워 리스트 조회] api")
+    @GetMapping("/followerList/{targetUserId}")
+    public ResponseEntity<ResponseDto<?>> getTargetUserFollowerList(@PathVariable("targetUserId") Long targetUserId) {
+        return ResponseEntity.ok(feedService.getTargetUserFollowerList(targetUserId));
     }
 
 }
