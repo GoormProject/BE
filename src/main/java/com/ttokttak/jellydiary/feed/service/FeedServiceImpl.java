@@ -3,7 +3,9 @@ package com.ttokttak.jellydiary.feed.service;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.feed.dto.TargetUserInfoResponseDto;
 import com.ttokttak.jellydiary.feed.mapper.FeedMapper;
+import com.ttokttak.jellydiary.follow.entity.FollowEntity;
 import com.ttokttak.jellydiary.follow.repository.FollowRepository;
+import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
@@ -11,6 +13,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -42,4 +47,31 @@ public class FeedServiceImpl implements FeedService {
                 .data(targetUserInfoResponseDto)
                 .build();
     }
+
+    @Override
+    public ResponseDto<?> createFollowRequest(Long targetUserId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if(loginUserEntity.getUserId().equals(targetUserId)){
+            throw new CustomException(CANNOT_FOLLOW_SELF);
+        }
+
+        FollowEntity followEntity = FollowEntity.builder()
+                .followRequestId(loginUserEntity.getUserId())
+                .followResponseId(targetUserId)
+                .build();
+
+        followRepository.save(followEntity);
+
+        return ResponseDto.builder()
+                .statusCode(FOLLOW_REQUEST_SUCCESS.getHttpStatus().value())
+                .message(FOLLOW_REQUEST_SUCCESS.getDetail())
+                .build();
+    }
+
+
 }
