@@ -39,6 +39,8 @@ public enum ErrorMsg {
     POST_NOT_FOUND(NOT_FOUND, "게시물이 존재하지 않습니다."),
     IMG_NOT_FOUND(NOT_FOUND, "이미지가 존재하지 않습니다."),
     DIARY_ALREADY_DELETED(NOT_FOUND, "삭제된 다이어리입니다."),
+    POST_ALREADY_DELETED(NOT_FOUND, "삭제된 게시글입니다."),
+    POST_IMG_ALREADY_DELETED(NOT_FOUND, "삭제된 게시글 이미지입니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),

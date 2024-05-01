@@ -9,8 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface DiaryPostRepository extends JpaRepository<DiaryPostEntity, Long> {
-    @Query("select d from DiaryPostEntity d where d.diaryProfile = :diaryProfile and d.isPublic = :isPublic")
-    List<DiaryPostEntity> findAllByDiaryProfileAndIsPublic(@Param("diaryProfile")DiaryProfileEntity diaryProfile, @Param("isPublic") Boolean isPublic);
+    @Query("select d from DiaryPostEntity d where d.diaryProfile = :diaryProfile and d.isPublic = :isPublic and d.isDeleted = :isDeleted")
+    List<DiaryPostEntity> findAllByDiaryProfileAndIsPublicAAndIsDeleted(@Param("diaryProfile")DiaryProfileEntity diaryProfile, @Param("isPublic") Boolean isPublic, @Param("isDeleted") Boolean isDeleted);
 
-    List<DiaryPostEntity> findAllByDiaryProfile(DiaryProfileEntity diaryProfileEntity);
+    @Query("select d from DiaryPostEntity d where d.diaryProfile = :diaryProfile and d.isDeleted = :isDeleted")
+    List<DiaryPostEntity> findAllByDiaryProfileAndIsDeleted(@Param("diaryProfile") DiaryProfileEntity diaryProfile, @Param("isDeleted") Boolean isDeleted);
 }

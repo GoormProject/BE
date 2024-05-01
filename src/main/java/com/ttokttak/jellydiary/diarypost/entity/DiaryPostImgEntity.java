@@ -8,8 +8,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE DIARY_POST_IMG SET IS_DELETED = true WHERE POST_IMG_ID = ?")
-@Where(clause = "IS_DELETED = false")
+@SQLDelete(sql = "UPDATE diary_post_img SET is_deleted = true WHERE post_img_id = ?")
 @Table(name = "diary_post_img")
 public class DiaryPostImgEntity {
     @Id

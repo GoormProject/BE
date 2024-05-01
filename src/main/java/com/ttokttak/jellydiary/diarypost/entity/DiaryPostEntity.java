@@ -17,8 +17,7 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE DIARY_POST SET IS_DELETED = true WHERE POST_ID = ?")
-@Where(clause = "IS_DELETED = false")
+@SQLDelete(sql = "UPDATE diary_post SET is_deleted = true WHERE post_id = ?")
 @Table(name = "diary_post")
 public class DiaryPostEntity extends BaseTimeEntity {
     @Id
