@@ -23,4 +23,10 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getTargetUserFeedInfo(targetUserId));
     }
 
+    @Operation(summary = "팔로우 신청", description = "[팔로우 신청] api")
+    @PostMapping("/follow/{targetUserId}")
+    public ResponseEntity<ResponseDto<?>> createFollowRequest(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(feedService.createFollowRequest(targetUserId, customOAuth2User));
+    }
+
 }
