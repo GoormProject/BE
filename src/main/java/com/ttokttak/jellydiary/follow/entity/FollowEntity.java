@@ -1,4 +1,4 @@
-package com.ttokttak.jellydiary.follow;
+package com.ttokttak.jellydiary.follow.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
