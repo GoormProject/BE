@@ -34,4 +34,10 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getTargetUserFollowerList(targetUserId));
     }
 
+    @Operation(summary = "타겟 유저의 팔로우 리스트 조회", description = "[타겟 유저의 팔로우 리스트 조회] api")
+    @GetMapping("/followList/{targetUserId}")
+    public ResponseEntity<ResponseDto<?>> getTargetUserFollowList(@PathVariable("targetUserId") Long targetUserId) {
+        return ResponseEntity.ok(feedService.getTargetUserFollowList(targetUserId));
+    }
+
 }
