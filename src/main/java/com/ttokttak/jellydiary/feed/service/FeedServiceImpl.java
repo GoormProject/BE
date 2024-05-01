@@ -14,8 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.List;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -53,7 +52,7 @@ public class FeedServiceImpl implements FeedService {
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        userRepository.findById(targetUserId)
+        UserEntity targetUserEntity = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         if(loginUserEntity.getUserId().equals(targetUserId)){
@@ -63,6 +62,8 @@ public class FeedServiceImpl implements FeedService {
         FollowEntity followEntity = FollowEntity.builder()
                 .followRequestId(loginUserEntity.getUserId())
                 .followResponseId(targetUserId)
+                .followRequest(loginUserEntity)
+                .followResponse(targetUserEntity)
                 .build();
 
         followRepository.save(followEntity);
@@ -70,6 +71,21 @@ public class FeedServiceImpl implements FeedService {
         return ResponseDto.builder()
                 .statusCode(FOLLOW_REQUEST_SUCCESS.getHttpStatus().value())
                 .message(FOLLOW_REQUEST_SUCCESS.getDetail())
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> getTargetUserFollowerList(Long targetUserId) {
+        userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        List<FollowEntity> followEntityList = followRepository.findByIdFollowResponseId(targetUserId);
+        List<UserEntity> followerUserInfoList = followEntityList.stream().map(FollowEntity::getFollowRequest).toList();
+
+        return ResponseDto.builder()
+                .statusCode(SEARCH_TARGET_USER_FOLLOWER_LIST_SUCCESS.getHttpStatus().value())
+                .message(SEARCH_TARGET_USER_FOLLOWER_LIST_SUCCESS.getDetail())
+                .data(feedMapper.entityToTargetUserFollowersDto(followerUserInfoList))
                 .build();
     }
 
