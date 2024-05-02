@@ -32,4 +32,4 @@ public class PostLikeController {
     public ResponseEntity<ResponseDto<?>> deletePostLike(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(postLikeService.deletePostLike(postId, customOAuth2User));
     }
-    }
+}
