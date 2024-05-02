@@ -18,8 +18,8 @@ public class FeedController {
 
     @Operation(summary = "타켓 유저 피드 정보 조회", description = "[타켓 유저 정보 조회] api")
     @GetMapping("/userInfo/{targetUserId}")
-    public ResponseEntity<ResponseDto<?>> getTargetUserFeedInfo(@PathVariable("targetUserId") Long targetUserId) {
-        return ResponseEntity.ok(feedService.getTargetUserFeedInfo(targetUserId));
+    public ResponseEntity<ResponseDto<?>> getTargetUserFeedInfo(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(feedService.getTargetUserFeedInfo(targetUserId, customOAuth2User));
     }
 
     @Operation(summary = "팔로우 신청", description = "[팔로우 신청] api")

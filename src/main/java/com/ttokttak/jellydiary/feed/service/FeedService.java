@@ -5,7 +5,7 @@ import com.ttokttak.jellydiary.util.dto.ResponseDto;
 
 public interface FeedService {
 
-    ResponseDto<?> getTargetUserFeedInfo(Long targetUserId);
+    ResponseDto<?> getTargetUserFeedInfo(Long targetUserId, CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> createFollowRequest(Long targetUserId, CustomOAuth2User customOAuth2User);
 

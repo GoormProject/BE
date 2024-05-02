@@ -20,4 +20,6 @@ public class TargetUserInfoResponseDto {
 
     private Long followingCount;
 
+    private Boolean followStatus;
+
 }
