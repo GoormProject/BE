@@ -104,5 +104,27 @@ public class FeedServiceImpl implements FeedService {
                 .build();
     }
 
+    @Override
+    public ResponseDto<?> cancelFollow(Long targetUserId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        UserEntity targetUserEntity = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        FollowEntity unFollowEntity = FollowEntity.builder()
+                .followRequestId(loginUserEntity.getUserId())
+                .followResponseId(targetUserId)
+                .followRequest(loginUserEntity)
+                .followResponse(targetUserEntity)
+                .build();
+
+        followRepository.delete(unFollowEntity);
+
+        return ResponseDto.builder()
+                .statusCode(UNFOLLOW_SUCCESS.getHttpStatus().value())
+                .message(UNFOLLOW_SUCCESS.getDetail())
+                .build();
+    }
 
 }
