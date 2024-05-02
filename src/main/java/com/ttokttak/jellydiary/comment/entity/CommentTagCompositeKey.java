@@ -3,6 +3,7 @@ package com.ttokttak.jellydiary.comment.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -10,7 +11,6 @@ import java.util.Objects;
 
 @Embeddable
 @NoArgsConstructor
-@AllArgsConstructor
 public class CommentTagCompositeKey implements Serializable {
     @Column(nullable = false)
     private Long userId;
@@ -28,5 +28,11 @@ public class CommentTagCompositeKey implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(userId, commentId);
+    }
+
+    @Builder
+    public CommentTagCompositeKey(Long userId, Long commentId) {
+        this.userId = userId;
+        this.commentId = commentId;
     }
 }

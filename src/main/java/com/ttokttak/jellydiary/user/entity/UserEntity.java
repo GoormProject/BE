@@ -2,6 +2,7 @@ package com.ttokttak.jellydiary.user.entity;
 
 import com.ttokttak.jellydiary.user.dto.UserCreateDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -43,6 +44,20 @@ public class UserEntity {
 
     @Column
     private Boolean notificationSetting;
+
+    @Builder
+    public UserEntity(Long userId, String oauthId, ProviderType providerType, String userEmail, String userName, String userDesc, String profileImg, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
+        this.userId = userId;
+        this.oauthId = oauthId;
+        this.providerType = providerType;
+        this.userEmail = userEmail;
+        this.userName = userName;
+        this.userDesc = userDesc;
+        this.profileImg = profileImg;
+        this.authority = authority;
+        this.userState = userState;
+        this.notificationSetting = notificationSetting;
+    }
 
     public UserEntity(UserCreateDto userCreateDto) {
         this.oauthId = userCreateDto.getOauthId();
