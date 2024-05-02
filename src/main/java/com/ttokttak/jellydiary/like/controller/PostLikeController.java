@@ -27,4 +27,9 @@ public class PostLikeController {
         return ResponseEntity.ok(postLikeService.getPostLike(postId, customOAuth2User));
     }
 
-}
+    @Operation(summary = "게시물 좋아요 취소", description = "[게시물 좋아요 취소] api")
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ResponseDto<?>> deletePostLike(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(postLikeService.deletePostLike(postId, customOAuth2User));
+    }
+    }
