@@ -40,4 +40,10 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getTargetUserFollowList(targetUserId));
     }
 
+    @Operation(summary = "팔로우 취소", description = "[팔로우 취소] api")
+    @DeleteMapping("/follow/{targetUserId}")
+    public ResponseEntity<ResponseDto<?>> cancelFollow(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(feedService.cancelFollow(targetUserId, customOAuth2User));
+    }
+
 }
