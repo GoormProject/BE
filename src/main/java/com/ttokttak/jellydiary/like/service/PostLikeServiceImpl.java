@@ -5,6 +5,7 @@ import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.like.dto.PostLikeGetResponseDto;
 import com.ttokttak.jellydiary.like.dto.PostLikeMapper;
 import com.ttokttak.jellydiary.like.entity.PostLikeCompositeKey;
 import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
@@ -17,8 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.Like_POST_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.LIKE_POST_GET_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.LIKE_POST_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -53,8 +57,38 @@ public class PostLikeServiceImpl implements PostLikeService {
         postLikeRepository.save(postLikeEntity);
 
         return ResponseDto.builder()
-                .statusCode(Like_POST_SUCCESS.getHttpStatus().value())
-                .message(Like_POST_SUCCESS.getDetail())
+                .statusCode(LIKE_POST_SUCCESS.getHttpStatus().value())
+                .message(LIKE_POST_SUCCESS.getDetail())
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> getPostLike(Long postId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
+
+        Optional<PostLikeEntity> postLikeEntity = postLikeRepository.findByUserAndDiaryPost(userEntity, diaryPostEntity);
+        boolean likeState = false;
+        if (postLikeEntity.isPresent()) {
+            likeState = true;
+        }
+
+        PostLikeGetResponseDto postLikeGetResponseDto = new PostLikeGetResponseDto(likeState);
+
+        return ResponseDto.builder()
+                .statusCode(LIKE_POST_GET_SUCCESS.getHttpStatus().value())
+                .message(LIKE_POST_GET_SUCCESS.getDetail())
+                .data(postLikeGetResponseDto)
                 .build();
     }
 }
