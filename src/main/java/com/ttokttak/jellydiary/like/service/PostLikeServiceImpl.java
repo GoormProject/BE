@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.LIKE_POST_GET_SUCCESS;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.LIKE_POST_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,8 +56,8 @@ public class PostLikeServiceImpl implements PostLikeService {
         postLikeRepository.save(postLikeEntity);
 
         return ResponseDto.builder()
-                .statusCode(LIKE_POST_SUCCESS.getHttpStatus().value())
-                .message(LIKE_POST_SUCCESS.getDetail())
+                .statusCode(CREATE_LIKE_POST_SUCCESS.getHttpStatus().value())
+                .message(CREATE_LIKE_POST_SUCCESS.getDetail())
                 .build();
     }
 
@@ -86,9 +85,39 @@ public class PostLikeServiceImpl implements PostLikeService {
         PostLikeGetResponseDto postLikeGetResponseDto = new PostLikeGetResponseDto(likeState);
 
         return ResponseDto.builder()
-                .statusCode(LIKE_POST_GET_SUCCESS.getHttpStatus().value())
-                .message(LIKE_POST_GET_SUCCESS.getDetail())
+                .statusCode(GET_LIKE_POST_SUCCESS.getHttpStatus().value())
+                .message(GET_LIKE_POST_SUCCESS.getDetail())
                 .data(postLikeGetResponseDto)
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public ResponseDto<?> deletePostLike(Long postId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
+
+        Optional<PostLikeEntity> postLikeEntity = postLikeRepository.findByUserAndDiaryPost(userEntity, diaryPostEntity);
+//        postLikeEntity.ifPresent(postLikeRepository::delete);
+        if (postLikeEntity.isPresent()) {
+            postLikeRepository.delete(postLikeEntity.get());
+        } else {
+            throw new CustomException(POST_LIKE_ALREADY_CANCEL);
+        }
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_LIKE_POST_SUCCESS.getHttpStatus().value())
+                .data(DELETE_LIKE_POST_SUCCESS.getDetail())
                 .build();
     }
 }

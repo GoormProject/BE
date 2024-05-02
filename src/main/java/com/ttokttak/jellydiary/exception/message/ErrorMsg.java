@@ -14,6 +14,7 @@ public enum ErrorMsg {
     POST_DATE_IS_FROM_THE_PAST_TO_TODAY(BAD_REQUEST, "작성일자는 과거부터 오늘까지만 선택 가능합니다."),
     DIARY_CREATOR_CANNOT_BE_DELETED(BAD_REQUEST, "다이어리 생성자는 삭제 대상이 아닙니다."),
     CANNOT_FOLLOW_SELF(BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
+    POST_LIKE_ALREADY_CANCEL(BAD_REQUEST, "좋아요가 이미 취소되었습니다."),
 //    INVALID_SEARCH_TERM(BAD_REQUEST, "검색어가 유효하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */

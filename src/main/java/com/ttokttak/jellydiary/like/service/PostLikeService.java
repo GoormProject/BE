@@ -7,4 +7,6 @@ public interface PostLikeService {
     ResponseDto<?> createPostLike(Long postId, CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> getPostLike(Long postId, CustomOAuth2User customOAuth2User);
+
+    ResponseDto<?> deletePostLike(Long postId, CustomOAuth2User customOAuth2User);
 }
