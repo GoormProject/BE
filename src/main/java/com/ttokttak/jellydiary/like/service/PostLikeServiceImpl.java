@@ -108,11 +108,10 @@ public class PostLikeServiceImpl implements PostLikeService {
             throw new CustomException(DIARY_ALREADY_DELETED);
 
         Optional<PostLikeEntity> postLikeEntity = postLikeRepository.findByUserAndDiaryPost(userEntity, diaryPostEntity);
-//        postLikeEntity.ifPresent(postLikeRepository::delete);
         if (postLikeEntity.isPresent()) {
             postLikeRepository.delete(postLikeEntity.get());
         } else {
-            throw new CustomException(POST_LIKE_ALREADY_CANCEL);
+            throw new CustomException(POST_LIKE_NOT_FOUND);
         }
 
         return ResponseDto.builder()
