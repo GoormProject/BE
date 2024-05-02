@@ -13,8 +13,9 @@ import java.util.List;
 public interface FeedMapper {
     FeedMapper INSTANCE = Mappers.getMapper(FeedMapper.class);
 
-    @Mapping(target = "followingCount", ignore = true)  // 이 필드는 무시
-    @Mapping(target = "followerCount", ignore = true)  // 이 필드도 무시
+    @Mapping(target = "followingCount", ignore = true)
+    @Mapping(target = "followerCount", ignore = true)
+    @Mapping(target = "followStatus", ignore = true)
     TargetUserInfoResponseDto userEntityToTargetUserInfoResponseDto(UserEntity userEntity);
     
     List<TargetUserFollowersDto> entityToTargetUserFollowersDto(List<UserEntity> entity);

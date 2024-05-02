@@ -3,6 +3,7 @@ package com.ttokttak.jellydiary.feed.service;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.feed.dto.TargetUserInfoResponseDto;
 import com.ttokttak.jellydiary.feed.mapper.FeedMapper;
+import com.ttokttak.jellydiary.follow.entity.FollowCompositeKey;
 import com.ttokttak.jellydiary.follow.entity.FollowEntity;
 import com.ttokttak.jellydiary.follow.repository.FollowRepository;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
@@ -32,13 +33,22 @@ public class FeedServiceImpl implements FeedService {
 
     @Override
     @Transactional
-    public ResponseDto<?> getTargetUserFeedInfo(Long targetUserId) {
-        UserEntity userEntity = userRepository.findById(targetUserId)
+    public ResponseDto<?> getTargetUserFeedInfo(Long targetUserId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        TargetUserInfoResponseDto targetUserInfoResponseDto = feedMapper.userEntityToTargetUserInfoResponseDto(userEntity);
-        targetUserInfoResponseDto.setFollowerCount(followRepository.countByIdFollowResponseId(userEntity.getUserId()));
-        targetUserInfoResponseDto.setFollowingCount(followRepository.countByIdFollowRequestId(userEntity.getUserId()));
+        UserEntity targetUserEntity = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        TargetUserInfoResponseDto targetUserInfoResponseDto = feedMapper.userEntityToTargetUserInfoResponseDto(targetUserEntity);
+        targetUserInfoResponseDto.setFollowerCount(followRepository.countByIdFollowResponseId(targetUserEntity.getUserId()));
+        targetUserInfoResponseDto.setFollowingCount(followRepository.countByIdFollowRequestId(targetUserEntity.getUserId()));
+
+        if(loginUserEntity.getUserId().equals(targetUserId)){
+            targetUserInfoResponseDto.setFollowStatus(null);
+        }else{
+            targetUserInfoResponseDto.setFollowStatus(followRepository.existsById(new FollowCompositeKey(loginUserEntity.getUserId(), targetUserId)));
+        }
 
         return ResponseDto.builder()
                 .statusCode(SEARCH_TARGET_USER_FEED_INFO_SUCCESS.getHttpStatus().value())
