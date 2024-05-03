@@ -15,4 +15,6 @@ public interface FeedService {
 
     ResponseDto<?> cancelFollow(Long targetUserId, CustomOAuth2User customOAuth2User);
 
+    ResponseDto<?> getTargetUserFeedList(Long targetUserId, CustomOAuth2User customOAuth2User);
+
 }

@@ -1,6 +1,12 @@
 package com.ttokttak.jellydiary.feed.service;
 
+import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
+import com.ttokttak.jellydiary.diarypost.entity.DiaryPostImgEntity;
+import com.ttokttak.jellydiary.diarypost.repository.DiaryPostImgRepository;
+import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.feed.dto.TargetUserFeedListResponseDto;
+import com.ttokttak.jellydiary.feed.dto.TargetUserFeedResponseDto;
 import com.ttokttak.jellydiary.feed.dto.TargetUserInfoResponseDto;
 import com.ttokttak.jellydiary.feed.mapper.FeedMapper;
 import com.ttokttak.jellydiary.follow.entity.FollowCompositeKey;
@@ -15,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
@@ -30,6 +37,10 @@ public class FeedServiceImpl implements FeedService {
     private final UserRepository userRepository;
 
     private final FeedMapper feedMapper;
+
+    private final DiaryPostRepository diaryPostRepository;
+
+    private final DiaryPostImgRepository diaryPostImgRepository;
 
     @Override
     @Transactional
@@ -58,6 +69,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> createFollowRequest(Long targetUserId, CustomOAuth2User customOAuth2User) {
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -85,6 +97,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> getTargetUserFollowerList(Long targetUserId) {
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -100,6 +113,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> getTargetUserFollowList(Long targetUserId) {
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -115,6 +129,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> cancelFollow(Long targetUserId, CustomOAuth2User customOAuth2User) {
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -134,6 +149,43 @@ public class FeedServiceImpl implements FeedService {
         return ResponseDto.builder()
                 .statusCode(UNFOLLOW_SUCCESS.getHttpStatus().value())
                 .message(UNFOLLOW_SUCCESS.getDetail())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> getTargetUserFeedList(Long targetUserId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        UserEntity targetUserEntity = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        List<DiaryPostEntity> diaryPostEntityList = diaryPostRepository.findFeedListForTargetUser(loginUserEntity, targetUserEntity ,false);
+        List<TargetUserFeedResponseDto> targetUserFeedResponseDtoList = new ArrayList<>();
+
+        for(DiaryPostEntity diaryPostEntity : diaryPostEntityList){
+            TargetUserFeedResponseDto targetUserFeedResponseDto = feedMapper.entityToTargetUserFeedResponseDto(diaryPostEntity);
+
+            List<DiaryPostImgEntity> diaryPostImgEntityList = diaryPostImgRepository.findByDiaryPostAndIsDeletedOrderByPostImgIdAsc(diaryPostEntity, false);
+
+            targetUserFeedResponseDto.setPostImgIsMultiple(diaryPostImgEntityList.size() >= 2);
+
+            if(!diaryPostImgEntityList.isEmpty())
+                targetUserFeedResponseDto.setPostImg(diaryPostImgEntityList.get(0).getImageLink());
+
+            targetUserFeedResponseDtoList.add(targetUserFeedResponseDto);
+        }
+
+        TargetUserFeedListResponseDto targetUserFeedListResponseDto = TargetUserFeedListResponseDto.builder()
+                .count(targetUserFeedResponseDtoList.size())
+                .feeds(targetUserFeedResponseDtoList)
+                .build();
+
+        return ResponseDto.builder()
+                .statusCode(SEARCH_TARGET_USER_FEED_LIST_SUCCESS.getHttpStatus().value())
+                .message(SEARCH_TARGET_USER_FEED_LIST_SUCCESS.getDetail())
+                .data(targetUserFeedListResponseDto)
                 .build();
     }
 
