@@ -22,5 +22,11 @@ public class CommentController {
         return ResponseEntity.ok(commentService.createComment(postId, commentCreateRequestDto, customOAuth2User));
     }
 
+    @Operation(summary = "댓글에 답글 작성", description = "[댓글에 답글 작성] api")
+    @PostMapping("/{postId}/{commentId}")
+    public ResponseEntity<ResponseDto<?>> createReplyComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentCreateRequestDto commentCreateRequestDto, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(commentService.createReplyComment(postId, commentId, commentCreateRequestDto, customOAuth2User));
+    }
+
 
 }

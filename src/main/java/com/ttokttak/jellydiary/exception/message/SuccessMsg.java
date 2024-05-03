@@ -49,7 +49,8 @@ public enum SuccessMsg {
     CREATE_DIARY_PROFILE_SUCCESS(CREATED, "다이어리 프로필 생성 완료"),
     CREATE_DIARY_USER_SUCCESS(CREATED, "다이어리 유저 생성 완료"),
     CREATE_POST_SUCCESS(CREATED, "게시물 생성 완료"),
-    CREATE_COMMENT_SUCCESS(CREATED, "게시물에 댓글 작성 완료");
+    CREATE_COMMENT_SUCCESS(CREATED, "게시물에 댓글 작성 완료"),
+    REPLY_CREATE_COMMENT_SUCCESS(CREATED, "게시물 댓글에 답글 작성 완료");
 
 //    CREATE_TEAM_SUCCESS(CREATED, "팀 생성 완료"),
 //    CREATE_PROJECT_SUCCESS(CREATED, "프로젝트 생성 완료"),

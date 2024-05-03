@@ -14,6 +14,7 @@ public enum ErrorMsg {
     POST_DATE_IS_FROM_THE_PAST_TO_TODAY(BAD_REQUEST, "작성일자는 과거부터 오늘까지만 선택 가능합니다."),
     DIARY_CREATOR_CANNOT_BE_DELETED(BAD_REQUEST, "다이어리 생성자는 삭제 대상이 아닙니다."),
     CANNOT_FOLLOW_SELF(BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
+    CANNOT_REPLY_COMMENT_TO_REPLIES(BAD_REQUEST, "답글은 댓글에만 달 수 있으며, 답글에는 답글을 작성할 수 없습니다."),
 //    INVALID_SEARCH_TERM(BAD_REQUEST, "검색어가 유효하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -46,6 +47,7 @@ public enum ErrorMsg {
     POST_ALREADY_DELETED(NOT_FOUND, "삭제된 게시물입니다."),
     POST_IMG_ALREADY_DELETED(NOT_FOUND, "삭제된 게시물 이미지입니다."),
     POST_LIKE_NOT_FOUND(NOT_FOUND, "이 게시물은 아직 좋아요를 하지 않았습니다."),
+    COMMENT_NOT_FOUND(NOT_FOUND, "댓글이 존재하지 않습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),
