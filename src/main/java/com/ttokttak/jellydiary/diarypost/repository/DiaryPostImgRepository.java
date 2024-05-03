@@ -11,5 +11,9 @@ import java.util.List;
 public interface DiaryPostImgRepository extends JpaRepository<DiaryPostImgEntity, Long> {
     @Query("select d from DiaryPostImgEntity d where d.diaryPost = :diaryPost and d.isDeleted = :isDeleted")
     List<DiaryPostImgEntity> findAllByDiaryPostAndIsDeleted(@Param("diaryPost") DiaryPostEntity diaryPost, @Param("isDeleted") Boolean isDeleted);
+
+    @Query("select d from DiaryPostImgEntity d where d.diaryPost = :diaryPost and d.isDeleted = :isDeleted order by d.postImgId asc")
+    List<DiaryPostImgEntity> findByDiaryPostAndIsDeletedOrderByPostImgIdAsc(@Param("diaryPost") DiaryPostEntity diaryPost, @Param("isDeleted") Boolean isDeleted);
+
 }
 

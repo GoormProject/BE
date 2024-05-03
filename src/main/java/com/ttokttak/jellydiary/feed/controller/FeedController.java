@@ -46,4 +46,10 @@ public class FeedController {
         return ResponseEntity.ok(feedService.cancelFollow(targetUserId, customOAuth2User));
     }
 
+    @Operation(summary = "타겟 유저의 피드 리스트 조회", description = "[타겟 유저의 피드 리스트 조회] api")
+    @GetMapping("/feedList/{targetUserId}")
+    public ResponseEntity<ResponseDto<?>> getTargetUserFeedList(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(feedService.getTargetUserFeedList(targetUserId, customOAuth2User));
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.ttokttak.jellydiary.feed.mapper;
 
+import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
+import com.ttokttak.jellydiary.feed.dto.TargetUserFeedResponseDto;
 import com.ttokttak.jellydiary.feed.dto.TargetUserFollowersDto;
 import com.ttokttak.jellydiary.feed.dto.TargetUserInfoResponseDto;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
@@ -19,5 +21,9 @@ public interface FeedMapper {
     TargetUserInfoResponseDto userEntityToTargetUserInfoResponseDto(UserEntity userEntity);
     
     List<TargetUserFollowersDto> entityToTargetUserFollowersDto(List<UserEntity> entity);
+
+    @Mapping(target = "postImgIsMultiple", ignore = true)
+    @Mapping(target = "postImg", ignore = true)
+    TargetUserFeedResponseDto entityToTargetUserFeedResponseDto(DiaryPostEntity entity);
 
 }
