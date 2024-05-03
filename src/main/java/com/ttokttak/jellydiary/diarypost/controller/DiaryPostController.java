@@ -32,15 +32,21 @@ public class DiaryPostController {
     }
 
     @Operation(summary = "게시물 삭제", description = "[게시물 삭제] api")
-    @DeleteMapping("{postId}")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<ResponseDto<?>> deleteDiaryPost(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(diaryPostService.deleteDiaryPost(postId, customOAuth2User));
     }
 
-    @Operation(summary = "게시물 리스트 조회", description = "[게시물 리스트 조] api")
+    @Operation(summary = "게시물 리스트 조회", description = "[게시물 리스트 조회] api")
     @GetMapping("/postList/{diaryId}")
     public ResponseEntity<ResponseDto<?>> getDiaryPostList(@PathVariable Long diaryId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(diaryPostService.getDiaryPostList(diaryId, customOAuth2User));
+    }
+
+    @Operation(summary = "게시물 상세 조회", description = "[게시물 상세 조회] api")
+    @GetMapping("{postId}")
+    public ResponseEntity<ResponseDto<?>> getDiaryPostOne(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryPostService.getDiaryPostOne(postId, customOAuth2User));
     }
 
 
