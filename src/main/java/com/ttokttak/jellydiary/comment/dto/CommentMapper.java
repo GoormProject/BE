@@ -26,6 +26,25 @@ public interface CommentMapper {
     @Mapping(target = "userTag", source = "userTagInfoDtos")
     CommentCreateCommentInfoDto entityAndDtoToCommentInfoDto(UserEntity userEntity, CommentEntity comment, Set<CommentUserTagInfoDto> userTagInfoDtos);
 
+    @Mapping(target = "commentId", ignore = true)
+    @Mapping(target = "commentContent", source = "dto.commentContent")
+    @Mapping(target = "parent", source = "comment")
+    @Mapping(target = "isDeleted", constant = "false")
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "diaryPost", source = "diaryPost")
+    CommentEntity replyCommentCreateRequestToEntity(CommentCreateRequestDto dto, UserEntity user, DiaryPostEntity diaryPost, CommentEntity comment);
+
+    @Mapping(target = "userId", source = "userEntity.userId")
+    @Mapping(target = "userName", source = "userEntity.userName")
+    @Mapping(target = "userProfileImg", source = "userEntity.profileImg")
+    @Mapping(target = "commentId", source = "comment.commentId")
+    @Mapping(target = "commentContent", source = "comment.commentContent")
+    @Mapping(target = "userTag", source = "userTagInfoDtos")
+    ReplyCommentCreateCommentInfoDto entityAndDtoToReplyCommentInfoDto(UserEntity userEntity, CommentEntity comment, Set<CommentUserTagInfoDto> userTagInfoDtos);
+
     @Mapping(target = "comment", source = "createCommentInfoDto")
     CommentCreateResponseDto dtoToCommentCreateResponseDto(Long postId, CommentCreateCommentInfoDto createCommentInfoDto);
+
+    @Mapping(target = "reply", source = "createReplyCommentInfoDto")
+    ReplyCommentCreateResponseDto dtoToReplyCommentCreateResponseDto(Long parentId, ReplyCommentCreateCommentInfoDto createReplyCommentInfoDto);
 }

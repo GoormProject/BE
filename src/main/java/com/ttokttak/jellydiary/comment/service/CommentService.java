@@ -6,4 +6,6 @@ import com.ttokttak.jellydiary.util.dto.ResponseDto;
 
 public interface CommentService {
     ResponseDto<?> createComment(Long postId, CommentCreateRequestDto commentCreateRequestDto, CustomOAuth2User customOAuth2User);
+
+    ResponseDto<?> createReplyComment(Long postId, Long commentId, CommentCreateRequestDto commentCreateRequestDto, CustomOAuth2User customOAuth2User);
 }
