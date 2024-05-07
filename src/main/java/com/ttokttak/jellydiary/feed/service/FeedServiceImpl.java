@@ -97,7 +97,6 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
-    @Transactional
     public ResponseDto<?> getTargetUserFollowerList(Long targetUserId) {
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -113,7 +112,6 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
-    @Transactional
     public ResponseDto<?> getTargetUserFollowList(Long targetUserId) {
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));

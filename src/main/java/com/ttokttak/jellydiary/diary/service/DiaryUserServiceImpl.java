@@ -39,7 +39,6 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     private final DiaryUserMapper diaryUserMapper;
 
     @Override
-    @Transactional
     public ResponseDto<?> getDiaryParticipantsList(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
@@ -219,7 +218,6 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     }
 
     @Override
-    @Transactional
     public ResponseDto<?> getUserRoleInDiary(Long diaryId, CustomOAuth2User customOAuth2User) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
@@ -231,7 +229,6 @@ public class DiaryUserServiceImpl implements DiaryUserService{
 
         DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
-
 
         return ResponseDto.builder()
                 .statusCode(SEARCH_DIARY_USER_ROLE.getHttpStatus().value())
