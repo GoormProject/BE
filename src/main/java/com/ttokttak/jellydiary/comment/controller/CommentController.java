@@ -28,6 +28,12 @@ public class CommentController {
         return ResponseEntity.ok(commentService.createReplyComment(postId, commentId, commentCreateRequestDto, customOAuth2User));
     }
 
+    @Operation(summary = "댓글/답글 삭제", description = "[댓글/답글 삭제] api")
+    @DeleteMapping("/{postId}/{commentId}")
+    public ResponseEntity<ResponseDto<?>> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(commentService.deleteComment(postId, commentId, customOAuth2User));
+    }
+
     @Operation(summary = "해당 게시물의 댓글 리스트 조회", description = "[해당 게시물의 댓글 리스트 조회] api")
     @GetMapping("/commentList/{postId}")
     public ResponseEntity<ResponseDto<?>> getCommentList(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {

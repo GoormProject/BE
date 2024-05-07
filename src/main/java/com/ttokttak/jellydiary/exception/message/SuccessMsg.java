@@ -44,8 +44,6 @@ public enum SuccessMsg {
     CREATE_LIKE_POST_SUCCESS(OK, "게시물 좋아요 등록 완료"),
     GET_LIKE_POST_SUCCESS(OK, "게시물 좋아요 상태 조회 완료"),
     DELETE_LIKE_POST_SUCCESS(OK, "게시물 좋아요 취소 완료"),
-    GET_LIST_POST_COMMENT(OK, "게시물 댓글 리스트 조회 완료"),
-    GET_LIST_POST_REPLY_COMMENT(OK, "타겟 댓글의 답글 리스트 조회 완료"),
 
 
     /* 201 CREATED : 생성 */
@@ -53,7 +51,10 @@ public enum SuccessMsg {
     CREATE_DIARY_USER_SUCCESS(CREATED, "다이어리 유저 생성 완료"),
     CREATE_POST_SUCCESS(CREATED, "게시물 생성 완료"),
     CREATE_COMMENT_SUCCESS(CREATED, "게시물에 댓글 작성 완료"),
-    REPLY_CREATE_COMMENT_SUCCESS(CREATED, "게시물 댓글에 답글 작성 완료");
+    REPLY_CREATE_COMMENT_SUCCESS(CREATED, "게시물 댓글에 답글 작성 완료"),
+    DELETE_COMMENT_SUCCESS(OK, "댓글 삭제 완료"),
+    GET_LIST_POST_COMMENT(OK, "게시물 댓글 리스트 조회 완료"),
+    GET_LIST_POST_REPLY_COMMENT(OK, "타겟 댓글의 답글 리스트 조회 완료");
 
 //    CREATE_TEAM_SUCCESS(CREATED, "팀 생성 완료"),
 //    CREATE_PROJECT_SUCCESS(CREATED, "프로젝트 생성 완료"),

@@ -7,10 +7,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE comment SET is_deleted = true WHERE comment_id = ?")
 @Table(name = "comment")
 public class CommentEntity extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
