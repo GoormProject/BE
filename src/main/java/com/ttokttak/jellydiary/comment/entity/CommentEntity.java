@@ -4,6 +4,7 @@ import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,14 @@ public class CommentEntity extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private DiaryPostEntity diaryPost;
+
+    @Builder
+    public CommentEntity(Long commentId, String commentContent, CommentEntity parent, Boolean isDeleted, UserEntity user, DiaryPostEntity diaryPost) {
+        this.commentId = commentId;
+        this.commentContent = commentContent;
+        this.parent = parent;
+        this.isDeleted = isDeleted;
+        this.user = user;
+        this.diaryPost = diaryPost;
+    }
 }

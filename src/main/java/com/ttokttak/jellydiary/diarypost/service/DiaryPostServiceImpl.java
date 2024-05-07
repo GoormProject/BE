@@ -5,10 +5,7 @@ import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserRoleEnum;
 import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diary.repository.DiaryUserRepository;
-import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateRequestDto;
-import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateResponseDto;
-import com.ttokttak.jellydiary.diarypost.dto.DiaryPostImgListResponseDto;
-import com.ttokttak.jellydiary.diarypost.dto.DiaryPostListResponseDto;
+import com.ttokttak.jellydiary.diarypost.dto.*;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostImgEntity;
 import com.ttokttak.jellydiary.diarypost.mapper.DiaryPostImgMapper;
@@ -16,6 +13,8 @@ import com.ttokttak.jellydiary.diarypost.mapper.DiaryPostMapper;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostImgRepository;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
+import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -31,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -44,6 +44,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     private final DiaryUserRepository diaryUserRepository;
     private final DiaryPostRepository diaryPostRepository;
     private final DiaryPostImgRepository diaryPostImgRepository;
+    private final PostLikeRepository postLikeRepository;
     private final DiaryPostMapper diaryPostMapper;
     private final DiaryPostImgMapper diaryPostImgMapper;
 
@@ -57,6 +58,8 @@ public class DiaryPostServiceImpl implements DiaryPostService {
 
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
@@ -98,9 +101,13 @@ public class DiaryPostServiceImpl implements DiaryPostService {
 
         DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
 
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
@@ -118,7 +125,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         diaryPostEntity.diaryPostUpdate(diaryPostCreateRequestDto);
 
         //TODO: [작성자: 김주희] S3 업로드 추가
-        List<DiaryPostImgEntity> dbDiaryPostImg = diaryPostImgRepository.findAllByDiaryPost(diaryPostEntity);
+        List<DiaryPostImgEntity> dbDiaryPostImg = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
         // 기존 이미지 중 삭제할 이미지 삭제
         if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
             for (Long deleteImageId : deleteImageIds) {
@@ -163,9 +170,13 @@ public class DiaryPostServiceImpl implements DiaryPostService {
 
         DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
 
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
@@ -175,7 +186,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
             throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE);
         }
 
-        List<DiaryPostImgEntity> dbDiaryPostImgs = diaryPostImgRepository.findAllByDiaryPost(diaryPostEntity);
+        List<DiaryPostImgEntity> dbDiaryPostImgs = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
         List<Long> dbDiaryPostImgsIdList = new ArrayList<>();
         for (DiaryPostImgEntity dbDiaryPostImg : dbDiaryPostImgs) {
             dbDiaryPostImgsIdList.add(dbDiaryPostImg.getPostImgId());
@@ -198,6 +209,8 @@ public class DiaryPostServiceImpl implements DiaryPostService {
 
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
                 .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
 
         DiaryUserEntity diaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
                 .orElseThrow(() -> new CustomException(DIARY_USER_NOT_FOUND));
@@ -205,9 +218,9 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         List<DiaryPostEntity> getDiaryPostList = new ArrayList<>();
 
         if (diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE) {
-            getDiaryPostList.addAll(diaryPostRepository.findAllByDiaryProfileAndIsPublic(diaryProfileEntity, true));
+            getDiaryPostList.addAll(diaryPostRepository.findAllByDiaryProfileAndIsPublicAAndIsDeleted(diaryProfileEntity, true, false));
         } else {
-            getDiaryPostList.addAll(diaryPostRepository.findAllByDiaryProfile(diaryProfileEntity));
+            getDiaryPostList.addAll(diaryPostRepository.findAllByDiaryProfileAndIsDeleted(diaryProfileEntity, false));
         }
 
         List<DiaryPostListResponseDto> diaryPostListResponseDtos = new ArrayList<>();
@@ -220,6 +233,52 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                 .statusCode(GET_LIST_POST_SUCCESS.getHttpStatus().value())
                 .message(GET_LIST_POST_SUCCESS.getDetail())
                 .data(diaryPostListResponseDtos)
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> getDiaryPostOne(Long postId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
+
+        Optional<DiaryUserEntity> dbDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
+        DiaryUserEntity diaryUserEntity;
+        if (!diaryPostEntity.getIsPublic()) { //게시글이 비공개 게시글인 경우 구독자와 일반 사용자는 해당 게시글에 접근하지 못한다.
+
+            if (dbDiaryUserEntity.isPresent()) { //dbDiaryUserEntity의 값이 존재한다면 구독자인지 여부 확인 후 예외처리
+                diaryUserEntity = dbDiaryUserEntity.get();
+
+                if (diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE) {
+                    throw new CustomException(SUBSCRIBE_DOES_NOT_HAVE_PERMISSION_TO_READ_PRIVATE);
+                }
+            } else { //dbDiaryUserEntity의 값이 존재하지 않는다면 해당 다이어리와 게시물에 연관이 없는 일반 사용자이므로 이에 따른 예외처리
+                throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE);
+            }
+        }
+
+        //해당 게시물의 좋아요 수를 좋아요 테이블에서 조회
+//        long size = postLikeRepository.findAllByDiaryPost(diaryPostEntity).size();
+        Long countPostLike = postLikeRepository.countByDiaryPost(diaryPostEntity);
+
+        List<DiaryPostImgEntity> diaryPostImgEntityList = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
+        List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = diaryPostImgEntityList.stream().map(diaryPostImgMapper::entityToDiaryPostImgListResponseDto).toList();
+
+        DiaryPostGetOneResponseDto diaryPostGetOneResponseDto = diaryPostMapper.entityToDiaryPostGetOneResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity, countPostLike);
+
+        return ResponseDto.builder()
+                .statusCode(GET_ONE_POST_SUCCESS.getHttpStatus().value())
+                .message(GET_ONE_POST_SUCCESS.getDetail())
+                .data(diaryPostGetOneResponseDto)
                 .build();
     }
 

@@ -57,8 +57,8 @@ jobs:
           prot: ${{ secrets.PORT }}
           envs: GITHUB_SHA
           script: |
-            sudo docker-compose -f /root/compose/docker-compose.yml down --rmi all
+            sudo docker-compose -f ~/compose/docker-compose.yml down --rmi all
             sudo docker pull ${{ secrets.DOCKER_ID }}/jelly:latest
-            sudo docker-compose -f /root/compose/docker-compose.yml up -d
+            sudo docker-compose -f ~/compose/docker-compose.yml up -d
             sudo docker image prune -f
             
