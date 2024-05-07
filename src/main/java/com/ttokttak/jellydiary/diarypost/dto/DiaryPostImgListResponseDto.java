@@ -5,10 +5,12 @@ import lombok.Getter;
 
 @Getter
 public class DiaryPostImgListResponseDto {
+    private Long imgId;
     private String diaryPostImg;
 
     @Builder
-    public DiaryPostImgListResponseDto(String diaryPostImg) {
+    public DiaryPostImgListResponseDto(Long imgId, String diaryPostImg) {
+        this.imgId = imgId;
         this.diaryPostImg = diaryPostImg;
     }
 }
