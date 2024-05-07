@@ -44,6 +44,7 @@ public enum SuccessMsg {
     GET_LIKE_POST_SUCCESS(OK, "게시물 좋아요 상태 조회 완료"),
     DELETE_LIKE_POST_SUCCESS(OK, "게시물 좋아요 취소 완료"),
     GET_LIST_POST_COMMENT(OK, "게시물 댓글 리스트 조회 완료"),
+    GET_LIST_POST_REPLY_COMMENT(OK, "타겟 댓글의 답글 리스트 조회 완료"),
 
 
     /* 201 CREATED : 생성 */

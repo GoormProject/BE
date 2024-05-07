@@ -102,6 +102,7 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
+    @Transactional
     @Override
     public ResponseDto<?> createReplyComment(Long postId, Long commentId, CommentCreateRequestDto commentCreateRequestDto, CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
@@ -183,12 +184,6 @@ public class CommentServiceImpl implements CommentService {
         if(diaryProfileEntity.getIsDiaryDeleted())
             throw new CustomException(DIARY_ALREADY_DELETED);
 
-//        CommentEntity commentEntity = commentRepository.findById(commentId)
-//                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
-//        if (commentEntity.getParent() != null) { //댓글의 depth는 1개까지이다. parent가 null이면 댓글, null이 아니면 답글이라는 의미로, 답글일 때는 "댓글에만 답글을 작성할 수 있다"는 예외를 발생.
-//            throw new CustomException(CANNOT_REPLY_COMMENT_TO_REPLIES);
-//        }
-
         Optional<DiaryUserEntity> dbDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
         DiaryUserEntity diaryUserEntity;
         if (!diaryPostEntity.getIsPublic()) { //게시글이 비공개 게시글인 경우 구독자와 일반 사용자는 해당 게시글에 접근하지 못한다.
@@ -210,18 +205,6 @@ public class CommentServiceImpl implements CommentService {
             Set<CommentTagEntity> commentTagEntities = commentTagRepository.findAllByComment(commentEntity);
             Set<CommentUserTagInfoDto> commentUserTagInfoDtos = commentTagEntities.stream().map(commentTagEntity -> commentTagMapper.entityToCommentUserInfoDto(commentTagEntity.getUser())).collect(Collectors.toSet());
 
-//            CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentTagEntities.stream()
-//                    .map(commentTagEntity -> {
-//                        UserEntity userEntityFromTag = commentTagEntity.getUser();
-//                        return commentMapper.entityAndDtoToCommentInfoDto(userEntityFromTag, commentEntity, commentUserTagInfoDtos);
-//                    });
-//            commentCreateCommentInfoDtos.add(commentCreateCommentInfoDto);
-//            for (CommentTagEntity commentTagEntity : commentTagEntities) {
-//                UserEntity userEntityFromTag = commentTagEntity.getUser();
-//                CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(userEntityFromTag, commentEntity, commentUserTagInfoDtos);
-//                commentCreateCommentInfoDtos.add(commentCreateCommentInfoDto);
-//            }
-
             CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(commentEntity.getUser(), commentEntity, commentUserTagInfoDtos);
             commentCreateCommentInfoDtos.add(commentCreateCommentInfoDto);
 
@@ -233,6 +216,60 @@ public class CommentServiceImpl implements CommentService {
                 .statusCode(GET_LIST_POST_COMMENT.getHttpStatus().value())
                 .message(GET_LIST_POST_COMMENT.getDetail())
                 .data(commentGetListResponseDto)
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public ResponseDto<?> getReplyCommentList(Long postId, Long commentId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
+
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+
+        Optional<DiaryUserEntity> dbDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
+        DiaryUserEntity diaryUserEntity;
+        if (!diaryPostEntity.getIsPublic()) { //게시글이 비공개 게시글인 경우 구독자와 일반 사용자는 해당 게시글에 접근하지 못한다.
+
+            if (dbDiaryUserEntity.isPresent()) { //dbDiaryUserEntity의 값이 존재한다면 구독자인지 여부 확인 후 예외처리
+                diaryUserEntity = dbDiaryUserEntity.get();
+
+                if (diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE) {
+                    throw new CustomException(SUBSCRIBE_DOES_NOT_HAVE_PERMISSION_TO_READ_PRIVATE);
+                }
+            } else { //dbDiaryUserEntity의 값이 존재하지 않는다면 해당 다이어리와 게시물에 연관이 없는 일반 사용자이므로 이에 따른 예외처리
+                throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE);
+            }
+        }
+
+        List<CommentEntity> replyCommentEntities = commentRepository.findAllByDiaryPostAndParent(diaryPostEntity, commentEntity);
+        List<CommentCreateCommentInfoDto> commentCreateCommentInfoDtos = new ArrayList<>();
+        for (CommentEntity replyComment : replyCommentEntities) {
+            Set<CommentTagEntity> commentTagEntities = commentTagRepository.findAllByComment(replyComment);
+            Set<CommentUserTagInfoDto> commentUserTagInfoDtos = commentTagEntities.stream().map(commentTagEntity -> commentTagMapper.entityToCommentUserInfoDto(commentTagEntity.getUser())).collect(Collectors.toSet());
+
+            CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(commentEntity.getUser(), replyComment, commentUserTagInfoDtos);
+            commentCreateCommentInfoDtos.add(commentCreateCommentInfoDto);
+
+        }
+
+        ReplyCommentGetListResponseDto replyCommentGetListResponseDto = commentMapper.dtoToReplyCommentGetListResponseDto(commentId, commentCreateCommentInfoDtos);
+
+        return ResponseDto.builder()
+                .statusCode(GET_LIST_POST_REPLY_COMMENT.getHttpStatus().value())
+                .message(GET_LIST_POST_REPLY_COMMENT.getDetail())
+                .data(replyCommentGetListResponseDto)
                 .build();
     }
 }

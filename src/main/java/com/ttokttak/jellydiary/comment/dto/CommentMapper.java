@@ -51,4 +51,9 @@ public interface CommentMapper {
 
     @Mapping(target = "comments", source = "commentInfoDtos")
     CommentGetListResponseDto dtoToCommentGetListResponseDto(Long postId, List<CommentCreateCommentInfoDto> commentInfoDtos);
+
+    @Mapping(target = "replies", source = "commentInfoDtos")
+    ReplyCommentGetListResponseDto dtoToReplyCommentGetListResponseDto(Long commentId, List<CommentCreateCommentInfoDto> commentInfoDtos);
+
+
 }
