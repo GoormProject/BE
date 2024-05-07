@@ -18,6 +18,7 @@ public interface DiaryPostImgMapper {
     @Mapping(target = "imageLink", expression = "java(postImg.getOriginalFilename())")
     DiaryPostImgEntity diaryPostImgRequestToEntity(MultipartFile postImg, DiaryPostEntity diaryPost);
 
+    @Mapping(target = "imgId", source = "diaryPostImg.postImgId")
     @Mapping(target = "diaryPostImg", source = "diaryPostImg.imageLink")
     DiaryPostImgListResponseDto entityToDiaryPostImgListResponseDto(DiaryPostImgEntity diaryPostImg);
 }
