@@ -33,4 +33,12 @@ public class CommentController {
     public ResponseEntity<ResponseDto<?>> getCommentList(@PathVariable Long postId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(commentService.getCommentList(postId, customOAuth2User));
     }
+
+    @Operation(summary = "타겟 댓글의 답글 리스트 조회", description = "[타겟 댓글의 답글 리스트 조회] api")
+    @GetMapping("/{postId}/{commentId}")
+    public ResponseEntity<ResponseDto<?>> getReplyCommentList(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(commentService.getReplyCommentList(postId, commentId, customOAuth2User));
+    }
+
+
 }
