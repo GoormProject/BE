@@ -8,4 +8,6 @@ public interface CommentService {
     ResponseDto<?> createComment(Long postId, CommentCreateRequestDto commentCreateRequestDto, CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> createReplyComment(Long postId, Long commentId, CommentCreateRequestDto commentCreateRequestDto, CustomOAuth2User customOAuth2User);
+
+    ResponseDto<?> getCommentList(Long postId, CustomOAuth2User customOAuth2User);
 }
