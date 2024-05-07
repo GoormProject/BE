@@ -22,6 +22,7 @@ public enum ErrorMsg {
     NOT_LOGGED_ID(UNAUTHORIZED, "로그인이 되어있지 않습니다."),
 
     /* 403 FORBIDDEN : 권한 없음 */
+    USER_ACCOUNT_DISABLED(FORBIDDEN, "사용자의 계정이 비활성화 상태입니다."),
     YOU_ARE_NOT_A_DIARY_CREATOR(FORBIDDEN, " 다이어리 생성자가 아니므로 다이어리 프로필 업데이트, 참여자 추가, 삭제 권한이 없습니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_WRITE_AND_UPDATE(FORBIDDEN, " 다이어리 생성자 이거나 쓰기 권한이 있는 사용자만이 게시물 생성 및 수정이 가능합니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE(FORBIDDEN, " 다이어리 생성자만이 게시물 삭제가 가능합니다."),
@@ -48,6 +49,7 @@ public enum ErrorMsg {
     POST_IMG_ALREADY_DELETED(NOT_FOUND, "삭제된 게시물 이미지입니다."),
     POST_LIKE_NOT_FOUND(NOT_FOUND, "이 게시물은 아직 좋아요를 하지 않았습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "댓글이 존재하지 않습니다."),
+    NOTIFICATION_SETTINGS_NOT_FOUND(NOT_FOUND, "알림 설정 정보를 찾을 수 없습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),

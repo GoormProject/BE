@@ -1,5 +1,6 @@
 package com.ttokttak.jellydiary.user.entity;
 
+import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.user.dto.UserCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -44,6 +45,9 @@ public class UserEntity {
 
     @Column
     private Boolean notificationSetting;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private NotificationSettingEntity notificationSettings;
 
     @Builder
     public UserEntity(Long userId, String oauthId, ProviderType providerType, String userEmail, String userName, String userDesc, String profileImg, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
