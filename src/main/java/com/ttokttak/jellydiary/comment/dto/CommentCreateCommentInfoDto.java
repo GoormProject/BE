@@ -14,9 +14,10 @@ public class CommentCreateCommentInfoDto {
     private String createdAt;
     private Set<CommentUserTagInfoDto> userTag;
     private String commentContent;
+    private Boolean isDeleted;
 
     @Builder
-    public CommentCreateCommentInfoDto(Long userId, String userName, String userProfileImg, Long commentId, String createdAt, Set<CommentUserTagInfoDto> userTag, String commentContent) {
+    public CommentCreateCommentInfoDto(Long userId, String userName, String userProfileImg, Long commentId, String createdAt, Set<CommentUserTagInfoDto> userTag, String commentContent, Boolean isDeleted) {
         this.userId = userId;
         this.userName = userName;
         this.userProfileImg = userProfileImg;
@@ -24,5 +25,6 @@ public class CommentCreateCommentInfoDto {
         this.createdAt = createdAt;
         this.userTag = userTag;
         this.commentContent = commentContent;
+        this.isDeleted = isDeleted;
     }
 }
