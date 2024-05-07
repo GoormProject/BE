@@ -19,8 +19,9 @@ public interface FeedMapper {
     @Mapping(target = "followerCount", ignore = true)
     @Mapping(target = "followStatus", ignore = true)
     TargetUserInfoResponseDto userEntityToTargetUserInfoResponseDto(UserEntity userEntity);
-    
-    List<TargetUserFollowersDto> entityToTargetUserFollowersDto(List<UserEntity> entity);
+
+    @Mapping(target = "followStatus", ignore = true)
+    TargetUserFollowersDto entityToTargetUserFollowersDto(UserEntity entity);
 
     @Mapping(target = "postImgIsMultiple", ignore = true)
     @Mapping(target = "postImg", ignore = true)

@@ -30,14 +30,14 @@ public class FeedController {
 
     @Operation(summary = "타겟 유저의 팔로워 리스트 조회", description = "[타겟 유저의 팔로워 리스트 조회] api")
     @GetMapping("/followerList/{targetUserId}")
-    public ResponseEntity<ResponseDto<?>> getTargetUserFollowerList(@PathVariable("targetUserId") Long targetUserId) {
-        return ResponseEntity.ok(feedService.getTargetUserFollowerList(targetUserId));
+    public ResponseEntity<ResponseDto<?>> getTargetUserFollowerList(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(feedService.getTargetUserFollowerList(targetUserId, customOAuth2User));
     }
 
     @Operation(summary = "타겟 유저의 팔로우 리스트 조회", description = "[타겟 유저의 팔로우 리스트 조회] api")
     @GetMapping("/followList/{targetUserId}")
-    public ResponseEntity<ResponseDto<?>> getTargetUserFollowList(@PathVariable("targetUserId") Long targetUserId) {
-        return ResponseEntity.ok(feedService.getTargetUserFollowList(targetUserId));
+    public ResponseEntity<ResponseDto<?>> getTargetUserFollowList(@PathVariable("targetUserId") Long targetUserId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(feedService.getTargetUserFollowList(targetUserId, customOAuth2User));
     }
 
     @Operation(summary = "팔로우 취소", description = "[팔로우 취소] api")
