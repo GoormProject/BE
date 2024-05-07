@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring")
@@ -34,17 +35,20 @@ public interface CommentMapper {
     @Mapping(target = "diaryPost", source = "diaryPost")
     CommentEntity replyCommentCreateRequestToEntity(CommentCreateRequestDto dto, UserEntity user, DiaryPostEntity diaryPost, CommentEntity comment);
 
-    @Mapping(target = "userId", source = "userEntity.userId")
-    @Mapping(target = "userName", source = "userEntity.userName")
-    @Mapping(target = "userProfileImg", source = "userEntity.profileImg")
-    @Mapping(target = "commentId", source = "comment.commentId")
-    @Mapping(target = "commentContent", source = "comment.commentContent")
-    @Mapping(target = "userTag", source = "userTagInfoDtos")
-    ReplyCommentCreateCommentInfoDto entityAndDtoToReplyCommentInfoDto(UserEntity userEntity, CommentEntity comment, Set<CommentUserTagInfoDto> userTagInfoDtos);
+//    @Mapping(target = "userId", source = "userEntity.userId")
+//    @Mapping(target = "userName", source = "userEntity.userName")
+//    @Mapping(target = "userProfileImg", source = "userEntity.profileImg")
+//    @Mapping(target = "commentId", source = "comment.commentId")
+//    @Mapping(target = "commentContent", source = "comment.commentContent")
+//    @Mapping(target = "userTag", source = "userTagInfoDtos")
+//    CommentCreateCommentInfoDto entityAndDtoToCommentInfoDto(UserEntity userEntity, CommentEntity comment, Set<CommentUserTagInfoDto> userTagInfoDtos);
 
     @Mapping(target = "comment", source = "createCommentInfoDto")
     CommentCreateResponseDto dtoToCommentCreateResponseDto(Long postId, CommentCreateCommentInfoDto createCommentInfoDto);
 
     @Mapping(target = "reply", source = "createReplyCommentInfoDto")
-    ReplyCommentCreateResponseDto dtoToReplyCommentCreateResponseDto(Long parentId, ReplyCommentCreateCommentInfoDto createReplyCommentInfoDto);
+    ReplyCommentCreateResponseDto dtoToReplyCommentCreateResponseDto(Long parentId, CommentCreateCommentInfoDto createReplyCommentInfoDto);
+
+    @Mapping(target = "comments", source = "commentInfoDtos")
+    CommentGetListResponseDto dtoToCommentGetListResponseDto(Long postId, List<CommentCreateCommentInfoDto> commentInfoDtos);
 }
