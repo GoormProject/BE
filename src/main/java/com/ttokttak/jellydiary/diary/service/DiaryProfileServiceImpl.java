@@ -89,7 +89,6 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .build();
     }
 
-    @Transactional
     @Override
     public ResponseDto<?> getDiaryProfileInfo(Long diaryId) {
         DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
@@ -105,7 +104,6 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
     }
 
     @Override
-    @Transactional
     public ResponseDto<?> getMySubscribedOrParticipatingDiariesList(CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
