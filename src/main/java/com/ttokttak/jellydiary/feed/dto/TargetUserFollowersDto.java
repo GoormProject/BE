@@ -15,4 +15,6 @@ public class TargetUserFollowersDto {
 
     private String profileImg;
 
+    private Boolean followStatus;
+
 }

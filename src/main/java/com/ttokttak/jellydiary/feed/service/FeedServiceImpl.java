@@ -7,6 +7,7 @@ import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.feed.dto.TargetUserFeedListResponseDto;
 import com.ttokttak.jellydiary.feed.dto.TargetUserFeedResponseDto;
+import com.ttokttak.jellydiary.feed.dto.TargetUserFollowersDto;
 import com.ttokttak.jellydiary.feed.dto.TargetUserInfoResponseDto;
 import com.ttokttak.jellydiary.feed.mapper.FeedMapper;
 import com.ttokttak.jellydiary.follow.entity.FollowCompositeKey;
@@ -97,32 +98,66 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
-    public ResponseDto<?> getTargetUserFollowerList(Long targetUserId) {
+    @Transactional
+    public ResponseDto<?> getTargetUserFollowerList(Long targetUserId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         List<FollowEntity> followEntityList = followRepository.findByIdFollowResponseId(targetUserId);
         List<UserEntity> followerUserInfoList = followEntityList.stream().map(FollowEntity::getFollowRequest).toList();
 
+        List<TargetUserFollowersDto> targetUserFollowersDtoList = new ArrayList<>();
+        for(UserEntity userEntity : followerUserInfoList){
+            TargetUserFollowersDto targetUserFollowersDto = feedMapper.entityToTargetUserFollowersDto(userEntity);
+
+            if(loginUserEntity.getUserId().equals(userEntity.getUserId())){
+                targetUserFollowersDto.setFollowStatus(null);
+            }else{
+                targetUserFollowersDto.setFollowStatus(followRepository.existsById(new FollowCompositeKey(loginUserEntity.getUserId(), userEntity.getUserId())));
+            }
+
+            targetUserFollowersDtoList.add(targetUserFollowersDto);
+        }
+
         return ResponseDto.builder()
                 .statusCode(SEARCH_TARGET_USER_FOLLOWER_LIST_SUCCESS.getHttpStatus().value())
                 .message(SEARCH_TARGET_USER_FOLLOWER_LIST_SUCCESS.getDetail())
-                .data(feedMapper.entityToTargetUserFollowersDto(followerUserInfoList))
+                .data(targetUserFollowersDtoList)
                 .build();
     }
 
     @Override
-    public ResponseDto<?> getTargetUserFollowList(Long targetUserId) {
+    @Transactional
+    public ResponseDto<?> getTargetUserFollowList(Long targetUserId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         List<FollowEntity> followEntityList = followRepository.findByIdFollowRequestId(targetUserId);
         List<UserEntity> followerUserInfoList = followEntityList.stream().map(FollowEntity::getFollowResponse).toList();
 
+        List<TargetUserFollowersDto> targetUserFollowersDtoList = new ArrayList<>();
+        for(UserEntity userEntity : followerUserInfoList){
+            TargetUserFollowersDto targetUserFollowersDto = feedMapper.entityToTargetUserFollowersDto(userEntity);
+
+            if(loginUserEntity.getUserId().equals(userEntity.getUserId())){
+                targetUserFollowersDto.setFollowStatus(null);
+            }else{
+                targetUserFollowersDto.setFollowStatus(followRepository.existsById(new FollowCompositeKey(loginUserEntity.getUserId(), userEntity.getUserId())));
+            }
+
+            targetUserFollowersDtoList.add(targetUserFollowersDto);
+        }
+
         return ResponseDto.builder()
                 .statusCode(SEARCH_TARGET_USER_FOLLOW_LIST_SUCCESS.getHttpStatus().value())
                 .message(SEARCH_TARGET_USER_FOLLOW_LIST_SUCCESS.getDetail())
-                .data(feedMapper.entityToTargetUserFollowersDto(followerUserInfoList))
+                .data(targetUserFollowersDtoList)
                 .build();
     }
 
