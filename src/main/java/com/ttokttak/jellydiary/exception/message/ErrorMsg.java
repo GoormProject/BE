@@ -28,6 +28,7 @@ public enum ErrorMsg {
     NO_PERMISSION_TO_APPROVE_INVITATION(FORBIDDEN, "해당 초대 요청을 승인할 권한이 없습니다."),
     SUBSCRIBE_DOES_NOT_HAVE_PERMISSION_TO_READ_PRIVATE(FORBIDDEN, "아쉽게도 구독자는 해당 다이어리의 비공개 게시글에 접근할 수 없습니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE(FORBIDDEN, "비공개 게시물에 접근할 권한이 없습니다."),
+    YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE_COMMENT(FORBIDDEN, "댓글/답글은 생성자만이 삭제가 가능합니다."),
 //    YOU_ARE_NOT_A_MEMBER_OF_THE_PROJECT_TEAM_AND_THEREFORE_CANNOT_PERFORM_THIS_ACTION(FORBIDDEN, "당신은 이 프로젝트 담당하는 팀의 구성원이 아님으로 권한이 없습니다."),
 //    NO_AUTHORITY_TO_UPDATE_PROJECT(FORBIDDEN, " 리더가 아님으로 프로젝트 업데이트 권한이 없습니다."),
 //    NO_AUTHORITY_TO_DELETE_PROJECT(FORBIDDEN, "프로젝트 삭제 권한이 없습니다."),
@@ -48,6 +49,7 @@ public enum ErrorMsg {
     POST_IMG_ALREADY_DELETED(NOT_FOUND, "삭제된 게시물 이미지입니다."),
     POST_LIKE_NOT_FOUND(NOT_FOUND, "이 게시물은 아직 좋아요를 하지 않았습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "댓글이 존재하지 않습니다."),
+    COMMENT_ALREADY_DELETED(NOT_FOUND, "삭제된 댓글/답글입니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),

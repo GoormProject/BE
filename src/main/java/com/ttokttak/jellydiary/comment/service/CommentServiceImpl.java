@@ -272,4 +272,45 @@ public class CommentServiceImpl implements CommentService {
                 .data(replyCommentGetListResponseDto)
                 .build();
     }
+
+    @Transactional
+    @Override
+    public ResponseDto<?> deleteComment(Long postId, Long commentId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryPostEntity diaryPostEntity = diaryPostRepository.findByIdWithDiaryProfile(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(diaryPostEntity.getIsDeleted())
+            throw new CustomException(POST_ALREADY_DELETED);
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryPostEntity.getDiaryProfile().getDiaryId())
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+        if(diaryProfileEntity.getIsDiaryDeleted())
+            throw new CustomException(DIARY_ALREADY_DELETED);
+
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        if (commentEntity.getIsDeleted()) {
+            throw new CustomException(COMMENT_ALREADY_DELETED);
+        }
+
+        if (commentEntity.getUser() != userEntity) {
+            throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE_COMMENT);
+        }
+
+        commentRepository.deleteById(commentEntity.getCommentId());
+
+        //TODO: [작성자: 김주희] response값이 false로 나오는 문제 추후 수정 예정
+//        CommentEntity deletedCommentEntity = commentRepository.findById(commentEntity.getCommentId())
+//                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+
+        CommentDeleteResponseDto commentDeleteResponseDto = commentMapper.entityToCommentDeleteResponseDto(commentEntity);
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_COMMENT_SUCCESS.getHttpStatus().value())
+                .message(DELETE_COMMENT_SUCCESS.getDetail())
+                .data(commentDeleteResponseDto)
+                .build();
+    }
 }

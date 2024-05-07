@@ -49,6 +49,10 @@ public interface CommentMapper {
     @Mapping(target = "reply", source = "createReplyCommentInfoDto")
     ReplyCommentCreateResponseDto dtoToReplyCommentCreateResponseDto(Long parentId, CommentCreateCommentInfoDto createReplyCommentInfoDto);
 
+    @Mapping(target = "commentId", source = "comment.commentId")
+    @Mapping(target = "isDeleted", source = "comment.isDeleted")
+    CommentDeleteResponseDto entityToCommentDeleteResponseDto(CommentEntity comment);
+
     @Mapping(target = "comments", source = "commentInfoDtos")
     CommentGetListResponseDto dtoToCommentGetListResponseDto(Long postId, List<CommentCreateCommentInfoDto> commentInfoDtos);
 

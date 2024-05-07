@@ -12,4 +12,6 @@ public interface CommentService {
     ResponseDto<?> getCommentList(Long postId, CustomOAuth2User customOAuth2User);
 
     ResponseDto<?> getReplyCommentList(Long postId, Long commentId, CustomOAuth2User customOAuth2User);
+
+    ResponseDto<?> deleteComment(Long postId, Long commentId, CustomOAuth2User customOAuth2User);
 }
