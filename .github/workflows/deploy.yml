@@ -54,7 +54,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          prot: ${{ secrets.PORT }}
           envs: GITHUB_SHA
           script: |
             sudo docker-compose -f ~/compose/docker-compose.yml down --rmi all
