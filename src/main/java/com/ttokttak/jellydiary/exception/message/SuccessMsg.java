@@ -24,6 +24,8 @@ public enum SuccessMsg {
     UNFOLLOW_SUCCESS(OK, "팔로우 취소 완료"),
     SEARCH_TARGET_USER_FEED_LIST_SUCCESS(OK, "타켓 유저 피드 리스트 조회 완료"),
 
+    UPDATE_USER_PROFILE_IMAGE_SUCCESS(OK, "다이어리 프로필 수정 완료"),
+
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),
 

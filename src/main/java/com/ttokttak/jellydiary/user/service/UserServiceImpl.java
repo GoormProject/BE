@@ -9,25 +9,30 @@ import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.entity.UserStateEnum;
 import com.ttokttak.jellydiary.user.mapper.UserMapper;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
+import com.ttokttak.jellydiary.util.S3Uploader;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.GET_USER_PROFILE_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final NotificationSettingRepository notificationSettingRepository;
+    private final S3Uploader s3Uploader;
 
     @Override
     public ResponseDto<?> getUserProflie(CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        if(userEntity.getUserState() != UserStateEnum.ACTIVE) {
+        if (userEntity.getUserState() != UserStateEnum.ACTIVE) {
             throw new CustomException(USER_ACCOUNT_DISABLED);
         }
 
@@ -43,5 +48,46 @@ public class UserServiceImpl implements UserService{
                 .build();
     }
 
+    @Override
+    public ResponseDto<?> updateUserProfileImg(CustomOAuth2User customOAuth2User, MultipartFile newProfileImg) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
+        if (userEntity.getUserState() != UserStateEnum.ACTIVE) {
+            throw new CustomException(USER_ACCOUNT_DISABLED);
+        }
+
+        String s3Path = "profile/" + UUID.randomUUID();
+        if (userEntity.getProfileImg() != null) { // 기존 이미지가 있는 경우
+            // 기존 이미지 S3 경로 추출
+            String keyToDelete = s3Uploader.extractKeyFromUrl(userEntity.getProfileImg());
+
+            // 기존 이미지 삭제
+            s3Uploader.deleteObject(keyToDelete);
+
+            if (newProfileImg == null || newProfileImg.isEmpty()) { // 새 이미지가 null인 경우
+                // DB에 null로 업데이트
+                userEntity.uploadProfileImg(null);
+            } else { // 새 이미지가 있는 경우
+                // DB에 새 이미지 업로드
+                String newImageUrl = s3Uploader.uploadToS3(newProfileImg, s3Path);
+                userEntity.uploadProfileImg(newImageUrl);
+            }
+        } else { // 기존 이미지가 없는 경우
+            if (newProfileImg == null || newProfileImg.isEmpty()) { // 새 이미지가 null인 경우
+                // 새 이미지가 null이면 DB에는 변화를 주지 않아 아무 작업도 수행하지 않음
+            } else { // 새 이미지가 있는 경우
+                // 새 이미지 업로드
+                String newImageUrl = s3Uploader.uploadToS3(newProfileImg, s3Path);
+                userEntity.uploadProfileImg(newImageUrl);
+            }
+        }
+
+        userRepository.save(userEntity);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_USER_PROFILE_IMAGE_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_USER_PROFILE_IMAGE_SUCCESS.getDetail())
+                .build();
+    }
 }

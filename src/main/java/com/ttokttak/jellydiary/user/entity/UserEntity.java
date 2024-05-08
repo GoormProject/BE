@@ -72,4 +72,8 @@ public class UserEntity {
         this.userState = userCreateDto.getUserState();
         this.notificationSetting = userCreateDto.getNotificationSetting();
     }
+
+    public void uploadProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
 }
