@@ -65,8 +65,12 @@ public class SearchServiceImpl implements SearchService {
                 if (diaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.CREATOR) {
                     continue;
                 }
-                isInvited = true;
+                isInvited = diaryUserEntity.getIsInvited();
             } else {
+                isInvited = false;
+            }
+
+            if (isInvited == null) { //구독자일 경우 null이기 때문에 null을 false로 바꿔서 출력해준다.
                 isInvited = false;
             }
             SearchUserListResponseDto searchUserListResponseDto = searchMapper.entityToUserListResponseDto(user, isInvited);
