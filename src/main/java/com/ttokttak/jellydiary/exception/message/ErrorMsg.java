@@ -30,6 +30,7 @@ public enum ErrorMsg {
     SUBSCRIBE_DOES_NOT_HAVE_PERMISSION_TO_READ_PRIVATE(FORBIDDEN, "아쉽게도 구독자는 해당 다이어리의 비공개 게시글에 접근할 수 없습니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE(FORBIDDEN, "비공개 게시물에 접근할 권한이 없습니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE_COMMENT(FORBIDDEN, "댓글/답글은 생성자만이 삭제가 가능합니다."),
+    SEARCH_WORD_MUST_NOT_BE_BLANK(FORBIDDEN, "검색어는 공백이 포함될 수 없습니다."),
 //    YOU_ARE_NOT_A_MEMBER_OF_THE_PROJECT_TEAM_AND_THEREFORE_CANNOT_PERFORM_THIS_ACTION(FORBIDDEN, "당신은 이 프로젝트 담당하는 팀의 구성원이 아님으로 권한이 없습니다."),
 //    NO_AUTHORITY_TO_UPDATE_PROJECT(FORBIDDEN, " 리더가 아님으로 프로젝트 업데이트 권한이 없습니다."),
 //    NO_AUTHORITY_TO_DELETE_PROJECT(FORBIDDEN, "프로젝트 삭제 권한이 없습니다."),
