@@ -56,6 +56,7 @@ public enum ErrorMsg {
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),
+    DUPLICATE_USER_NAME(CONFLICT,"이미 사용 중인 이름입니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일입니다."),
     DUPLICATE_DIARY_USER(CONFLICT,"이미 해당 다이어리에 참여 중인 사용자입니다."),
     ALREADY_SUBSCRIBED_DIARY(CONFLICT,"이미 구독중인 다이어리입니다."),
