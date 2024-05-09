@@ -26,6 +26,15 @@ public interface CommentMapper {
     @Mapping(target = "userTag", source = "userTagInfoDtos")
     CommentCreateCommentInfoDto entityAndDtoToCommentInfoDto(UserEntity userEntity, CommentEntity comment, Set<CommentUserTagInfoDto> userTagInfoDtos);
 
+    @Mapping(target = "userId", source = "userEntity.userId")
+    @Mapping(target = "userName", source = "userEntity.userName")
+    @Mapping(target = "userProfileImg", source = "userEntity.profileImg")
+    @Mapping(target = "commentId", source = "comment.commentId")
+    @Mapping(target = "commentContent", source = "comment.commentContent")
+    @Mapping(target = "userTag", source = "userTagInfoDtos")
+    CommentGetCommentInfoDto entityAndDtoToCommentGetInfoDto(UserEntity userEntity, CommentEntity comment, Set<CommentUserTagInfoDto> userTagInfoDtos, Long replyCount);
+
+
     @Mapping(target = "commentId", ignore = true)
     @Mapping(target = "commentContent", source = "dto.commentContent")
     @Mapping(target = "parent", source = "comment")
@@ -40,7 +49,7 @@ public interface CommentMapper {
     ReplyCommentCreateResponseDto dtoToReplyCommentCreateResponseDto(Long parentId, CommentCreateCommentInfoDto createReplyCommentInfoDto);
 
     @Mapping(target = "comments", source = "commentInfoDtos")
-    CommentGetListResponseDto dtoToCommentGetListResponseDto(Long postId, List<CommentCreateCommentInfoDto> commentInfoDtos);
+    CommentGetListResponseDto dtoToCommentGetListResponseDto(Long postId, List<CommentGetCommentInfoDto> commentInfoDtos);
 
     @Mapping(target = "replies", source = "commentInfoDtos")
     ReplyCommentGetListResponseDto dtoToReplyCommentGetListResponseDto(Long commentId, List<CommentCreateCommentInfoDto> commentInfoDtos);

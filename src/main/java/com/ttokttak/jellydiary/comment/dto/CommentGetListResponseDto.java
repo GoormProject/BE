@@ -10,10 +10,10 @@ import java.util.List;
 public class CommentGetListResponseDto {
 
     private Long postId;
-    private List<CommentCreateCommentInfoDto> comments;
+    private List<CommentGetCommentInfoDto> comments;
 
     @Builder
-    public CommentGetListResponseDto(Long postId, List<CommentCreateCommentInfoDto> comments) {
+    public CommentGetListResponseDto(Long postId, List<CommentGetCommentInfoDto> comments) {
         this.postId = postId;
         this.comments = comments;
     }
