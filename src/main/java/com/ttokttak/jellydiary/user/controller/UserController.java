@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.user.controller;
 
-import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserNameCheckRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
@@ -36,5 +35,11 @@ public class UserController {
     @PostMapping("/profile/ckeckUserName")
     public ResponseEntity<ResponseDto<?>> checkUserName(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody @Valid UserNameCheckRequestDto userNameCheckRequestDto) {
         return ResponseEntity.ok(userService.checkUserName(customOAuth2User, userNameCheckRequestDto));
+    }
+
+    @Operation(summary = "유저 프로필 정보 수정", description = "[유저 프로필 정보 수정] api")
+    @PatchMapping("/profile")
+    public ResponseEntity<ResponseDto<?>> updateUserProfile(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody @Valid UserProfileUpdateRequestDto userProfileUpdateRequestDto) {
+        return ResponseEntity.ok(userService.updateUserProfile(customOAuth2User, userProfileUpdateRequestDto));
     }
 }

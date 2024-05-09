@@ -2,6 +2,7 @@ package com.ttokttak.jellydiary.user.mapper;
 
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.user.dto.UserProfileDto;
+import com.ttokttak.jellydiary.user.dto.UserProfileUpdateResponseDto;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,4 +14,7 @@ public interface UserMapper {
 
     @Mapping(source = "userEntity.userId", target = "userId")
     UserProfileDto entitiytoUserProfileDto(UserEntity userEntity, NotificationSettingEntity notificationSettingEntity);
+
+    @Mapping(source = "userDesc", target = "userDescription")
+    UserProfileUpdateResponseDto entitiytoUserProfileUpdateResponseDto(UserEntity userEntity);
 }

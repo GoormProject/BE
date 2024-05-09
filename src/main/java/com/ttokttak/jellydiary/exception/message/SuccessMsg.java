@@ -25,6 +25,7 @@ public enum SuccessMsg {
 
     GET_USER_PROFILE_SUCCESS(OK, "유저 프로필 조회 완료"),
     UPDATE_USER_PROFILE_IMAGE_SUCCESS(OK, "유저 프로필 이미지 수정 완료"),
+    UPDATE_USER_PROFILE_SUCCESS(OK, "유저 프로필 수정 완료"),
     USER_NAME_CHECK_SUCCESS(OK,"사용 가능한 이름입니다."),
 
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
