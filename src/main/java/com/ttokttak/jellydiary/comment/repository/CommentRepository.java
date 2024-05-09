@@ -18,5 +18,5 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
   
     List<CommentEntity> findByParent(CommentEntity comment);
 
-    // Long countByDiaryPostAndIsDeleted(DiaryPostEntity diaryPost, Boolean isDeleted);
+    Long countByDiaryPost(DiaryPostEntity diaryPost);
 }

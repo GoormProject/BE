@@ -84,6 +84,25 @@ public class CommentServiceImpl implements CommentService {
             UserEntity tagUserEntity = userRepository.findById(userId).orElseThrow(
                     () -> new CustomException(USER_TAG_NOT_FOUND)
             );
+            if (userId.equals(userEntity.getUserId())) {
+                throw new CustomException(YOU_CANNOT_TAG_YOURSELF);
+            }
+
+            Optional<DiaryUserEntity> dbTagDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, tagUserEntity);
+            DiaryUserEntity tagDiaryUserEntity;
+            if (!diaryPostEntity.getIsPublic()) { //게시글이 비공개 게시글인 경우 구독자와 일반 사용자는 해당 게시글에 접근하지 못한다.
+
+                if (dbTagDiaryUserEntity.isPresent()) { //dbDiaryUserEntity의 값이 존재한다면 구독자인지 여부 확인 후 예외처리
+                    tagDiaryUserEntity = dbDiaryUserEntity.get();
+
+                    if (tagDiaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE) {
+                        throw new CustomException(SUBSCRIBE_DOES_NOT_HAVE_PERMISSION_TO_READ_PRIVATE_AND_COMMENT);
+                    }
+                } else { //dbDiaryUserEntity의 값이 존재하지 않는다면 해당 다이어리와 게시물에 연관이 없는 일반 사용자이므로 이에 따른 예외처리
+                    throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE_POST_AND_COMMENT);
+                }
+            }
+
             CommentTagCompositeKey commentTagCompositeKey = commentTagMapper.userAndCommentToCommentTagCompositeKey(tagUserEntity.getUserId(), commentEntity.getCommentId());
             CommentTagEntity commentTagEntity = commentTagMapper.commentCreateRequestToEntity(commentTagCompositeKey, tagUserEntity, commentEntity);
             commentTagRepository.save(commentTagEntity);
@@ -153,6 +172,25 @@ public class CommentServiceImpl implements CommentService {
             UserEntity tagUserEntity = userRepository.findById(userId).orElseThrow(
                     () -> new CustomException(USER_TAG_NOT_FOUND)
             );
+            if (userId.equals(userEntity.getUserId())) {
+                throw new CustomException(YOU_CANNOT_TAG_YOURSELF);
+            }
+
+            Optional<DiaryUserEntity> dbTagDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, tagUserEntity);
+            DiaryUserEntity tagDiaryUserEntity;
+            if (!diaryPostEntity.getIsPublic()) { //게시글이 비공개 게시글인 경우 구독자와 일반 사용자는 해당 게시글에 접근하지 못한다.
+
+                if (dbTagDiaryUserEntity.isPresent()) { //dbDiaryUserEntity의 값이 존재한다면 구독자인지 여부 확인 후 예외처리
+                    tagDiaryUserEntity = dbDiaryUserEntity.get();
+
+                    if (tagDiaryUserEntity.getDiaryRole() == DiaryUserRoleEnum.SUBSCRIBE) {
+                        throw new CustomException(SUBSCRIBE_DOES_NOT_HAVE_PERMISSION_TO_READ_PRIVATE_AND_COMMENT);
+                    }
+                } else { //dbDiaryUserEntity의 값이 존재하지 않는다면 해당 다이어리와 게시물에 연관이 없는 일반 사용자이므로 이에 따른 예외처리
+                    throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE_POST_AND_COMMENT);
+                }
+            }
+
             CommentTagCompositeKey commentTagCompositeKey = commentTagMapper.userAndCommentToCommentTagCompositeKey(tagUserEntity.getUserId(), ReplyCommentEntity.getCommentId());
             CommentTagEntity commentTagEntity = commentTagMapper.commentCreateRequestToEntity(commentTagCompositeKey, tagUserEntity, ReplyCommentEntity);
             commentTagRepository.save(commentTagEntity);
