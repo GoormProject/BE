@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.user.mapper;
 
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
+import com.ttokttak.jellydiary.user.dto.UserNotificationSettingResponseDto;
 import com.ttokttak.jellydiary.user.dto.UserProfileDto;
 import com.ttokttak.jellydiary.user.dto.UserProfileUpdateResponseDto;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
@@ -17,4 +18,6 @@ public interface UserMapper {
 
     @Mapping(source = "userDesc", target = "userDescription")
     UserProfileUpdateResponseDto entitiytoUserProfileUpdateResponseDto(UserEntity userEntity);
+
+    UserNotificationSettingResponseDto entitiytoUserNotificationSettingResponseDto(UserEntity userEntity, NotificationSettingEntity notificationSettingEntity);
 }

@@ -81,4 +81,8 @@ public class UserEntity {
         this.userName = userName;
         this.userDesc = userDescription;
     }
+
+    public void userNotificationSettingUpdate(Boolean notificationSetting) {
+        this.notificationSetting = notificationSetting;
+    }
 }
