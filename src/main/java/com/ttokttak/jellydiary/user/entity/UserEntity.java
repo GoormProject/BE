@@ -26,7 +26,7 @@ public class UserEntity {
     @Column
     private String userEmail;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String userName;
 
     @Column
@@ -75,5 +75,10 @@ public class UserEntity {
 
     public void uploadProfileImg(String profileImg) {
         this.profileImg = profileImg;
+    }
+
+    public void userProfileUpdate(String userName, String userDescription) {
+        this.userName = userName;
+        this.userDesc = userDescription;
     }
 }

@@ -14,4 +14,6 @@ public interface UserService {
     ResponseDto<?> updateUserProfileImg(CustomOAuth2User customOAuth2User, MultipartFile newProfileImg);
 
     ResponseDto<?> checkUserName(CustomOAuth2User customOAuth2User, UserNameCheckRequestDto userNameCheckRequestDto);
+
+    ResponseDto<?> updateUserProfile(CustomOAuth2User customOAuth2User, UserProfileUpdateRequestDto userProfileUpdateRequestDto);
 }

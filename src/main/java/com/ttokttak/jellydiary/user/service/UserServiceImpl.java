@@ -14,11 +14,9 @@ import com.ttokttak.jellydiary.user.mapper.UserMapper;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.S3Uploader;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -106,6 +104,31 @@ public class UserServiceImpl implements UserService {
         return ResponseDto.builder()
                 .statusCode(USER_NAME_CHECK_SUCCESS.getHttpStatus().value())
                 .message(USER_NAME_CHECK_SUCCESS.getDetail())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> updateUserProfile(CustomOAuth2User customOAuth2User, UserProfileUpdateRequestDto userProfileUpdateRequestDto) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (userEntity.getUserState() != UserStateEnum.ACTIVE) {
+            throw new CustomException(USER_ACCOUNT_DISABLED);
+        }
+
+        if (userRepository.existsByUserName(userProfileUpdateRequestDto.getUserName())) {
+            throw new CustomException(DUPLICATE_USER_NAME);
+        }
+
+        userEntity.userProfileUpdate(userProfileUpdateRequestDto.getUserName(), userProfileUpdateRequestDto.getUserDescription());
+
+        UserProfileUpdateResponseDto userProfileUpdateResponseDto = UserMapper.INSTANCE.entitiytoUserProfileUpdateResponseDto(userEntity);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_USER_PROFILE_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_USER_PROFILE_SUCCESS.getDetail())
+                .data(userProfileUpdateResponseDto)
                 .build();
     }
 }
