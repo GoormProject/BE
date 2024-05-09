@@ -30,9 +30,10 @@ public class DiaryPostGetOneResponseDto {
     private Long diaryId;
     private Long userId;
     private Long likeCount;
+    private Long commentCount;
 
     @Builder
-    public DiaryPostGetOneResponseDto(Long postId, String postDate, String postTitle, String meal, String snack, String water, String walk, String toiletRecord, String shower, String weight, String specialNote, String weather, String postContent, List<DiaryPostImgListResponseDto> postImgs, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isPublic, Boolean isDeleted, Long diaryId, Long userId, Long likeCount) {
+    public DiaryPostGetOneResponseDto(Long postId, String postDate, String postTitle, String meal, String snack, String water, String walk, String toiletRecord, String shower, String weight, String specialNote, String weather, String postContent, List<DiaryPostImgListResponseDto> postImgs, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isPublic, Boolean isDeleted, Long diaryId, Long userId, Long likeCount, Long commentCount) {
         this.postId = postId;
         this.postDate = postDate;
         this.postTitle = postTitle;
@@ -54,5 +55,6 @@ public class DiaryPostGetOneResponseDto {
         this.diaryId = diaryId;
         this.userId = userId;
         this.likeCount = likeCount;
+        this.commentCount = commentCount;
     }
 }

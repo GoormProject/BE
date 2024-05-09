@@ -12,7 +12,6 @@ import static org.springframework.http.HttpStatus.OK;
 public enum SuccessMsg {
     /* 200 OK : 성공 */
     LOGIN_SUCCESS(OK, "로그인 완료"),
-    GET_USER_PROFILE_SUCCESS(OK, "유저 프로필 조회 완료"),
     SEARCH_DIARY_SUCCESS(OK, "다이어리 정보 조회 완료"),
     SEARCH_DIARY_USER_LIST_SUCCESS(OK, "다이어리 참여자, 생성자 유저 조회 완료"),
     SEARCH_DIARY_USER_ROLE(OK, "다이어리 유저(권한) 조회 완료"),
@@ -23,6 +22,11 @@ public enum SuccessMsg {
     SEARCH_TARGET_USER_FOLLOW_LIST_SUCCESS(OK, "타켓 유저의 팔로우 리스트 조회 완료"),
     UNFOLLOW_SUCCESS(OK, "팔로우 취소 완료"),
     SEARCH_TARGET_USER_FEED_LIST_SUCCESS(OK, "타켓 유저 피드 리스트 조회 완료"),
+
+    GET_USER_PROFILE_SUCCESS(OK, "유저 프로필 조회 완료"),
+    UPDATE_USER_PROFILE_IMAGE_SUCCESS(OK, "유저 프로필 이미지 수정 완료"),
+    UPDATE_USER_PROFILE_SUCCESS(OK, "유저 프로필 수정 완료"),
+    USER_NAME_CHECK_SUCCESS(OK,"사용 가능한 이름입니다."),
 
 //    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
 //    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),
@@ -44,6 +48,7 @@ public enum SuccessMsg {
     CREATE_LIKE_POST_SUCCESS(OK, "게시물 좋아요 등록 완료"),
     GET_LIKE_POST_SUCCESS(OK, "게시물 좋아요 상태 조회 완료"),
     DELETE_LIKE_POST_SUCCESS(OK, "게시물 좋아요 취소 완료"),
+    SEARCH_USER_SUCCESS(OK, "사용자 검색 성공"),
 
 
     /* 201 CREATED : 생성 */

@@ -1,5 +1,6 @@
 package com.ttokttak.jellydiary.diarypost.service;
 
+import com.ttokttak.jellydiary.comment.repository.CommentRepository;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserRoleEnum;
@@ -45,6 +46,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     private final DiaryPostRepository diaryPostRepository;
     private final DiaryPostImgRepository diaryPostImgRepository;
     private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
     private final DiaryPostMapper diaryPostMapper;
     private final DiaryPostImgMapper diaryPostImgMapper;
 
@@ -267,13 +269,15 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         }
 
         //해당 게시물의 좋아요 수를 좋아요 테이블에서 조회
-//        long size = postLikeRepository.findAllByDiaryPost(diaryPostEntity).size();
         Long countPostLike = postLikeRepository.countByDiaryPost(diaryPostEntity);
+
+        //해당 게시물에 달린 댓글 수를 댓글 테이블에서 조회
+        Long commentCount = commentRepository.countByDiaryPostAndIsDeleted(diaryPostEntity, false);
 
         List<DiaryPostImgEntity> diaryPostImgEntityList = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = diaryPostImgEntityList.stream().map(diaryPostImgMapper::entityToDiaryPostImgListResponseDto).toList();
 
-        DiaryPostGetOneResponseDto diaryPostGetOneResponseDto = diaryPostMapper.entityToDiaryPostGetOneResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity, countPostLike);
+        DiaryPostGetOneResponseDto diaryPostGetOneResponseDto = diaryPostMapper.entityToDiaryPostGetOneResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity, countPostLike, commentCount);
 
         return ResponseDto.builder()
                 .statusCode(GET_ONE_POST_SUCCESS.getHttpStatus().value())

@@ -31,6 +31,7 @@ public enum ErrorMsg {
     YOU_DO_NOT_HAVE_PERMISSION_TO_READ_PRIVATE(FORBIDDEN, "비공개 게시물에 접근할 권한이 없습니다."),
     YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE_COMMENT(FORBIDDEN, "댓글/답글은 생성자만이 삭제가 가능합니다."),
     COMMENT_AND_POST_DO_DOT_MATCH(FORBIDDEN, "요청하신 게시물과 요청하신 댓글의 게시물이 일치하지 않습니다."),
+    SEARCH_WORD_MUST_NOT_BE_BLANK(FORBIDDEN, "검색어는 공백이 포함될 수 없습니다."),
 //    YOU_ARE_NOT_A_MEMBER_OF_THE_PROJECT_TEAM_AND_THEREFORE_CANNOT_PERFORM_THIS_ACTION(FORBIDDEN, "당신은 이 프로젝트 담당하는 팀의 구성원이 아님으로 권한이 없습니다."),
 //    NO_AUTHORITY_TO_UPDATE_PROJECT(FORBIDDEN, " 리더가 아님으로 프로젝트 업데이트 권한이 없습니다."),
 //    NO_AUTHORITY_TO_DELETE_PROJECT(FORBIDDEN, "프로젝트 삭제 권한이 없습니다."),
@@ -56,12 +57,15 @@ public enum ErrorMsg {
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_USER(CONFLICT,"이미 가입된 사용자입니다."),
+    DUPLICATE_USER_NAME(CONFLICT,"이미 사용 중인 이름입니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일입니다."),
     DUPLICATE_DIARY_USER(CONFLICT,"이미 해당 다이어리에 참여 중인 사용자입니다."),
     ALREADY_SUBSCRIBED_DIARY(CONFLICT,"이미 구독중인 다이어리입니다."),
-    ALREADY_SENT_INVITATION(CONFLICT,"이미 초대 요청을 보낸 사용자입니다.");
+    ALREADY_SENT_INVITATION(CONFLICT,"이미 초대 요청을 보낸 사용자입니다."),
 
     /* 500 INTERNAL SERVER ERROR : 그 외 서버 에러 (컴파일 관련) */
+    S3_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "S3 업로드 중 문제가 발생했습니다."),
+    S3_DELETE_FAILED(INTERNAL_SERVER_ERROR, "S3 객체 삭제 중 오류가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String detail;
