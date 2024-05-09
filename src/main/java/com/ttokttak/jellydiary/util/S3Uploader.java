@@ -59,7 +59,7 @@ public class S3Uploader {
     }
 
     // TODO: 수정해야합니다~
-    // 다중 객체 업로드
+    // S3다중 객체 업로드
 //    public List<String> uploadMultipleFilesToS3(List<MultipartFile> files, String baseS3Path) throws IOException {
 //        return files.stream().map(file -> {
 //            String individualPath = baseS3Path + "/" + file.getOriginalFilename(); // 각 파일의 S3 경로 생성

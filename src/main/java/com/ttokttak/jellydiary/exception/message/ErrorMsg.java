@@ -9,8 +9,10 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 @AllArgsConstructor
 public enum ErrorMsg {
-    /* 400 BAD_REQUEST : 잘못된 요청 */
+    /* 400 BAD_REQUEST : 잘못된 요청 */ //You can only upload up to 5 images.
+
     IMAGE_INVALID(BAD_REQUEST,"이미지가 잘못 되었습니다."),
+    YOU_CAN_ONLY_UPLOAD_UP_TO_5_IMAGES(BAD_REQUEST,"게시물 이미지는 5개까지만 업로드 할 수 있습니다."),
     POST_DATE_IS_FROM_THE_PAST_TO_TODAY(BAD_REQUEST, "작성일자는 과거부터 오늘까지만 선택 가능합니다."),
     DIARY_CREATOR_CANNOT_BE_DELETED(BAD_REQUEST, "다이어리 생성자는 삭제 대상이 아닙니다."),
     CANNOT_FOLLOW_SELF(BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
