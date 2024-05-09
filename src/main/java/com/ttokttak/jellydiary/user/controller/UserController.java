@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(userService.checkUserName(customOAuth2User, userNameCheckRequestDto));
     }
 
-    @Operation(summary = "유저 프로필 정보 수정", description = "[다이어리 정보 수정] api")
+    @Operation(summary = "유저 프로필 정보 수정", description = "[유저 프로필 정보 수정] api")
     @PatchMapping("/profile")
     public ResponseEntity<ResponseDto<?>> updateUserProfile(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody @Valid UserProfileUpdateRequestDto userProfileUpdateRequestDto) {
         return ResponseEntity.ok(userService.updateUserProfile(customOAuth2User, userProfileUpdateRequestDto));
