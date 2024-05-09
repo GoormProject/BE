@@ -242,17 +242,19 @@ public class CommentServiceImpl implements CommentService {
         }
 
         List<CommentEntity> commentEntities = commentRepository.findAllByDiaryPostAndParent(diaryPostEntity);
-        List<CommentCreateCommentInfoDto> commentCreateCommentInfoDtos = new ArrayList<>();
+        List<CommentGetCommentInfoDto> commentGetCommentInfoDto = new ArrayList<>();
         for (CommentEntity commentEntity : commentEntities) {
             Set<CommentTagEntity> commentTagEntities = commentTagRepository.findAllByComment(commentEntity);
             Set<CommentUserTagInfoDto> commentUserTagInfoDtos = commentTagEntities.stream().map(commentTagEntity -> commentTagMapper.entityToCommentUserInfoDto(commentTagEntity.getUser())).collect(Collectors.toSet());
 
-            CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(commentEntity.getUser(), commentEntity, commentUserTagInfoDtos);
-            commentCreateCommentInfoDtos.add(commentCreateCommentInfoDto);
+            List<CommentEntity> replyComments = commentRepository.findAllByDiaryPostAndParent(diaryPostEntity, commentEntity);
+            Long replyCount = Long.valueOf(replyComments.size());
+            CommentGetCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentGetInfoDto(commentEntity.getUser(), commentEntity, commentUserTagInfoDtos, replyCount);
+            commentGetCommentInfoDto.add(commentCreateCommentInfoDto);
 
         }
 
-        CommentGetListResponseDto commentGetListResponseDto = commentMapper.dtoToCommentGetListResponseDto(postId, commentCreateCommentInfoDtos);
+        CommentGetListResponseDto commentGetListResponseDto = commentMapper.dtoToCommentGetListResponseDto(postId, commentGetCommentInfoDto);
 
         return ResponseDto.builder()
                 .statusCode(GET_LIST_POST_COMMENT.getHttpStatus().value())
