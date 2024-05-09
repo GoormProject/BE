@@ -310,7 +310,7 @@ public class CommentServiceImpl implements CommentService {
             Set<CommentTagEntity> commentTagEntities = commentTagRepository.findAllByComment(replyComment);
             Set<CommentUserTagInfoDto> commentUserTagInfoDtos = commentTagEntities.stream().map(commentTagEntity -> commentTagMapper.entityToCommentUserInfoDto(commentTagEntity.getUser())).collect(Collectors.toSet());
 
-            CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(commentEntity.getUser(), replyComment, commentUserTagInfoDtos);
+            CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(replyComment.getUser(), replyComment, commentUserTagInfoDtos);
             commentCreateCommentInfoDtos.add(commentCreateCommentInfoDto);
 
         }
