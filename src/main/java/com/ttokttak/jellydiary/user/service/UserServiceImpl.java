@@ -3,7 +3,10 @@ package com.ttokttak.jellydiary.user.service;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
+import com.ttokttak.jellydiary.user.dto.UserNameCheckRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserProfileDto;
+import com.ttokttak.jellydiary.user.dto.UserProfileUpdateRequestDto;
+import com.ttokttak.jellydiary.user.dto.UserProfileUpdateResponseDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.entity.UserStateEnum;
@@ -11,8 +14,11 @@ import com.ttokttak.jellydiary.user.mapper.UserMapper;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.S3Uploader;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -88,6 +94,18 @@ public class UserServiceImpl implements UserService {
         return ResponseDto.builder()
                 .statusCode(UPDATE_USER_PROFILE_IMAGE_SUCCESS.getHttpStatus().value())
                 .message(UPDATE_USER_PROFILE_IMAGE_SUCCESS.getDetail())
+                .build();
+    }
+
+    @Override
+    public ResponseDto<?> checkUserName(CustomOAuth2User customOAuth2User, UserNameCheckRequestDto userNameCheckRequestDto) {
+        if (userRepository.existsByUserName(userNameCheckRequestDto.getUserName())) {
+            throw new CustomException(DUPLICATE_USER_NAME);
+        }
+
+        return ResponseDto.builder()
+                .statusCode(USER_NAME_CHECK_SUCCESS.getHttpStatus().value())
+                .message(USER_NAME_CHECK_SUCCESS.getDetail())
                 .build();
     }
 }
