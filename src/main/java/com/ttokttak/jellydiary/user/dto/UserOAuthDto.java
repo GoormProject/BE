@@ -1,6 +1,6 @@
 package com.ttokttak.jellydiary.user.dto;
 
-import com.ttokttak.jellydiary.user.entity.UserEntity;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -9,12 +9,7 @@ public class UserOAuthDto {
     private String userName;
     private String authority;
 
-    public UserOAuthDto(UserEntity userEntity){
-        this.userId = userEntity.getUserId();
-        this.userName = userEntity.getUserName();
-        this.authority = String.valueOf(userEntity.getAuthority());
-    }
-
+    @Builder
     public UserOAuthDto(Long userId, String userName, String authority){
         this.userId = userId;
         this.userName = userName;

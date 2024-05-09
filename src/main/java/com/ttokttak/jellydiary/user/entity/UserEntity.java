@@ -1,7 +1,6 @@
 package com.ttokttak.jellydiary.user.entity;
 
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
-import com.ttokttak.jellydiary.user.dto.UserCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -63,14 +62,15 @@ public class UserEntity {
         this.notificationSetting = notificationSetting;
     }
 
-    public UserEntity(UserCreateDto userCreateDto) {
-        this.oauthId = userCreateDto.getOauthId();
-        this.providerType = userCreateDto.getProviderType();
-        this.userEmail = userCreateDto.getUserEmail();
-        this.userName = userCreateDto.getUserName();
-        this.authority = userCreateDto.getAuthority();
-        this.userState = userCreateDto.getUserState();
-        this.notificationSetting = userCreateDto.getNotificationSetting();
+    @Builder
+    public UserEntity(String oauthId, ProviderType providerType, String userEmail, String userName, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
+        this.oauthId = oauthId;
+        this.providerType = providerType;
+        this.userEmail = userEmail;
+        this.userName = userName;
+        this.authority = authority;
+        this.userState = userState;
+        this.notificationSetting = notificationSetting;
     }
 
     public void uploadProfileImg(String profileImg) {
