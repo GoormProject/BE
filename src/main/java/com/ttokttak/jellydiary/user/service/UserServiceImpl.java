@@ -3,10 +3,7 @@ package com.ttokttak.jellydiary.user.service;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
-import com.ttokttak.jellydiary.user.dto.UserNameCheckRequestDto;
-import com.ttokttak.jellydiary.user.dto.UserProfileDto;
-import com.ttokttak.jellydiary.user.dto.UserProfileUpdateRequestDto;
-import com.ttokttak.jellydiary.user.dto.UserProfileUpdateResponseDto;
+import com.ttokttak.jellydiary.user.dto.*;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.entity.UserStateEnum;
@@ -129,6 +126,31 @@ public class UserServiceImpl implements UserService {
                 .statusCode(UPDATE_USER_PROFILE_SUCCESS.getHttpStatus().value())
                 .message(UPDATE_USER_PROFILE_SUCCESS.getDetail())
                 .data(userProfileUpdateResponseDto)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> updateUserNotificationSetting(CustomOAuth2User customOAuth2User, UserNotificationSettingRequestDto userNotificationSettingRequestDto) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (userEntity.getUserState() != UserStateEnum.ACTIVE) {
+            throw new CustomException(USER_ACCOUNT_DISABLED);
+        }
+
+        NotificationSettingEntity notificationSettingEntity = notificationSettingRepository.findById(userEntity.getUserId())
+                .orElseThrow(() -> new CustomException(NOTIFICATION_SETTINGS_NOT_FOUND));
+
+        userEntity.userNotificationSettingUpdate(userNotificationSettingRequestDto.getNotificationSetting());
+        notificationSettingEntity.notificationsSettingUpdate(userNotificationSettingRequestDto.getPostLike(), userNotificationSettingRequestDto.getPostComment(), userNotificationSettingRequestDto.getPostCreated(), userNotificationSettingRequestDto.getCommentTag(), userNotificationSettingRequestDto.getNewFollower(), userNotificationSettingRequestDto.getDm());
+
+        UserNotificationSettingResponseDto userNotificationSettingResponseDto = UserMapper.INSTANCE.entitiytoUserNotificationSettingResponseDto(userEntity, notificationSettingEntity);
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_USER_NOTIFICATION_SETTING_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_USER_NOTIFICATION_SETTING_SUCCESS.getDetail())
+                .data(userNotificationSettingResponseDto)
                 .build();
     }
 }

@@ -51,4 +51,13 @@ public class NotificationSettingEntity {
         this.newFollower = newFollower;
         this.dm = dm;
     }
+
+    public void notificationsSettingUpdate(Boolean postLike, Boolean postComment, Boolean postCreated, Boolean commentTag, Boolean newFollower, Boolean dm) {
+        this.postLike = postLike;
+        this.postComment = postComment;
+        this.postCreated = postCreated;
+        this.commentTag = commentTag;
+        this.newFollower = newFollower;
+        this.dm = dm;
+    }
 }

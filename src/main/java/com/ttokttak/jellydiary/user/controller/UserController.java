@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.user.controller;
 
 import com.ttokttak.jellydiary.user.dto.UserNameCheckRequestDto;
+import com.ttokttak.jellydiary.user.dto.UserNotificationSettingRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.service.UserService;
@@ -41,5 +42,11 @@ public class UserController {
     @PatchMapping("/profile")
     public ResponseEntity<ResponseDto<?>> updateUserProfile(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody @Valid UserProfileUpdateRequestDto userProfileUpdateRequestDto) {
         return ResponseEntity.ok(userService.updateUserProfile(customOAuth2User, userProfileUpdateRequestDto));
+    }
+
+    @Operation(summary = "유저 알림 수신 설정", description = "[유저 알림 수신 설정] api")
+    @PatchMapping("/profile/notifications")
+    public ResponseEntity<ResponseDto<?>> updateUserNotificationSetting(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody @Valid UserNotificationSettingRequestDto userNotificationSettingRequestDto) {
+        return ResponseEntity.ok(userService.updateUserNotificationSetting(customOAuth2User, userNotificationSettingRequestDto));
     }
 }
