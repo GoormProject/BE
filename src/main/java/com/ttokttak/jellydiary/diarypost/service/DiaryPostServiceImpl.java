@@ -272,7 +272,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         Long countPostLike = postLikeRepository.countByDiaryPost(diaryPostEntity);
 
         //해당 게시물에 달린 댓글 수를 댓글 테이블에서 조회
-        Long commentCount = commentRepository.countByDiaryPostAndIsDeleted(diaryPostEntity, false);
+        Long commentCount = commentRepository.countByDiaryPost(diaryPostEntity);
 
         List<DiaryPostImgEntity> diaryPostImgEntityList = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = diaryPostImgEntityList.stream().map(diaryPostImgMapper::entityToDiaryPostImgListResponseDto).toList();
