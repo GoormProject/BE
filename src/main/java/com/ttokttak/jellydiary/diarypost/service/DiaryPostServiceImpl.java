@@ -19,6 +19,7 @@ import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
+import com.ttokttak.jellydiary.util.S3Uploader;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -49,6 +47,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     private final CommentRepository commentRepository;
     private final DiaryPostMapper diaryPostMapper;
     private final DiaryPostImgMapper diaryPostImgMapper;
+    private final S3Uploader s3Uploader;
 
 
     //게시글 생성
@@ -138,6 +137,8 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                         .orElseThrow(() -> new CustomException(IMG_NOT_FOUND));
 
                 // 이미지 삭제
+                String keyToDelete = s3Uploader.extractKeyFromUrl(deleteImage.getImageLink());
+                s3Uploader.deleteObject(keyToDelete);
                 diaryPostImgRepository.deleteById(deleteImage.getPostImgId());
             }
             // 삭제한 이미지 목록에서 제거
@@ -151,6 +152,9 @@ public class DiaryPostServiceImpl implements DiaryPostService {
             diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
         }
 
+        if (newPostImgs.size() + diaryPostImgListResponseDtos.size() > 5) {
+            throw new CustomException(YOU_CAN_ONLY_UPLOAD_UP_TO_5_IMAGES);
+        }
         //새 이미지 추가 및 responseDto로 변환
         List<DiaryPostImgListResponseDto> newDiaryPostImgListResponseDtos = getDiaryPostImgListResponseDtos(newPostImgs, diaryPostEntity);
 
@@ -291,7 +295,9 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
         if (postImgs != null && !postImgs.isEmpty()) {
             for (MultipartFile postImg : postImgs) {
-                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(postImg, diaryPostEntity);
+                String s3Path = "profile/" + UUID.randomUUID();
+                String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
+                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
                 diaryPostImgRepository.save(diaryPostImgEntity);
 
                 DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
