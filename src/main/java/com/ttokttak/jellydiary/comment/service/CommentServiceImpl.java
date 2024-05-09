@@ -124,6 +124,10 @@ public class CommentServiceImpl implements CommentService {
             throw new CustomException(CANNOT_REPLY_COMMENT_TO_REPLIES);
         }
 
+        if (!Objects.equals(diaryPostEntity.getPostId(), commentEntity.getDiaryPost().getPostId())) {
+            throw new CustomException(COMMENT_AND_POST_DO_DOT_MATCH);
+        }
+
         Optional<DiaryUserEntity> dbDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
         DiaryUserEntity diaryUserEntity;
         if (!diaryPostEntity.getIsPublic()) { //게시글이 비공개 게시글인 경우 구독자와 일반 사용자는 해당 게시글에 접근하지 못한다.
@@ -237,6 +241,13 @@ public class CommentServiceImpl implements CommentService {
 
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        if (commentEntity.getParent() != null) { //댓글의 depth는 1개까지이다. parent가 null이면 댓글, null이 아니면 답글이라는 의미로, 답글일 때는 "댓글에만 답글을 작성할 수 있다"는 예외를 발생.
+            throw new CustomException(THE_COMMNET_YOU_REQUESTED_IS_A_REPLY);
+        }
+
+        if (!Objects.equals(diaryPostEntity.getPostId(), commentEntity.getDiaryPost().getPostId())) {
+            throw new CustomException(COMMENT_AND_POST_DO_DOT_MATCH);
+        }
 
         Optional<DiaryUserEntity> dbDiaryUserEntity = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity);
         DiaryUserEntity diaryUserEntity;
@@ -291,26 +302,22 @@ public class CommentServiceImpl implements CommentService {
 
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
-        if (commentEntity.getIsDeleted()) {
-            throw new CustomException(COMMENT_ALREADY_DELETED);
+
+        if (!Objects.equals(diaryPostEntity.getPostId(), commentEntity.getDiaryPost().getPostId())) {
+            throw new CustomException(COMMENT_AND_POST_DO_DOT_MATCH);
         }
 
         if (commentEntity.getUser() != userEntity) {
             throw new CustomException(YOU_DO_NOT_HAVE_PERMISSION_TO_DELETE_COMMENT);
         }
 
-        commentRepository.deleteById(commentEntity.getCommentId());
-
-        //TODO: [작성자: 김주희] response값이 false로 나오는 문제 추후 수정 예정
-//        CommentEntity deletedCommentEntity = commentRepository.findById(commentEntity.getCommentId())
-//                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
-
-        CommentDeleteResponseDto commentDeleteResponseDto = commentMapper.entityToCommentDeleteResponseDto(commentEntity);
+        List<CommentEntity> childComments = commentRepository.findByParent(commentEntity);
+        commentRepository.deleteAll(childComments);
+        commentRepository.delete(commentEntity);
 
         return ResponseDto.builder()
                 .statusCode(DELETE_COMMENT_SUCCESS.getHttpStatus().value())
                 .message(DELETE_COMMENT_SUCCESS.getDetail())
-                .data(commentDeleteResponseDto)
                 .build();
     }
 }

@@ -9,10 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE comment SET is_deleted = true WHERE comment_id = ?")
 @Table(name = "comment")
 public class CommentEntity extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +27,6 @@ public class CommentEntity extends BaseTimeEntity {
     @JoinColumn(name = "parent_Id")
     private CommentEntity parent;
 
-    @Column(nullable = false)
-    private Boolean isDeleted;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -36,13 +35,16 @@ public class CommentEntity extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     private DiaryPostEntity diaryPost;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<CommentTagEntity> commentTag = new ArrayList<>();
+
     @Builder
-    public CommentEntity(Long commentId, String commentContent, CommentEntity parent, Boolean isDeleted, UserEntity user, DiaryPostEntity diaryPost) {
+    public CommentEntity(Long commentId, String commentContent, CommentEntity parent, UserEntity user, DiaryPostEntity diaryPost, List<CommentTagEntity> commentTag) {
         this.commentId = commentId;
         this.commentContent = commentContent;
         this.parent = parent;
-        this.isDeleted = isDeleted;
         this.user = user;
         this.diaryPost = diaryPost;
+        this.commentTag = commentTag;
     }
 }

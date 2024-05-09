@@ -15,4 +15,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
     @Query("SELECT c FROM CommentEntity c LEFT JOIN FETCH c.user LEFT JOIN FETCH c.diaryPost WHERE c.diaryPost = :diaryPost AND c.parent = :parent AND c.parent IS NOT NULL")
     List<CommentEntity> findAllByDiaryPostAndParent(@Param("diaryPost") DiaryPostEntity diaryPost, @Param("parent") CommentEntity parent);
+
+    List<CommentEntity> findByParent(CommentEntity comment);
+
 }
