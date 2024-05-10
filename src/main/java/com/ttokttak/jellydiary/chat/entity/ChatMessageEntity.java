@@ -7,10 +7,11 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "chat_message")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Table(name = "chat_message")
 public class ChatMessageEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
