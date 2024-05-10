@@ -70,6 +70,7 @@ public enum ErrorMsg {
     DUPLICATE_DIARY_USER(CONFLICT,"이미 해당 다이어리에 참여 중인 사용자입니다."),
     ALREADY_SUBSCRIBED_DIARY(CONFLICT,"이미 구독중인 다이어리입니다."),
     ALREADY_SENT_INVITATION(CONFLICT,"이미 초대 요청을 보낸 사용자입니다."),
+    ALREADY_APPROVED_INVITATION_REQUEST(CONFLICT,"이미 초대 요청을 승인한 사용자입니다."),
 
     /* 500 INTERNAL SERVER ERROR : 그 외 서버 에러 (컴파일 관련) */
     S3_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "S3 업로드 중 문제가 발생했습니다."),
