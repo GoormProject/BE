@@ -1,5 +1,9 @@
 package com.ttokttak.jellydiary.diary.service;
 
+import com.ttokttak.jellydiary.chat.entity.ChatRoomEntity;
+import com.ttokttak.jellydiary.chat.entity.ChatUserEntity;
+import com.ttokttak.jellydiary.chat.repository.ChatRoomRepository;
+import com.ttokttak.jellydiary.chat.repository.ChatUserRepository;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
@@ -36,13 +40,15 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
 
     private final DiaryProfileMapper diaryProfileMapper;
 
+    private final ChatRoomRepository chatRoomRepository;
+
+    private final ChatUserRepository chatUserRepository;
+
     @Transactional
     @Override
     public ResponseDto<?> createDiaryProfile(DiaryProfileRequestDto diaryProfileRequestDto, CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
-        //TODO: [작성자 정다운]다이어리 채팅방(chat_room, chat_user) 생성 코드 추가하기
 
         DiaryProfileEntity diaryEntity = diaryProfileMapper.diaryProfileRequestDtoToEntity(diaryProfileRequestDto);
         DiaryProfileEntity savedEntity = diaryProfileRepository.save(diaryEntity);
@@ -54,6 +60,20 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .isInvited(null)
                 .build();
         diaryUserRepository.save(diaryUser);
+        
+        String chatRoomName = "group_" + savedEntity.getDiaryId();
+        ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
+                .chatRoomName(chatRoomName)
+                .build();
+        ChatRoomEntity savedChatRoomEntity = chatRoomRepository.save(chatRoomEntity);
+
+        ChatUserEntity chatUserEntity = ChatUserEntity.builder().
+                chatRoomId(savedChatRoomEntity).
+                userId(userEntity)
+                .build();
+        chatUserRepository.save(chatUserEntity);
+
+        savedEntity.assignChatRoom(chatRoomEntity);
 
         return ResponseDto.builder()
                 .statusCode(CREATE_DIARY_PROFILE_SUCCESS.getHttpStatus().value())
