@@ -1,5 +1,7 @@
 package com.ttokttak.jellydiary.diary.service;
 
+import com.ttokttak.jellydiary.chat.entity.ChatUserEntity;
+import com.ttokttak.jellydiary.chat.repository.ChatUserRepository;
 import com.ttokttak.jellydiary.diary.dto.DiaryUserRequestDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryUserUpdateRoleRequestDto;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
@@ -19,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
@@ -37,6 +38,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     private final UserRepository userRepository;
 
     private final DiaryUserMapper diaryUserMapper;
+
+    private final ChatUserRepository chatUserRepository;
 
     @Override
     public ResponseDto<?> getDiaryParticipantsList(Long diaryId) {
@@ -174,9 +177,20 @@ public class DiaryUserServiceImpl implements DiaryUserService{
             throw new CustomException(NO_PERMISSION_TO_APPROVE_INVITATION);
         }
 
-        if(Boolean.FALSE.equals(diaryUserEntity.getIsInvited())){
-            diaryUserEntity.isInvitedUpdate(true);
-            diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
+        if(Boolean.TRUE.equals(diaryUserEntity.getIsInvited())){
+            throw new CustomException(ALREADY_APPROVED_INVITATION_REQUEST);
+        }
+
+        diaryUserEntity.isInvitedUpdate(true);
+        diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
+
+        if(!chatUserRepository.existsByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity)){
+            ChatUserEntity chatUserEntity = ChatUserEntity.builder()
+                    .chatRoomId(diaryProfileEntity.getChatRoomId())
+                    .userId(loginUserEntity)
+                    .build();
+
+            chatUserRepository.save(chatUserEntity);
         }
 
         return ResponseDto.builder()
