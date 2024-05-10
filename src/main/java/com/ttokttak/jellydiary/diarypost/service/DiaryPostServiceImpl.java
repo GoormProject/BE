@@ -25,6 +25,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -152,7 +153,14 @@ public class DiaryPostServiceImpl implements DiaryPostService {
             diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
         }
 
-        if (newPostImgs.size() + diaryPostImgListResponseDtos.size() > 5) {
+        Long newPostImgsSize;
+        if (CollectionUtils.isEmpty(newPostImgs)) {
+            newPostImgsSize = 0L;
+        } else {
+            newPostImgsSize = Long.valueOf(newPostImgs.size());
+        }
+
+        if (newPostImgsSize + diaryPostImgListResponseDtos.size() > 5) {
             throw new CustomException(YOU_CAN_ONLY_UPLOAD_UP_TO_5_IMAGES);
         }
         //새 이미지 추가 및 responseDto로 변환
