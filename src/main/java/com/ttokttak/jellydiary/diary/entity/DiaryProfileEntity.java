@@ -44,4 +44,8 @@ public class DiaryProfileEntity {
         this.diaryDescription = diaryDescription;
     }
 
+    public void assignChatRoom(ChatRoomEntity chatRoom) {
+        this.chatRoomId = chatRoom;
+    }
+
 }
