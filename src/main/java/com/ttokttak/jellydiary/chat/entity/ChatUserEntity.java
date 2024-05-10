@@ -3,6 +3,7 @@ package com.ttokttak.jellydiary.chat.entity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,9 @@ public class ChatUserEntity {
     @JoinColumn(name = "user_id")
     private UserEntity userId;
 
+    @Builder
+    public ChatUserEntity(ChatRoomEntity chatRoomId, UserEntity userId) {
+        this.chatRoomId = chatRoomId;
+        this.userId = userId;
+    }
 }

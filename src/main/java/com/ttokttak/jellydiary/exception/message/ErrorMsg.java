@@ -18,6 +18,7 @@ public enum ErrorMsg {
     CANNOT_FOLLOW_SELF(BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
     CANNOT_REPLY_COMMENT_TO_REPLIES(BAD_REQUEST, "답글은 댓글에만 달 수 있으며, 답글에는 답글을 작성할 수 없습니다."),
     THE_COMMNET_YOU_REQUESTED_IS_A_REPLY(BAD_REQUEST, "요청하신 댓글은 답글입니다. 답글에는 답글 리스트가 없으므로 다시 요청해주세요."),
+    CANNOT_CHAT_WITH_SELF(BAD_REQUEST, "자기 자신과의 채팅은 불가능합니다."),
 //    INVALID_SEARCH_TERM(BAD_REQUEST, "검색어가 유효하지 않습니다."),
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "인증된 사용자가 아닙니다."),
@@ -37,6 +38,7 @@ public enum ErrorMsg {
     COMMENT_AND_POST_DO_DOT_MATCH(FORBIDDEN, "요청하신 게시물과 요청하신 댓글의 게시물이 일치하지 않습니다."),
     SEARCH_WORD_MUST_NOT_BE_BLANK(FORBIDDEN, "검색어는 공백이 포함될 수 없습니다."),
     YOU_CANNOT_TAG_YOURSELF(FORBIDDEN, "자기 자신은 태그할 수 없습니다."),
+    YOU_ARE_NOT_A_CHAT_ROOM_MEMBER(FORBIDDEN, "채팅방 멤버가 아니므로 채팅에 참여할 수 없습니다."),
     //You cannot tag yourself.
 //    YOU_ARE_NOT_A_MEMBER_OF_THE_PROJECT_TEAM_AND_THEREFORE_CANNOT_PERFORM_THIS_ACTION(FORBIDDEN, "당신은 이 프로젝트 담당하는 팀의 구성원이 아님으로 권한이 없습니다."),
 //    NO_AUTHORITY_TO_UPDATE_PROJECT(FORBIDDEN, " 리더가 아님으로 프로젝트 업데이트 권한이 없습니다."),
