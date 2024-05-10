@@ -3,6 +3,7 @@ package com.ttokttak.jellydiary.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,8 @@ public class ChatRoomEntity {
     @Column(nullable = false)
     private String chatRoomName;
 
+    @Builder
+    public ChatRoomEntity(String chatRoomName) {
+        this.chatRoomName = chatRoomName;
+    }
 }
