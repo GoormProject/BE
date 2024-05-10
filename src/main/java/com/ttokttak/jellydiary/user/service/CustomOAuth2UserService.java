@@ -68,10 +68,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
                         .notificationSetting(true)
                         .build());
 
-        userRepository.save(userEntity);
+        UserEntity saveUserEntity = userRepository.save(userEntity);
 
         // UserEntity를 UserOAuthDto로 변환
-        UserOAuthDto userOAuthDto = UserMapper.INSTANCE.entityToUserOAuthDto(userEntity);
+        UserOAuthDto userOAuthDto = UserMapper.INSTANCE.entityToUserOAuthDto(saveUserEntity);
 
         return new CustomOAuth2User(userOAuthDto);
     }
