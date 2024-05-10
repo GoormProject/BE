@@ -6,10 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "chat_room")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Table(name = "chat_room")
 public class ChatRoomEntity {
 
     @Id
