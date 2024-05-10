@@ -106,7 +106,7 @@ public class DiaryPostEntity extends BaseTimeEntity {
         this.shower = diaryPostCreateRequestDto.getShower();
         this.weight = diaryPostCreateRequestDto.getWeight();
         this.specialNote = diaryPostCreateRequestDto.getSpecialNote();
-        this.weather = WeatherEnum.valueOf(diaryPostCreateRequestDto.getWeather());
+        this.weather = (diaryPostCreateRequestDto.getWeather() == null || diaryPostCreateRequestDto.getWeather().isBlank()) ? null : WeatherEnum.valueOf(diaryPostCreateRequestDto.getWeather());
         this.postContent = diaryPostCreateRequestDto.getPostContent();
         this.isPublic = diaryPostCreateRequestDto.getIsPublic();
     }
