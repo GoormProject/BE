@@ -8,12 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatUserRepository extends JpaRepository<ChatUserEntity, Long> {
 
     @Query("select cu.chatRoomId from ChatUserEntity cu where cu.userId = :loginUser and cu.chatRoomId IN (select chatRoomId from ChatUserEntity where userId = :targetUser)")
     List<ChatRoomEntity> findCommonChatRooms(@Param("loginUser")UserEntity loginUser, @Param("targetUser")UserEntity targetUser);
 
-    boolean existsByChatRoomIdAndUserId(ChatRoomEntity chatRoomEntity, UserEntity userEntity);
+    Optional<ChatUserEntity> findByChatRoomIdAndUserId(ChatRoomEntity chatRoomEntity, UserEntity userEntity);
 
 }

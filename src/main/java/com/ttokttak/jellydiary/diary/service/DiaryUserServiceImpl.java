@@ -184,7 +184,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
         diaryUserEntity.isInvitedUpdate(true);
         diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
 
-        if(!chatUserRepository.existsByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity)){
+        Optional<ChatUserEntity> chatUserEntityOpt = chatUserRepository.findByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity);
+        if(chatUserEntityOpt.isEmpty()){
             ChatUserEntity chatUserEntity = ChatUserEntity.builder()
                     .chatRoomId(diaryProfileEntity.getChatRoomId())
                     .userId(loginUserEntity)
@@ -221,6 +222,11 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                     .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
             if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR))
                 throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        if(diaryUserEntityToDelete.getIsInvited()){
+            Optional<ChatUserEntity> chatUserEntityOpt = chatUserRepository.findByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity);
+            chatUserEntityOpt.ifPresent(chatUserRepository::delete);
         }
 
         diaryUserRepository.delete(diaryUserEntityToDelete);
