@@ -34,6 +34,6 @@ public interface DiaryPostMapper {
 
     @Mapping(target = "postImgs", source = "postImgs")
     @Mapping(target = "diaryId", source = "diaryProfile.diaryId")
-    @Mapping(target = "userId", source = "user.userId")
-    DiaryPostGetOneResponseDto entityToDiaryPostGetOneResponseDto(DiaryPostEntity diaryPost, List<DiaryPostImgListResponseDto> postImgs, DiaryProfileEntity diaryProfile, UserEntity user, Long likeCount, Long commentCount);
+    @Mapping(target = "userId", source = "diaryPost.user.userId")
+    DiaryPostGetOneResponseDto entityToDiaryPostGetOneResponseDto(DiaryPostEntity diaryPost, List<DiaryPostImgListResponseDto> postImgs, DiaryProfileEntity diaryProfile, Long likeCount, Long commentCount);
 }
