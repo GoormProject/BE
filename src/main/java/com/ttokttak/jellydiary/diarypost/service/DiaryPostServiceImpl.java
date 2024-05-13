@@ -287,7 +287,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         List<DiaryPostImgEntity> diaryPostImgEntityList = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = diaryPostImgEntityList.stream().map(diaryPostImgMapper::entityToDiaryPostImgListResponseDto).toList();
 
-        DiaryPostGetOneResponseDto diaryPostGetOneResponseDto = diaryPostMapper.entityToDiaryPostGetOneResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity, countPostLike, commentCount);
+        DiaryPostGetOneResponseDto diaryPostGetOneResponseDto = diaryPostMapper.entityToDiaryPostGetOneResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, countPostLike, commentCount);
 
         return ResponseDto.builder()
                 .statusCode(GET_ONE_POST_SUCCESS.getHttpStatus().value())

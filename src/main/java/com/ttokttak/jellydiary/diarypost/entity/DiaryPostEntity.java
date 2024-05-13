@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE diary_post SET is_deleted = true WHERE post_id = ?")
 @Table(name = "diary_post")
@@ -95,7 +97,7 @@ public class DiaryPostEntity extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void setPostDate(LocalDate postDate) {
-        this.postDate = postDate;
-    }
+//    public void setPostDate(LocalDate postDate) {
+//        this.postDate = postDate;
+//    }
 }
