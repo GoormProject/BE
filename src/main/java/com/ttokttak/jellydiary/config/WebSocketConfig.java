@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.config;
 
-import com.ttokttak.jellydiary.chat.handler.ChatHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
