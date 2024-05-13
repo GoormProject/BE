@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -54,7 +55,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     //게시글 생성
     @Transactional
     @Override
-    public ResponseDto<?> createDiaryPost(Long diaryId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<MultipartFile> postImgs, CustomOAuth2User customOAuth2User) {
+    public ResponseDto<?> createDiaryPost(Long diaryId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<MultipartFile> postImgs, CustomOAuth2User customOAuth2User) throws IOException {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -97,7 +98,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     //게시글 수정
     @Transactional
     @Override
-    public ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User) {
+    public ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User) throws IOException {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -293,18 +294,16 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     }
 
     //새 이미지 추가 후 responseDto를 반환해주는 메서드
-    private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) {
+    private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) throws IOException {
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
-        if (postImgs != null && !postImgs.isEmpty()) {
-            for (MultipartFile postImg : postImgs) {
-                String s3Path = "profile/" + UUID.randomUUID();
-                String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
-                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
-                diaryPostImgRepository.save(diaryPostImgEntity);
+        for (MultipartFile postImg : postImgs) {
+            String s3Path = "profile/" + UUID.randomUUID();
+            String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
+            DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
+            diaryPostImgRepository.save(diaryPostImgEntity);
 
-                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
-                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
-            }
+            DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
+            diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
         }
         return diaryPostImgListResponseDtos;
     }
