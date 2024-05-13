@@ -299,16 +299,17 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     //새 이미지 추가 후 responseDto를 반환해주는 메서드
     private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) {
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
-        for (MultipartFile postImg : postImgs) {
-            String s3Path = "postImgs/" + UUID.randomUUID();
-            String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
-            DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
-            diaryPostImgRepository.save(diaryPostImgEntity);
+        if (postImgs != null) {
+            for (MultipartFile postImg : postImgs) {
+                String s3Path = "postImgs/" + UUID.randomUUID();
+                String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
+                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
+                diaryPostImgRepository.save(diaryPostImgEntity);
 
-            DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
-            diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
+                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+            }
         }
-
 
         return diaryPostImgListResponseDtos;
     }
