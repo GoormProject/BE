@@ -31,4 +31,10 @@ public class ChatMessageEntity {
     @JoinColumn(name = "user_id")
     private UserEntity userId;
 
+    @Builder
+    public ChatMessageEntity(String chat_message, ChatRoomEntity chatRoomId, UserEntity userId) {
+        this.chat_message = chat_message;
+        this.chatRoomId = chatRoomId;
+        this.userId = userId;
+    }
 }

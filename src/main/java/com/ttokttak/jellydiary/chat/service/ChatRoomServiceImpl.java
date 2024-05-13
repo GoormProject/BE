@@ -103,4 +103,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .build();
     }
 
+    @Override
+    public String getDestinationFromChatRoomType(Long chatRoomId) {
+        ChatRoomEntity chatRoomEntity = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
+
+        if(chatRoomEntity.getChatRoomName().startsWith("group_")){
+            return "/topic/group/";
+        }else{
+            return "/queue/private/";
+        }
+    }
+
 }
