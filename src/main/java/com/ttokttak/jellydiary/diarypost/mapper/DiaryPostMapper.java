@@ -4,8 +4,7 @@ import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
 import com.ttokttak.jellydiary.diarypost.dto.*;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
@@ -19,6 +18,10 @@ public interface DiaryPostMapper {
     @Mapping(target = "isDeleted", constant = "false")
     @Mapping(target = "postDate", expression = "java(LocalDate.parse(diaryPostCreateRequestDto.getPostDate(), DateTimeFormatter.ISO_DATE))")
     DiaryPostEntity diaryPostCreateRequestDtoToEntity(DiaryPostCreateRequestDto diaryPostCreateRequestDto, UserEntity user, DiaryProfileEntity diaryProfile);
+
+    @Mapping(target = "postDate", expression = "java(LocalDate.parse(diaryPostCreateRequestDto.getPostDate(), DateTimeFormatter.ISO_DATE))")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void diaryPostUpdateRequestDtoToEntity(DiaryPostCreateRequestDto diaryPostCreateRequestDto, UserEntity user, DiaryProfileEntity diaryProfile, @MappingTarget DiaryPostEntity diaryPost);
 
     @Mapping(target = "postImgs", source = "postImgs")
     @Mapping(target = "diaryId", source = "diaryProfile.diaryId")

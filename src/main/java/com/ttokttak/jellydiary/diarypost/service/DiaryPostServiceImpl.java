@@ -55,7 +55,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     //게시글 생성
     @Transactional
     @Override
-    public ResponseDto<?> createDiaryPost(Long diaryId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<MultipartFile> postImgs, CustomOAuth2User customOAuth2User) throws IOException {
+    public ResponseDto<?> createDiaryPost(Long diaryId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<MultipartFile> postImgs, CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -98,7 +98,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     //게시글 수정
     @Transactional
     @Override
-    public ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User) throws IOException {
+    public ResponseDto<?> updateDiaryPost(Long postId, DiaryPostCreateRequestDto diaryPostCreateRequestDto, List<Long> deleteImageIds, List<MultipartFile> newPostImgs, CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -125,9 +125,9 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         }
 
         //diaryPostEntity에 변경사항 업데이트
-        diaryPostEntity.diaryPostUpdate(diaryPostCreateRequestDto);
+        diaryPostMapper.diaryPostUpdateRequestDtoToEntity(diaryPostCreateRequestDto, userEntity, diaryProfileEntity, diaryPostEntity);
+        diaryPostRepository.save(diaryPostEntity);
 
-        //TODO: [작성자: 김주희] S3 업로드 추가
         List<DiaryPostImgEntity> dbDiaryPostImg = diaryPostImgRepository.findAllByDiaryPostAndIsDeleted(diaryPostEntity, false);
         // 기존 이미지 중 삭제할 이미지 삭제
         if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
@@ -297,18 +297,16 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     }
 
     //새 이미지 추가 후 responseDto를 반환해주는 메서드
-    private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) throws IOException {
+    private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) {
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
-        if (postImgs != null && postImgs.isEmpty()) {
-            for (MultipartFile postImg : postImgs) {
-                String s3Path = "postImgs/" + UUID.randomUUID();
-                String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
-                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
-                diaryPostImgRepository.save(diaryPostImgEntity);
+        for (MultipartFile postImg : postImgs) {
+            String s3Path = "postImgs/" + UUID.randomUUID();
+            String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
+            DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
+            diaryPostImgRepository.save(diaryPostImgEntity);
 
-                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
-                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
-            }
+            DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
+            diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
         }
 
 

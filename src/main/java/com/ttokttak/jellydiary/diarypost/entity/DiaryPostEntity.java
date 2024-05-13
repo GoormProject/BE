@@ -95,19 +95,7 @@ public class DiaryPostEntity extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void diaryPostUpdate(DiaryPostCreateRequestDto diaryPostCreateRequestDto) {
-        this.postTitle = diaryPostCreateRequestDto.getPostTitle();
-        this.postDate = LocalDate.parse(diaryPostCreateRequestDto.getPostDate(), DateTimeFormatter.ISO_DATE);
-        this.meal = diaryPostCreateRequestDto.getMeal();
-        this.snack = diaryPostCreateRequestDto.getSnack();
-        this.water = diaryPostCreateRequestDto.getWater();
-        this.walk = diaryPostCreateRequestDto.getWalk();
-        this.toiletRecord = diaryPostCreateRequestDto.getToiletRecord();
-        this.shower = diaryPostCreateRequestDto.getShower();
-        this.weight = diaryPostCreateRequestDto.getWeight();
-        this.specialNote = diaryPostCreateRequestDto.getSpecialNote();
-        this.weather = (diaryPostCreateRequestDto.getWeather() == null || diaryPostCreateRequestDto.getWeather().isBlank()) ? null : WeatherEnum.valueOf(diaryPostCreateRequestDto.getWeather());
-        this.postContent = diaryPostCreateRequestDto.getPostContent();
-        this.isPublic = diaryPostCreateRequestDto.getIsPublic();
+    public void setPostDate(LocalDate postDate) {
+        this.postDate = postDate;
     }
 }
