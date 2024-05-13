@@ -17,7 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -38,7 +40,7 @@ public class SecurityConfig {
                 public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                     CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://apic.app", "https://jellydiary.life"));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -78,6 +80,8 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http
             .authorizeHttpRequests((auth) -> auth
+                    //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()  // CORS pre-flight 요청 허용
+                    //.requestMatchers("/ws/**").permitAll()  // 웹소켓 경로 허용
                 .requestMatchers("**").permitAll()
                 .anyRequest().authenticated());
 

@@ -8,4 +8,6 @@ public interface ChatRoomService {
 
     ResponseDto<?> getOrCreateChatRoomId(ChatRoomRequestDto chatRoomRequestDto, CustomOAuth2User customOAuth2User);
 
+    String getDestinationFromChatRoomType(Long chatRoomId);
+
 }
