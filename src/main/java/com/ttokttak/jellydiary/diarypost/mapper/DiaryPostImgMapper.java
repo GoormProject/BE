@@ -17,11 +17,9 @@ public interface DiaryPostImgMapper {
     DiaryPostImgMapper INSTANCE = Mappers.getMapper(DiaryPostImgMapper.class);
 
     @Mapping(target = "isDeleted", constant = "false")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     DiaryPostImgEntity diaryPostImgRequestToEntity(String imageLink, DiaryPostEntity diaryPost);
 
     @Mapping(target = "imgId", source = "diaryPostImg.postImgId")
     @Mapping(target = "diaryPostImg", source = "diaryPostImg.imageLink")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     DiaryPostImgListResponseDto entityToDiaryPostImgListResponseDto(DiaryPostImgEntity diaryPostImg);
 }
