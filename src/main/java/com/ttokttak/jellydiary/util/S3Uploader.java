@@ -78,7 +78,7 @@ public class S3Uploader {
 //    }
 
     // 주어진 URL에서 S3의 키 부분만 추출
-    public String extractKeyFromUrl(String url) {
+    public String extractKeyFromUrl(String url)  {
         // URL에서 도메인을 제거하고 첫번째 '/' 이후의 부분을 반환합니다.
         return url.substring(url.indexOf(".com/") + 5);
     }
