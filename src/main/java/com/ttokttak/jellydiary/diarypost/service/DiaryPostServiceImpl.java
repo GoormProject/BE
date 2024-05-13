@@ -154,8 +154,11 @@ public class DiaryPostServiceImpl implements DiaryPostService {
             diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
         }
 
-        if (newPostImgs.size() + diaryPostImgListResponseDtos.size() > 5) {
-            throw new CustomException(YOU_CAN_ONLY_UPLOAD_UP_TO_5_IMAGES);
+        if (newPostImgs != null) {
+            if (newPostImgs.size() + diaryPostImgListResponseDtos.size() > 5) {
+                throw new CustomException(YOU_CAN_ONLY_UPLOAD_UP_TO_5_IMAGES);
+            }
+
         }
         //새 이미지 추가 및 responseDto로 변환
         List<DiaryPostImgListResponseDto> newDiaryPostImgListResponseDtos = getDiaryPostImgListResponseDtos(newPostImgs, diaryPostEntity);
@@ -296,15 +299,19 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     //새 이미지 추가 후 responseDto를 반환해주는 메서드
     private List<DiaryPostImgListResponseDto> getDiaryPostImgListResponseDtos(List<MultipartFile> postImgs, DiaryPostEntity diaryPostEntity) throws IOException {
         List<DiaryPostImgListResponseDto> diaryPostImgListResponseDtos = new ArrayList<>();
-        for (MultipartFile postImg : postImgs) {
-            String s3Path = "profile/" + UUID.randomUUID();
-            String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
-            DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
-            diaryPostImgRepository.save(diaryPostImgEntity);
+        if (postImgs != null && postImgs.isEmpty()) {
+            for (MultipartFile postImg : postImgs) {
+                String s3Path = "postImgs/" + UUID.randomUUID();
+                String newImageUrl = s3Uploader.uploadToS3(postImg, s3Path);
+                DiaryPostImgEntity diaryPostImgEntity = diaryPostImgMapper.diaryPostImgRequestToEntity(newImageUrl, diaryPostEntity);
+                diaryPostImgRepository.save(diaryPostImgEntity);
 
-            DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
-            diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+                DiaryPostImgListResponseDto diaryPostImgListResponseDto = diaryPostImgMapper.entityToDiaryPostImgListResponseDto(diaryPostImgEntity);
+                diaryPostImgListResponseDtos.add(diaryPostImgListResponseDto);
+            }
         }
+
+
         return diaryPostImgListResponseDtos;
     }
 

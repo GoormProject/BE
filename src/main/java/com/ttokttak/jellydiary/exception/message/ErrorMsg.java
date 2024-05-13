@@ -19,6 +19,7 @@ public enum ErrorMsg {
     CANNOT_REPLY_COMMENT_TO_REPLIES(BAD_REQUEST, "답글은 댓글에만 달 수 있으며, 답글에는 답글을 작성할 수 없습니다."),
     THE_COMMNET_YOU_REQUESTED_IS_A_REPLY(BAD_REQUEST, "요청하신 댓글은 답글입니다. 답글에는 답글 리스트가 없으므로 다시 요청해주세요."),
     CANNOT_CHAT_WITH_SELF(BAD_REQUEST, "자기 자신과의 채팅은 불가능합니다."),
+    IMG_IS_NULL(BAD_REQUEST, "이미지가 null입니다."),
 //    INVALID_SEARCH_TERM(BAD_REQUEST, "검색어가 유효하지 않습니다."),
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "인증된 사용자가 아닙니다."),
