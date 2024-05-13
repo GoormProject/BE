@@ -1,9 +1,12 @@
 package com.ttokttak.jellydiary.chat.service;
 
 import com.ttokttak.jellydiary.chat.dto.ChatRoomRequestDto;
+import com.ttokttak.jellydiary.chat.dto.ChatRoomResponseDto;
 import com.ttokttak.jellydiary.chat.dto.ChatRoomTypeEnum;
+import com.ttokttak.jellydiary.chat.entity.ChatMessageEntity;
 import com.ttokttak.jellydiary.chat.entity.ChatRoomEntity;
 import com.ttokttak.jellydiary.chat.entity.ChatUserEntity;
+import com.ttokttak.jellydiary.chat.repository.ChatMessageRepository;
 import com.ttokttak.jellydiary.chat.repository.ChatRoomRepository;
 import com.ttokttak.jellydiary.chat.repository.ChatUserRepository;
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
@@ -19,8 +22,13 @@ import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +50,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatUserRepository chatUserRepository;
 
     private final ChatRoomRepository chatRoomRepository;
+
+    private final ChatMessageRepository chatMessageRepository;
 
     @Override
     @Transactional
@@ -113,6 +123,56 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         }else{
             return "/queue/private/";
         }
+    }
+
+    @Override
+    public ResponseDto<?> getMyChatRoomList(CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
+
+        List<ChatRoomEntity> chatRoomEntities = chatUserRepository.findChatRoomsByUserId(loginUserEntity);
+        for(ChatRoomEntity chatRoomEntity : chatRoomEntities){
+            ChatRoomResponseDto.ChatRoomResponseDtoBuilder chatRoomResponseDtoBuilder = ChatRoomResponseDto.builder();
+
+            Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt").descending());
+            Page<ChatMessageEntity> chatMessageEntityPage = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity, pageable);
+            List<ChatMessageEntity> chatMessageEntities = chatMessageEntityPage.getContent();
+            String messagePreview = "";
+            if (!chatMessageEntities.isEmpty()) {
+                messagePreview = chatMessageEntities.get(0).getChatMessage();
+            } else {
+                messagePreview = "새로운 채팅방이 생성되었습니다. 첫 번째 메시지를 보내보세요.";
+            }
+
+            chatRoomResponseDtoBuilder.chatRoomId(chatRoomEntity.getChatRoomId())
+                    .chatMessagePreview(messagePreview);
+
+            String[] splitRoomName = chatRoomEntity.getChatRoomName().split("_");
+            if(splitRoomName[0].equals("group")){
+                DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(Long.parseLong(splitRoomName[1]))
+                        .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+                chatRoomResponseDtoBuilder.chatRoomName(diaryProfileEntity.getDiaryName())
+                        .chatRoomProfile(diaryProfileEntity.getDiaryProfileImage());
+            }else{
+                Long recipientId = (Long.parseLong(splitRoomName[1]) == loginUserEntity.getUserId()) ? Long.parseLong(splitRoomName[2]) : Long.parseLong(splitRoomName[1]);
+                UserEntity recipientUserEntity = userRepository.findById(recipientId)
+                        .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+                chatRoomResponseDtoBuilder.chatRoomName(recipientUserEntity.getUserName())
+                        .chatRoomProfile(recipientUserEntity.getProfileImg());
+            }
+
+            ChatRoomResponseDto chatRoomResponseDto = chatRoomResponseDtoBuilder.build();
+            chatRoomResponseDtoList.add(chatRoomResponseDto);
+        }
+        return ResponseDto.builder()
+                .statusCode(SEARCH_MY_CHAT_LIST_SUCCESS.getHttpStatus().value())
+                .message(SEARCH_MY_CHAT_LIST_SUCCESS.getDetail())
+                .data(chatRoomResponseDtoList)
+                .build();
     }
 
 }
