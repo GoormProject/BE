@@ -21,4 +21,8 @@ public class ChatRoomResponseDto {
 
     private LocalDateTime createdAt;
 
+    private Long userId;
+
+    private Long diaryId;
+
 }
