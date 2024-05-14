@@ -18,7 +18,7 @@ public class ChatMessageEntity {
     private Long chatMessageId;
 
     @Column(nullable = false)
-    private String chat_message;
+    private String chatMessage;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -32,8 +32,8 @@ public class ChatMessageEntity {
     private UserEntity userId;
 
     @Builder
-    public ChatMessageEntity(String chat_message, ChatRoomEntity chatRoomId, UserEntity userId) {
-        this.chat_message = chat_message;
+    public ChatMessageEntity(String chatMessage, ChatRoomEntity chatRoomId, UserEntity userId) {
+        this.chatMessage = chatMessage;
         this.chatRoomId = chatRoomId;
         this.userId = userId;
     }

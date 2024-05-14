@@ -48,7 +48,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_CHAT_ROOM_MEMBER));
 
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.builder()
-                .chat_message(chatMessageRequestDto.getChatMessage())
+                .chatMessage(chatMessageRequestDto.getChatMessage())
                 .chatRoomId(chatRoomEntity)
                 .userId(loginUserEntity)
                 .build();
@@ -70,7 +70,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_CHAT_ROOM_MEMBER));
 
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.builder()
-                .chat_message(message)
+                .chatMessage(message)
                 .chatRoomId(chatRoomEntity)
                 .userId(loginUserEntity)
                 .build();

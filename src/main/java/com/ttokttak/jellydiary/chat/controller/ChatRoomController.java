@@ -12,15 +12,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/chat/room")
+@RequestMapping("/api/chat")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
     @Operation(summary = "채팅방 아이디 조회 및 생성", description = "[채팅방 아이디 조회 및 생성] api")
-    @PostMapping
+    @PostMapping("/room")
     public ResponseEntity<ResponseDto<?>> getOrCreateChatRoomId(@RequestBody ChatRoomRequestDto chatRoomRequestDto, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(chatRoomService.getOrCreateChatRoomId(chatRoomRequestDto, customOAuth2User));
+    }
+
+    @Operation(summary = "나의 채팅 리스트 조회", description = "[나의 채팅 리스트 조회] api")
+    @GetMapping("/roomList")
+    public ResponseEntity<ResponseDto<?>> getMyChatRoomList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(chatRoomService.getMyChatRoomList(customOAuth2User));
     }
 
 }
