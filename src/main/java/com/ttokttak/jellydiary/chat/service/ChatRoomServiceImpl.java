@@ -160,14 +160,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                         .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
                 chatRoomResponseDtoBuilder.chatRoomName(diaryProfileEntity.getDiaryName())
-                        .chatRoomProfileImg(diaryProfileEntity.getDiaryProfileImage());
+                        .chatRoomProfileImg(diaryProfileEntity.getDiaryProfileImage())
+                        .diaryId(diaryProfileEntity.getDiaryId());
             }else{
                 Long recipientId = (Long.parseLong(splitRoomName[1]) == loginUserEntity.getUserId()) ? Long.parseLong(splitRoomName[2]) : Long.parseLong(splitRoomName[1]);
                 UserEntity recipientUserEntity = userRepository.findById(recipientId)
                         .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
                 chatRoomResponseDtoBuilder.chatRoomName(recipientUserEntity.getUserName())
-                        .chatRoomProfileImg(recipientUserEntity.getProfileImg());
+                        .chatRoomProfileImg(recipientUserEntity.getProfileImg())
+                        .userId(recipientUserEntity.getUserId());
             }
 
             ChatRoomResponseDto chatRoomResponseDto = chatRoomResponseDtoBuilder.build();
