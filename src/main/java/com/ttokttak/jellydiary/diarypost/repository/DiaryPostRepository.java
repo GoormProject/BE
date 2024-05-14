@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface DiaryPostRepository extends JpaRepository<DiaryPostEntity, Long> {
+public interface DiaryPostRepository extends JpaRepository<DiaryPostEntity, Long>, DiaryPostRepositoryCustom {
 
     @Query("SELECT dp FROM DiaryPostEntity dp JOIN FETCH dp.diaryProfile WHERE dp.postId = :postId")
     Optional<DiaryPostEntity> findByIdWithDiaryProfile(@Param("postId") Long postId);
