@@ -21,4 +21,6 @@ public class ChatMessageResponseDto {
 
     private String userName;
 
+    private String userProfileImg;
+
 }
