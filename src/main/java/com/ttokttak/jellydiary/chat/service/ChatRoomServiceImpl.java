@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -126,6 +127,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<?> getMyChatRoomList(CustomOAuth2User customOAuth2User) {
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -140,14 +142,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             Page<ChatMessageEntity> chatMessageEntityPage = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity, pageable);
             List<ChatMessageEntity> chatMessageEntities = chatMessageEntityPage.getContent();
             String messagePreview = "";
+            LocalDateTime createdAt = null;
             if (!chatMessageEntities.isEmpty()) {
                 messagePreview = chatMessageEntities.get(0).getChatMessage();
+                createdAt = chatMessageEntities.get(0).getCreatedAt();
             } else {
                 messagePreview = "새로운 채팅방이 생성되었습니다. 첫 번째 메시지를 보내보세요.";
             }
 
             chatRoomResponseDtoBuilder.chatRoomId(chatRoomEntity.getChatRoomId())
-                    .chatMessagePreview(messagePreview);
+                    .chatMessagePreview(messagePreview)
+                    .createdAt(createdAt);
 
             String[] splitRoomName = chatRoomEntity.getChatRoomName().split("_");
             if(splitRoomName[0].equals("group")){
@@ -155,14 +160,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                         .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
 
                 chatRoomResponseDtoBuilder.chatRoomName(diaryProfileEntity.getDiaryName())
-                        .chatRoomProfile(diaryProfileEntity.getDiaryProfileImage());
+                        .chatRoomProfileImg(diaryProfileEntity.getDiaryProfileImage());
             }else{
                 Long recipientId = (Long.parseLong(splitRoomName[1]) == loginUserEntity.getUserId()) ? Long.parseLong(splitRoomName[2]) : Long.parseLong(splitRoomName[1]);
                 UserEntity recipientUserEntity = userRepository.findById(recipientId)
                         .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
                 chatRoomResponseDtoBuilder.chatRoomName(recipientUserEntity.getUserName())
-                        .chatRoomProfile(recipientUserEntity.getProfileImg());
+                        .chatRoomProfileImg(recipientUserEntity.getProfileImg());
             }
 
             ChatRoomResponseDto chatRoomResponseDto = chatRoomResponseDtoBuilder.build();
