@@ -31,7 +31,7 @@ public class DiaryPostRepositoryCustomImpl implements DiaryPostRepositoryCustom 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<DiaryPostEntity> postOrderByCreatedAtDesc(UserEntity user, Pageable pageable) {
+    public Slice<DiaryPostEntity> postOrderByCreatedAtDesc(UserEntity user, Pageable pageable, Long lastPostId) {
         BooleanExpression condition = diaryPostEntity.isPublic.isTrue();
         condition = condition.or(
                 diaryUserEntity.diaryId.eq(diaryPostEntity.diaryProfile)
@@ -47,7 +47,9 @@ public class DiaryPostRepositoryCustomImpl implements DiaryPostRepositoryCustom 
                 .on(diaryUserEntity.diaryId.eq(diaryPostEntity.diaryProfile)
                         .and(diaryUserEntity.userId.eq(user))
                         .and(diaryUserEntity.diaryRole.ne(DiaryUserRoleEnum.SUBSCRIBE)))
-                .where(condition
+                .where(
+                        ltLastPostId(lastPostId),
+                        condition
                         .and(diaryPostEntity.isDeleted.eq(false)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
@@ -64,4 +66,15 @@ public class DiaryPostRepositoryCustomImpl implements DiaryPostRepositoryCustom 
         }
         return false;
     }
+
+    private BooleanExpression ltLastPostId(Long lastPostId) {
+
+        if (lastPostId == null) {
+            return null;
+        }
+
+        return diaryPostEntity.postId.lt(lastPostId);
+    }
+
+
 }
