@@ -60,13 +60,7 @@ public class SnsServiceImpl implements SnsService {
             snsGetListResponseDtos.add(snsGetListResponseDto);
         }
 
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 클 경우, next = true
-        if (snsGetListResponseDtos.size() > pageable.getPageSize()) {
-            hasNext = true;
-            snsGetListResponseDtos.remove(pageable.getPageSize());
-        }
+        boolean hasNext = diaryPostEntities.hasNext();
 
         SnsGetResponseDto snsGetResponseDto = snsMapper.dtoToSnsGetResponseDto(snsGetListResponseDtos, hasNext);
 
