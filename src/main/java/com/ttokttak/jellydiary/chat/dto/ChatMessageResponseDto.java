@@ -11,12 +11,14 @@ public class ChatMessageResponseDto {
 
     private Long chatMessageId;
 
-    private String chat_message;
+    private String chatMessage;
 
     private LocalDateTime createdAt;
 
     private String chatRoomId;
 
     private String userId;
+
+    private String userName;
 
 }

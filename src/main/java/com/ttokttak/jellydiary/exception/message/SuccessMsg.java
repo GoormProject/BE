@@ -24,6 +24,7 @@ public enum SuccessMsg {
     SEARCH_TARGET_USER_FEED_LIST_SUCCESS(OK, "타켓 유저 피드 리스트 조회 완료"),
     SEARCH_CHAT_ROOM_ID_SUCCESS(OK, "채팅방 아이디 조회 완료"),
     SEARCH_MY_CHAT_LIST_SUCCESS(OK, "나의 채팅 리스트 조회 완료"),
+    SEARCH_CHAT_MESSAGES_SUCCEEDED(OK, "채팅 내역 상세 조회 완료"),
 
     GET_USER_PROFILE_SUCCESS(OK, "유저 프로필 조회 완료"),
     UPDATE_USER_PROFILE_IMAGE_SUCCESS(OK, "유저 프로필 이미지 수정 완료"),
