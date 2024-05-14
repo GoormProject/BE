@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface DiaryPostRepositoryCustom {
-    Slice<DiaryPostEntity> postOrderByCreatedAtDesc(UserEntity user, Pageable pageable);
+    Slice<DiaryPostEntity> postOrderByCreatedAtDesc(UserEntity user, Pageable pageable, Long lastPostId);
 }

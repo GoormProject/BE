@@ -8,7 +8,8 @@ import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
 import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
-import com.ttokttak.jellydiary.sns.SnsMapper;
+import com.ttokttak.jellydiary.sns.dto.SnsGetResponseDto;
+import com.ttokttak.jellydiary.sns.mapper.SnsMapper;
 import com.ttokttak.jellydiary.sns.dto.SnsGetListResponseDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
@@ -31,7 +32,6 @@ import static com.ttokttak.jellydiary.exception.message.SuccessMsg.GET_SNS_LIST_
 @RequiredArgsConstructor
 public class SnsServiceImpl implements SnsService {
     private final UserRepository userRepository;
-    private final DiaryProfileRepository diaryProfileRepository;
     private final DiaryPostRepository diaryPostRepository;
     private final DiaryPostImgRepository diaryPostImgRepository;
     private final PostLikeRepository postLikeRepository;
@@ -43,7 +43,7 @@ public class SnsServiceImpl implements SnsService {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        Slice<DiaryPostEntity> diaryPostEntities = diaryPostRepository.postOrderByCreatedAtDesc(userEntity, pageable);
+        Slice<DiaryPostEntity> diaryPostEntities = diaryPostRepository.postOrderByCreatedAtDesc(userEntity, pageable, lastPostId);
 
         List<SnsGetListResponseDto> snsGetListResponseDtos = new ArrayList<>();
         for (DiaryPostEntity diaryPostEntity : diaryPostEntities) {
@@ -60,10 +60,20 @@ public class SnsServiceImpl implements SnsService {
             snsGetListResponseDtos.add(snsGetListResponseDto);
         }
 
+        boolean hasNext = false;
+
+        // 조회한 결과 개수가 요청한 페이지 사이즈보다 클 경우, next = true
+        if (snsGetListResponseDtos.size() > pageable.getPageSize()) {
+            hasNext = true;
+            snsGetListResponseDtos.remove(pageable.getPageSize());
+        }
+
+        SnsGetResponseDto snsGetResponseDto = snsMapper.dtoToSnsGetResponseDto(snsGetListResponseDtos, hasNext);
+
         return ResponseDto.builder()
                 .statusCode(GET_SNS_LIST_SUCCESS.getHttpStatus().value())
-                .data(GET_SNS_LIST_SUCCESS.getDetail())
-                .data(snsGetListResponseDtos)
+                .message(GET_SNS_LIST_SUCCESS.getDetail())
+                .data(snsGetResponseDto)
                 .build();
     }
 }
