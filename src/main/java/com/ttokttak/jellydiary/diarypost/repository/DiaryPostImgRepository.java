@@ -15,5 +15,7 @@ public interface DiaryPostImgRepository extends JpaRepository<DiaryPostImgEntity
     @Query("select d from DiaryPostImgEntity d where d.diaryPost = :diaryPost and d.isDeleted = :isDeleted order by d.postImgId asc")
     List<DiaryPostImgEntity> findByDiaryPostAndIsDeletedOrderByPostImgIdAsc(@Param("diaryPost") DiaryPostEntity diaryPost, @Param("isDeleted") Boolean isDeleted);
 
+    @Query("select d from DiaryPostImgEntity d where d.diaryPost = :diaryPost and d.isDeleted = :isDeleted order by d.postImgId asc")
+    DiaryPostImgEntity findFirstByDiaryPostAndIsDeleted(@Param("diaryPost") DiaryPostEntity diaryPost, @Param("isDeleted") Boolean isDeleted);
 }
 

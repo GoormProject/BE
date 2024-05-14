@@ -52,6 +52,7 @@ public enum SuccessMsg {
     GET_LIKE_POST_SUCCESS(OK, "게시물 좋아요 상태 조회 완료"),
     DELETE_LIKE_POST_SUCCESS(OK, "게시물 좋아요 취소 완료"),
     SEARCH_USER_SUCCESS(OK, "사용자 검색 성공"),
+    GET_SNS_LIST_SUCCESS(OK, "sns 게시물 리스트 조회 성공"),
 
 
     /* 201 CREATED : 생성 */

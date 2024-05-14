@@ -20,7 +20,7 @@ public class SnsController {
     private final SnsService snsService;
 
     @Operation(summary = "SNS 게시물 리스트 조회", description = "[SNS 게시물 리스트 조회] api - 1페이지당 10개씩")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ResponseDto<?>> getSnsList(Pageable pageable, @RequestParam(value = "lastPostId", required = false) Long lastPostId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(snsService.getSnsList(pageable, lastPostId, customOAuth2User));
     }

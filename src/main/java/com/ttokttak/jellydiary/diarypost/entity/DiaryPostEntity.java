@@ -96,8 +96,4 @@ public class DiaryPostEntity extends BaseTimeEntity {
         this.diaryProfile = diaryProfile;
         this.user = user;
     }
-
-//    public void setPostDate(LocalDate postDate) {
-//        this.postDate = postDate;
-//    }
 }
