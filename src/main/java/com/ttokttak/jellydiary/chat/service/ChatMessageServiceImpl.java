@@ -13,12 +13,21 @@ import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
+import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
 
 @Service
 @RequiredArgsConstructor
@@ -77,5 +86,30 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         ChatMessageEntity savedChatMessageEntity = chatMessageRepository.save(chatMessageEntity);
 
         return chatMessageMapper.entityToChatMessageResponseDto(savedChatMessageEntity);
+    }
+
+    @Override
+    public ResponseDto<?> getMessagesByChatRoomId(Long chatRoomId, CustomOAuth2User customOAuth2User) {
+        UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        ChatRoomEntity chatRoomEntity = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
+
+        chatUserRepository.findByChatRoomIdAndUserId(chatRoomEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_CHAT_ROOM_MEMBER));
+
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("createdAt").descending());
+        Page<ChatMessageEntity> chatMessageEntityPage = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity, pageable);
+
+        List<ChatMessageResponseDto> chatMessageResponseDtoList = chatMessageEntityPage.getContent().stream()
+                .map(chatMessageMapper::entityToChatMessageResponseDto)
+                .collect(Collectors.toList());
+
+        return ResponseDto.builder()
+                .statusCode(SEARCH_CHAT_MESSAGES_SUCCEEDED.getHttpStatus().value())
+                .message(SEARCH_CHAT_MESSAGES_SUCCEEDED.getDetail())
+                .data(chatMessageResponseDtoList)
+                .build();
     }
 }

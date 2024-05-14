@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.chat.controller;
 
 import com.ttokttak.jellydiary.chat.dto.ChatRoomRequestDto;
+import com.ttokttak.jellydiary.chat.service.ChatMessageService;
 import com.ttokttak.jellydiary.chat.service.ChatRoomService;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
@@ -17,6 +18,8 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
+    private final ChatMessageService chatMessageService;
+
     @Operation(summary = "채팅방 아이디 조회 및 생성", description = "[채팅방 아이디 조회 및 생성] api")
     @PostMapping("/room")
     public ResponseEntity<ResponseDto<?>> getOrCreateChatRoomId(@RequestBody ChatRoomRequestDto chatRoomRequestDto, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
@@ -27,6 +30,12 @@ public class ChatRoomController {
     @GetMapping("/roomList")
     public ResponseEntity<ResponseDto<?>> getMyChatRoomList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(chatRoomService.getMyChatRoomList(customOAuth2User));
+    }
+
+    @Operation(summary = "채팅 내역 상세 조회", description = "[채팅 내역 상세 조회] api")
+    @GetMapping("/messages/{chatRoomId}")
+    public ResponseEntity<ResponseDto<?>> getMessagesByChatRoomId(@PathVariable("chatRoomId")Long chatRoomId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(chatMessageService.getMessagesByChatRoomId(chatRoomId, customOAuth2User));
     }
 
 }

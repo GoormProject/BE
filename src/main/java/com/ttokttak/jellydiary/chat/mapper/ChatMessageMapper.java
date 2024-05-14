@@ -12,6 +12,7 @@ public interface ChatMessageMapper {
     ChatMessageMapper INSTANCE = Mappers.getMapper(ChatMessageMapper.class);
     @Mapping(target = "chatRoomId", source = "chatRoomId.chatRoomId")
     @Mapping(target = "userId", source = "userId.userId")
+    @Mapping(target = "userName", source = "userId.userName")
     ChatMessageResponseDto entityToChatMessageResponseDto(ChatMessageEntity entity);
 
 }

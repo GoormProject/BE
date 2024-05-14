@@ -9,5 +9,6 @@ public interface ChatMessageService {
 
     ChatMessageResponseDto createIncompleteChatMessage(Long chatRoomId, ChatMessageRequestDto chatMessageRequestDto);
     ChatMessageResponseDto createChatMessage(Long chatRoomId, String message, CustomOAuth2User customOAuth2User);
+    ResponseDto<?> getMessagesByChatRoomId(Long chatRoomId, CustomOAuth2User customOAuth2User);
 
 }
