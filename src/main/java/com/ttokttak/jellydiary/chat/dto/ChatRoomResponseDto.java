@@ -2,6 +2,8 @@ package com.ttokttak.jellydiary.chat.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -13,8 +15,10 @@ public class ChatRoomResponseDto {
 
     private String chatRoomName;
 
-    private String chatRoomProfile;
+    private String chatRoomProfileImg;
 
     private String chatMessagePreview;
+
+    private LocalDateTime createdAt;
 
 }
