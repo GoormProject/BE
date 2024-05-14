@@ -13,6 +13,7 @@ public interface ChatMessageMapper {
     @Mapping(target = "chatRoomId", source = "chatRoomId.chatRoomId")
     @Mapping(target = "userId", source = "userId.userId")
     @Mapping(target = "userName", source = "userId.userName")
+    @Mapping(target = "userProfileImg", source = "userId.profileImg")
     ChatMessageResponseDto entityToChatMessageResponseDto(ChatMessageEntity entity);
 
 }
