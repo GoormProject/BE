@@ -7,6 +7,8 @@ import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +35,10 @@ public class ChatRoomController {
     }
 
     @Operation(summary = "채팅 내역 상세 조회", description = "[채팅 내역 상세 조회] api")
-    @GetMapping("/messages/{chatRoomId}")
-    public ResponseEntity<ResponseDto<?>> getMessagesByChatRoomId(@PathVariable("chatRoomId")Long chatRoomId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        return ResponseEntity.ok(chatMessageService.getMessagesByChatRoomId(chatRoomId, customOAuth2User));
+    @GetMapping("/messages")
+    public ResponseEntity<ResponseDto<?>> getMessagesByChatRoomId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "30") int size, @RequestParam("chatRoomId")Long chatRoomId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(chatMessageService.getMessagesByChatRoomId(pageable, chatRoomId, customOAuth2User));
     }
 
 }
