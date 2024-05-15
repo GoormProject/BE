@@ -178,9 +178,4 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .build();
     }
 
-    private String saveImg(MultipartFile newProfileImg){
-        String s3Path = "diary_profile/" + UUID.randomUUID();
-        return "";
-    }
-
 }
