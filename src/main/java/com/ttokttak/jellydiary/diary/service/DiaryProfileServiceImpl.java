@@ -16,13 +16,16 @@ import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
+import com.ttokttak.jellydiary.util.S3Uploader;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -44,11 +47,19 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
 
     private final ChatUserRepository chatUserRepository;
 
+    private final S3Uploader s3Uploader;
+
     @Transactional
     @Override
-    public ResponseDto<?> createDiaryProfile(DiaryProfileRequestDto diaryProfileRequestDto, CustomOAuth2User customOAuth2User) {
+    public ResponseDto<?> createDiaryProfile(DiaryProfileRequestDto diaryProfileRequestDto, MultipartFile diaryProfileImage, CustomOAuth2User customOAuth2User) {
         UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if(diaryProfileImage != null && !diaryProfileImage.isEmpty()){
+            String s3Path = "diary_profile/" + UUID.randomUUID();
+            String imageUrl = s3Uploader.uploadToS3(diaryProfileImage, s3Path);
+            diaryProfileRequestDto.setDiaryProfileImage(imageUrl);
+        }
 
         DiaryProfileEntity diaryEntity = diaryProfileMapper.diaryProfileRequestDtoToEntity(diaryProfileRequestDto);
         DiaryProfileEntity savedEntity = diaryProfileRepository.save(diaryEntity);
