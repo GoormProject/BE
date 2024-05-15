@@ -21,7 +21,7 @@ public class DiaryProfileController {
 
     @Operation(summary = "다이어리 생성", description = "[다이어리 생성] api")
     @PostMapping
-    public ResponseEntity<ResponseDto<?>> createDiaryProfile(@RequestPart DiaryProfileRequestDto diaryProfileRequestDto, @RequestPart MultipartFile diaryProfileImage, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    public ResponseEntity<ResponseDto<?>> createDiaryProfile(@RequestPart DiaryProfileRequestDto diaryProfileRequestDto, @RequestPart(required = false) MultipartFile diaryProfileImage, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         return ResponseEntity.ok(diaryProfileService.createDiaryProfile(diaryProfileRequestDto, diaryProfileImage, customOAuth2User));
     }
 
