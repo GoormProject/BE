@@ -178,4 +178,38 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
                 .build();
     }
 
+    @Transactional
+    @Override
+    public ResponseDto<?> updateDiaryProfileImg(Long diaryId, MultipartFile diaryProfileImage, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(diaryId)
+                .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+        DiaryUserEntity byDiaryIdAndUserId = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, userEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+
+        if(!byDiaryIdAndUserId.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+            throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        if(diaryProfileEntity.getDiaryProfileImage() != null){
+            String keyToDelete = s3Uploader.extractKeyFromUrl(diaryProfileEntity.getDiaryProfileImage());
+            s3Uploader.deleteObject(keyToDelete);
+        }
+
+        if(diaryProfileImage != null && !diaryProfileImage.isEmpty()){
+            String s3Path = "diary_profile/" + UUID.randomUUID();
+            String imageUrl = s3Uploader.uploadToS3(diaryProfileImage, s3Path);
+            diaryProfileEntity.diaryProfileImgUpdate(imageUrl);
+        }
+
+        return ResponseDto.builder()
+                .statusCode(UPDATE_DIARY_PROFILE_IMAGE_SUCCESS.getHttpStatus().value())
+                .message(UPDATE_DIARY_PROFILE_IMAGE_SUCCESS.getDetail())
+                .data(diaryProfileMapper.entityToDiaryProfileResponseDto(diaryProfileEntity))
+                .build();
+    }
+
 }

@@ -18,4 +18,5 @@ public interface DiaryProfileService {
 
     ResponseDto<?> deleteDiaryProfile(Long diaryId, CustomOAuth2User customOAuth2User);
 
+    ResponseDto<?> updateDiaryProfileImg(Long diaryId, MultipartFile diaryProfileImage, CustomOAuth2User customOAuth2User);
 }

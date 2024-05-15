@@ -31,6 +31,12 @@ public class DiaryProfileController {
         return ResponseEntity.ok(diaryProfileService.updateDiaryProfile(diaryId, diaryProfileUpdateRequestDto, customOAuth2User));
     }
 
+    @Operation(summary = "다이어리 프로필 이미지 수정", description = "[다이어리 프로필 이미지 수정] api")
+    @PatchMapping("/profile/img/{diaryId}")
+    public ResponseEntity<ResponseDto<?>> updateDiaryProfileImg(@PathVariable("diaryId")Long diaryId, @RequestPart(required = false) MultipartFile diaryProfileImage, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryProfileService.updateDiaryProfileImg(diaryId, diaryProfileImage, customOAuth2User));
+    }
+
     @Operation(summary = "다이어리 프로필 조회", description = "[다이어리 프로필 조회] api")
     @GetMapping("/profile/{diaryId}")
     public ResponseEntity<ResponseDto<?>> getDiaryProfileInfo(@PathVariable("diaryId")Long diaryId) {
