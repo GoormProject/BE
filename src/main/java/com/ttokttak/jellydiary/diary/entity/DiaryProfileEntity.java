@@ -44,6 +44,10 @@ public class DiaryProfileEntity {
         this.diaryDescription = diaryDescription;
     }
 
+    public void diaryProfileImgUpdate(String diaryProfileImage) {
+        this.diaryProfileImage = diaryProfileImage;
+    }
+
     public void assignChatRoom(ChatRoomEntity chatRoom) {
         this.chatRoomId = chatRoom;
     }
