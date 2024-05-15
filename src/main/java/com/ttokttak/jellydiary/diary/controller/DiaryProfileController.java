@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/diary")
@@ -20,8 +21,8 @@ public class DiaryProfileController {
 
     @Operation(summary = "다이어리 생성", description = "[다이어리 생성] api")
     @PostMapping
-    public ResponseEntity<ResponseDto<?>> createDiaryProfile(@RequestBody DiaryProfileRequestDto diaryProfileRequestDto, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-        return ResponseEntity.ok(diaryProfileService.createDiaryProfile(diaryProfileRequestDto, customOAuth2User));
+    public ResponseEntity<ResponseDto<?>> createDiaryProfile(@RequestPart DiaryProfileRequestDto diaryProfileRequestDto, @RequestPart MultipartFile diaryProfileImage, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(diaryProfileService.createDiaryProfile(diaryProfileRequestDto, diaryProfileImage, customOAuth2User));
     }
 
     @Operation(summary = "다이어리 정보 수정", description = "[다이어리 정보 수정] api")

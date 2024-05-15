@@ -4,10 +4,11 @@ import com.ttokttak.jellydiary.diary.dto.DiaryProfileRequestDto;
 import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface DiaryProfileService {
 
-    ResponseDto<?> createDiaryProfile(DiaryProfileRequestDto diaryProfileRequestDto, CustomOAuth2User customOAuth2User );
+    ResponseDto<?> createDiaryProfile(DiaryProfileRequestDto diaryProfileRequestDto, MultipartFile diaryProfileImage, CustomOAuth2User customOAuth2User );
 
     ResponseDto<?> updateDiaryProfile(Long diaryId, DiaryProfileUpdateRequestDto diaryProfileUpdateRequestDto, CustomOAuth2User customOAuth2User);
 
