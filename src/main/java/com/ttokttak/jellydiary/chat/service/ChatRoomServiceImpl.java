@@ -22,10 +22,6 @@ import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -137,16 +133,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         List<ChatRoomEntity> chatRoomEntities = chatUserRepository.findChatRoomsByUserId(loginUserEntity);
         for(ChatRoomEntity chatRoomEntity : chatRoomEntities){
             ChatRoomResponseDto.ChatRoomResponseDtoBuilder chatRoomResponseDtoBuilder = ChatRoomResponseDto.builder();
-
-            Pageable pageable = PageRequest.of(0, 1, Sort.by("createdAt").descending());
-            Page<ChatMessageEntity> chatMessageEntityPage = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity, pageable);
-            List<ChatMessageEntity> chatMessageEntities = chatMessageEntityPage.getContent();
             String messagePreview = "";
             LocalDateTime createdAt = null;
-            if (!chatMessageEntities.isEmpty()) {
-                messagePreview = chatMessageEntities.get(0).getChatMessage();
-                createdAt = chatMessageEntities.get(0).getCreatedAt();
-            } else {
+            ChatMessageEntity top1ByChatRoomEntity = chatMessageRepository.findTop1ByChatRoomIdOrderByCreatedAtDesc(chatRoomEntity);
+            if(top1ByChatRoomEntity != null){
+                messagePreview = top1ByChatRoomEntity.getChatMessage();
+                createdAt = top1ByChatRoomEntity.getCreatedAt();
+            }else {
                 messagePreview = "새로운 채팅방이 생성되었습니다. 첫 번째 메시지를 보내보세요.";
             }
 
