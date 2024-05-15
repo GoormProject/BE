@@ -203,6 +203,8 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
             String s3Path = "diary_profile/" + UUID.randomUUID();
             String imageUrl = s3Uploader.uploadToS3(diaryProfileImage, s3Path);
             diaryProfileEntity.diaryProfileImgUpdate(imageUrl);
+        }else{
+            diaryProfileEntity.diaryProfileImgUpdate(null);
         }
 
         return ResponseDto.builder()
