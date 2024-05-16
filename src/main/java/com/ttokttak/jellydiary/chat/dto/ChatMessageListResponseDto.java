@@ -17,4 +17,6 @@ public class ChatMessageListResponseDto {
 
     private boolean hasNext;
 
+    private int page;
+
 }

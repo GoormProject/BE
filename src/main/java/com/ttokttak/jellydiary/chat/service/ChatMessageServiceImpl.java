@@ -107,6 +107,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .chatMessageList(chatMessageResponseDtoList)
                 .hasPrevious(chatMessageEntityPage.hasPrevious())
                 .hasNext(chatMessageEntityPage.hasNext())
+                .page(chatMessageEntityPage.getNumber())
                 .build();
 
         return ResponseDto.builder()
