@@ -3,6 +3,7 @@ package com.ttokttak.jellydiary.jwt;
 import com.ttokttak.jellydiary.user.dto.UserOAuthDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.Authority;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -15,7 +16,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
+import static com.ttokttak.jellydiary.exception.message.ErrorMsg.ACCESS_TOKEN_EXPIRED;
+import static com.ttokttak.jellydiary.exception.message.ErrorMsg.INVALID_ACCESS_TOKEN;
+
+// 로그인 후 요청이 있을 때마다 실행되는 JWT 검증 로직을 포함하고 있는 Spring Security 필터
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
@@ -33,38 +39,35 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
-        String authorization = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("Authorization")) {
-                    authorization = cookie.getValue();
-                }
-            }
+        // 헤더에서 Authorization 헤더를 찾음 (= accessToken)
+        String authorization = request.getHeader("Authorization");
+
+        // Authorization 헤더 검증, 토큰이 없다면 다음 필터로 넘김
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return; // 조건이 해당되면 메소드 종료 (필수)
         }
 
-        // Authorization 헤더 검증
-        if (authorization == null) {
-            System.out.println("token null");
-            filterChain.doFilter(request, response);
+        // Bearer 부분 제거 후 순수 토큰만 획득
+        String token = authorization.split(" ")[1];
 
-            // 조건이 해당되면 메소드 종료 (필수)
+        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+        try {
+            jwtUtil.isExpired(token);
+        } catch (ExpiredJwtException e) {
+            response.setStatus(ACCESS_TOKEN_EXPIRED.getHttpStatus().value());
             return;
         }
 
-        // 토큰
-        String token = authorization;
+        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
+        String category = jwtUtil.getCategory(token);
 
-        if (jwtUtil.isExpired(token)) {
-            System.out.println("token expired");
-            filterChain.doFilter(request, response);
-
-            // 조건이 해당되면 메소드 종료 (필수)
+        if (!category.equals("access")) {
+            response.setStatus(INVALID_ACCESS_TOKEN.getHttpStatus().value());
             return;
         }
 
-        // 토큰에서 username과 role 획득
+        // 토큰에서 userId, userName, authority 획득
         Long userId = jwtUtil.getUserId(token);
         String userName = jwtUtil.getUserName(token);
         String authority = jwtUtil.getAuthority(token);
