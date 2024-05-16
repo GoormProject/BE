@@ -18,7 +18,6 @@ public class ReissueController {
     @Operation(summary = "엑세스 토큰 재발급", description = "[엑세스 토큰 재발급] api")
     @PostMapping("/api/reissue")
     public ResponseEntity<ResponseDto<?>> reissue(HttpServletRequest request, HttpServletResponse response) {
-        ResponseDto<?> result = refreshTokenService.reissue(request, response);
-        return ResponseEntity.status(result.getStatusCode()).body(result);
+        return ResponseEntity.ok(refreshTokenService.reissue(request, response));
     }
 }
