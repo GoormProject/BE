@@ -10,7 +10,9 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ErrorMsg {
     /* 400 BAD_REQUEST : 잘못된 요청 */ //You can only upload up to 5 images.
-
+    REFRESH_TOKEN_NULL(BAD_REQUEST, "Refresh Token이 없습니다."),
+    REFRESH_TOKEN_EXPIRED(BAD_REQUEST, "Refresh Token이 만료되었습니다."),
+    INVALID_REFRESH_TOKEN(BAD_REQUEST, "Refresh Token이 유효하지 않습니다."),
     IMAGE_INVALID(BAD_REQUEST,"이미지가 잘못 되었습니다."),
     YOU_CAN_ONLY_UPLOAD_UP_TO_5_IMAGES(BAD_REQUEST,"게시물 이미지는 5개까지만 업로드 할 수 있습니다."),
     POST_DATE_IS_FROM_THE_PAST_TO_TODAY(BAD_REQUEST, "작성일자는 과거부터 오늘까지만 선택 가능합니다."),
@@ -24,6 +26,8 @@ public enum ErrorMsg {
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "인증된 사용자가 아닙니다."),
     NOT_LOGGED_ID(UNAUTHORIZED, "로그인이 되어있지 않습니다."),
+    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "Access Token이 만료되었습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "Access Token이 유효하지 않습니다."),
 
     /* 403 FORBIDDEN : 권한 없음 */
     USER_ACCOUNT_DISABLED(FORBIDDEN, "사용자의 계정이 비활성화 상태입니다."),
