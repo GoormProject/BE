@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.user.controller;
 
 import com.ttokttak.jellydiary.user.service.RefreshTokenService;
+import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +19,7 @@ public class ReissueController {
 
     @Operation(summary = "엑세스 토큰 재발급", description = "[엑세스 토큰 재발급] api")
     @PostMapping(value = {"/reissue", "/signin"})
-    public ResponseEntity<?> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        return refreshTokenService.reissue(request, response);
+    public ResponseEntity<ResponseDto<?>> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(refreshTokenService.reissue(request, response));
     }
 }
