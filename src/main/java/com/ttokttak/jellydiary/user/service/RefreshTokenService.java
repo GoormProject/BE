@@ -2,8 +2,10 @@ package com.ttokttak.jellydiary.user.service;
 
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.jwt.JWTUtil;
+import com.ttokttak.jellydiary.user.dto.AccessTokenDto;
 import com.ttokttak.jellydiary.user.entity.RefreshTokenEntity;
 import com.ttokttak.jellydiary.user.repository.RefreshTokenRepository;
+import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.TOKEN_REISSUED_SUCCESS;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.UPDATE_USER_PROFILE_SUCCESS;
 
 
 @Service
@@ -26,7 +29,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         // Get refresh token from cookies
         String refresh = null;
         Cookie[] cookies = request.getCookies();
@@ -85,11 +88,15 @@ public class RefreshTokenService {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, expiredRefreshTokenCookie.toString());
 
-        response.setHeader("Authorization", newAccess);
         ResponseCookie refreshTokenCookie = jwtUtil.createCookie("refresh", newRefresh);
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
-        return ResponseEntity.ok(TOKEN_REISSUED_SUCCESS);
+        AccessTokenDto accessTokenDto = new AccessTokenDto(newAccess);
+        return ResponseDto.builder()
+                .statusCode(TOKEN_REISSUED_SUCCESS.getHttpStatus().value())
+                .message(TOKEN_REISSUED_SUCCESS.getDetail())
+                .data(accessTokenDto)
+                .build();
     }
 
     public void addRefreshTokenEntity(Long userId, String userName, String refreshToken) {
