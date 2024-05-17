@@ -4,7 +4,6 @@ import com.ttokttak.jellydiary.jwt.JWTUtil;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.service.RefreshTokenService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,23 +35,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String userName = customUserDetails.getName();
         String authority = customUserDetails.getAuthorities().iterator().next().getAuthority();
 
-        // 토큰 생성
-        String accessToken = jwtUtil.createAccessJwt("access", userId, userName, authority);
+        // 토큰 생성 (중간페이지를 만들어서 그곳으로 리다이렉트후 액세스토큰 발급)
         String refreshToken = jwtUtil.createRefreshJwt("refresh", userId, userName, authority);
 
         // Refresh 토큰 저장
-        refreshTokenService.addRefreshTokenEntity(userName, refreshToken);
+        refreshTokenService.addRefreshTokenEntity(userId, userName, refreshToken);
 
         // 응답 설정 후 클라이언트로 전송
-        response.setHeader("Authorization", accessToken);
         ResponseCookie refreshTokenCookie = jwtUtil.createCookie("refresh", refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-//        response.addCookie(refreshTokenCookie);
-//        response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
         response.setStatus(HttpStatus.OK.value());
         response.sendRedirect(redirectUrl);
-
-        System.out.println("Authorization Header: " + response.getHeader("Authorization"));
-        System.out.println("RefreshToken Cookie: " + refreshTokenCookie.getName() + "=" + refreshTokenCookie.getValue());
     }
 }

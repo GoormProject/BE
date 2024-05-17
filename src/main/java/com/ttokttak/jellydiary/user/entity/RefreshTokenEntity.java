@@ -10,17 +10,23 @@ import org.springframework.data.redis.core.TimeToLive;
 @RedisHash("RefreshToken")
 public class RefreshTokenEntity {
     @Id
-    private String refreshToken;
+    private String id;
 
-    private String username;
+    private Long userId;
+
+    private String userName;
+
+    private String refreshToken;
 
     @TimeToLive
     private Long expiration;
 
     @Builder
-    public RefreshTokenEntity(String refreshToken, String username, Long expiration) {
+    public RefreshTokenEntity(Long userId, String userName, String refreshToken, Long expiration) {
+        this.id = userId + ":" + refreshToken;
+        this.userId = userId;
+        this.userName = userName;
         this.refreshToken = refreshToken;
-        this.username = username;
         this.expiration = expiration;
     }
 }
