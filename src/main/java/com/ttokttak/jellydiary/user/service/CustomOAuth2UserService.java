@@ -32,6 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // loadUser 메소드를 호출하여 인증 서버로부터 액세스 토큰과 사용자 정보를 포함한 OAuth2User 객체를 얻음
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        String refreshToken = (String) userRequest.getAdditionalParameters().get("refresh_token");
 
         // OAuth2 Provider를 식별하기 위하여 registrationId를 획득
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -61,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
                 .orElseGet(() -> UserEntity.builder()
                         .oauthId(oauthId)
                         .providerType(oAuth2Response.getProvider())
-                        .userEmail(oAuth2Response.getEmail())
+                        .providerToken(refreshToken)
                         .userName(userNameWithRandom)
                         .authority(Authority.USER)
                         .userState(UserStateEnum.ACTIVE)
