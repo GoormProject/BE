@@ -16,6 +16,9 @@ import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
 import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.service.NotificationService;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -50,6 +53,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     private final DiaryPostMapper diaryPostMapper;
     private final DiaryPostImgMapper diaryPostImgMapper;
     private final S3Uploader s3Uploader;
+    private final NotificationServiceImpl notificationServiceImpl;
 
 
     //게시글 생성
@@ -88,6 +92,12 @@ public class DiaryPostServiceImpl implements DiaryPostService {
 
         DiaryPostCreateResponseDto diaryPostCreateResponseDto = diaryPostMapper.entityToDiaryPostCreateResponseDto(diaryPostEntity, diaryPostImgListResponseDtos, diaryProfileEntity, userEntity);
 
+        //다이어리 참여자들에게 알림 발송
+        List<DiaryUserEntity> dbDiaryUserEntities = diaryUserRepository.findAllByDiaryIdAndIsInvited(diaryProfileEntity, true);
+        for (DiaryUserEntity dbDiaryUserEntity : dbDiaryUserEntities) {
+            Long receiverId = dbDiaryUserEntity.getUserId().getUserId();
+            notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_JOIN_CREATE_REQUEST, NotificationType.JOIN_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
+        }
         return ResponseDto.builder()
                 .statusCode(CREATE_POST_SUCCESS.getHttpStatus().value())
                 .message(CREATE_POST_SUCCESS.getDetail())

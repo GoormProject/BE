@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "notification_setting")
 public class NotificationSettingEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;  // UserEntity의 ID와 매핑
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -29,7 +30,10 @@ public class NotificationSettingEntity {
     private Boolean postComment;
 
     @Column(nullable = false)
-    private Boolean postCreated;
+    private Boolean post;
+
+    @Column(nullable = false)
+    private Boolean diary;
 
     @Column(nullable = false)
     private Boolean commentTag;
@@ -41,21 +45,22 @@ public class NotificationSettingEntity {
     private Boolean dm;
 
     @Builder
-    public NotificationSettingEntity(UserEntity user, Boolean postLike, Boolean postComment, Boolean postCreated, Boolean commentTag, Boolean newFollower, Boolean dm) {
+    public NotificationSettingEntity(UserEntity user, Boolean postLike, Boolean postComment, Boolean post, Boolean diary, Boolean commentTag, Boolean newFollower, Boolean dm) {
         this.user = user;
-        this.userId = user.getUserId();
         this.postLike = postLike;
         this.postComment = postComment;
-        this.postCreated = postCreated;
+        this.post = post;
+        this.diary = diary;
         this.commentTag = commentTag;
         this.newFollower = newFollower;
         this.dm = dm;
     }
 
-    public void notificationsSettingUpdate(Boolean postLike, Boolean postComment, Boolean postCreated, Boolean commentTag, Boolean newFollower, Boolean dm) {
+    public void notificationsSettingUpdate(Boolean postLike, Boolean postComment, Boolean post, Boolean diary, Boolean commentTag, Boolean newFollower, Boolean dm) {
         this.postLike = postLike;
         this.postComment = postComment;
-        this.postCreated = postCreated;
+        this.post = post;
+        this.diary = diary;
         this.commentTag = commentTag;
         this.newFollower = newFollower;
         this.dm = dm;
