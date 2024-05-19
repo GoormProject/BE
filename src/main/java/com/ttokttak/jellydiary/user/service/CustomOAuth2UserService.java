@@ -52,17 +52,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
         // 리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬
         String oauthId = oAuth2Response.getProvider()+"_"+oAuth2Response.getProviderId();
 
-        // 난수를 사용자 이름에 추가
-        String randomPart = UUID.randomUUID().toString().split("-")[0]; // UUID에서 첫 부분만 사용
-        String userNameWithRandom = oAuth2Response.getName() + "_" + randomPart;
-
         // 사용자 정보를 데이터베이스에서 검색 => 유저가 검색되지 않으면 새로운 유저 정보를 DB에 저장
         UserEntity userEntity = userRepository.findByOauthId(oauthId)
                 .orElseGet(() -> UserEntity.builder()
                         .oauthId(oauthId)
                         .providerType(oAuth2Response.getProvider())
                         .providerToken(null)
-                        .userName(userNameWithRandom)
+                        .userName(userNameWithRandom(oAuth2Response))
                         .authority(Authority.USER)
                         .userState(UserStateEnum.ACTIVE)
                         .notificationSetting(true)
@@ -74,5 +70,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
         UserOAuthDto userOAuthDto = UserMapper.INSTANCE.entityToUserOAuthDto(saveUserEntity);
 
         return new CustomOAuth2User(userOAuthDto);
+    }
+
+    public String userNameWithRandom(OAuth2Response oAuth2Response) {
+        String randomPart = UUID.randomUUID().toString().split("-")[0];
+
+        // 받은 이름에서 유효하지 않은 문자 제거 및 길이 조정 (UUID 8글자 + "_" + 6글자 = 15글자)
+        String name = oAuth2Response.getName().replaceAll("[^가-힣\u3131-\u314E\u314F-\u3163a-zA-Z0-9._]", "").substring(0, Math.min(6, oAuth2Response.getName().length()));
+        String userNameWithRandom = randomPart + "_" + name;
+
+        return userNameWithRandom;
     }
 }
