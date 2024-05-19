@@ -1,10 +1,7 @@
 package com.ttokttak.jellydiary.user.service;
 
 import com.ttokttak.jellydiary.user.dto.UserOAuthDto;
-import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
-import com.ttokttak.jellydiary.user.dto.oauth2.GoogleResponse;
-import com.ttokttak.jellydiary.user.dto.oauth2.NaverResponse;
-import com.ttokttak.jellydiary.user.dto.oauth2.OAuth2Response;
+import com.ttokttak.jellydiary.user.dto.oauth2.*;
 import com.ttokttak.jellydiary.user.entity.Authority;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.entity.UserStateEnum;
@@ -32,7 +29,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // loadUser 메소드를 호출하여 인증 서버로부터 액세스 토큰과 사용자 정보를 포함한 OAuth2User 객체를 얻음
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String refreshToken = (String) userRequest.getAdditionalParameters().get("refresh_token");
+//        String refreshToken = (String) userRequest.getAdditionalParameters().get("refresh_token");
 
         // OAuth2 Provider를 식별하기 위하여 registrationId를 획득
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -41,7 +38,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
 
         // Provider에 맞게 OAuth2Response 객체를 생성
         // => OAuth2Response interface를 이용해 Provider에 맞게 구현클래스를 만들어서 사용
-        if (registrationId.equals("naver")) {
+        if (registrationId.equals("kakao")) {
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+        } else if (registrationId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registrationId.equals("google")) {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
@@ -62,7 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
                 .orElseGet(() -> UserEntity.builder()
                         .oauthId(oauthId)
                         .providerType(oAuth2Response.getProvider())
-                        .providerToken(refreshToken)
+                        .providerToken(null)
                         .userName(userNameWithRandom)
                         .authority(Authority.USER)
                         .userState(UserStateEnum.ACTIVE)
