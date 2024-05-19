@@ -1,8 +1,10 @@
 package com.ttokttak.jellydiary.config;
 
+import com.ttokttak.jellydiary.jwt.CustomLogoutFilter;
 import com.ttokttak.jellydiary.jwt.JWTFilter;
 import com.ttokttak.jellydiary.jwt.JWTUtil;
 import com.ttokttak.jellydiary.user.handler.CustomSuccessHandler;
+import com.ttokttak.jellydiary.user.repository.RefreshTokenRepository;
 import com.ttokttak.jellydiary.user.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -27,6 +30,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -67,6 +71,9 @@ public class SecurityConfig {
         http
 //            .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
             .addFilterAfter(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
+
+        http
+            .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
 
         // oauth2
         http
