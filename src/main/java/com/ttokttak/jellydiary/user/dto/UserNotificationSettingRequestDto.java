@@ -7,7 +7,8 @@ public class UserNotificationSettingRequestDto {
     private Boolean notificationSetting;
     private Boolean postLike;
     private Boolean postComment;
-    private Boolean postCreated;
+    private Boolean post;
+    private Boolean diary;
     private Boolean commentTag;
     private Boolean newFollower;
     private Boolean dm;

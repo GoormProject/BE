@@ -22,4 +22,6 @@ public interface DiaryUserRepository extends JpaRepository<DiaryUserEntity, Long
     @Query("SELECT d FROM DiaryUserEntity d WHERE d.diaryId = :diaryId AND (d.diaryRole != 'SUBSCRIBE' OR (d.diaryRole = 'SUBSCRIBE' AND d.isInvited IS NOT NULL))")
     List<DiaryUserEntity> findByDiaryIdAndValidUsers(@Param("diaryId") DiaryProfileEntity diaryId);
 
+    List<DiaryUserEntity> findAllByDiaryIdAndIsInvited(DiaryProfileEntity diaryProfile, Boolean isInvited);
+
 }
