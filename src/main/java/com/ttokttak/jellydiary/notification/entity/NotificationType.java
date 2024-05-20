@@ -11,6 +11,7 @@ public enum NotificationType {
     JOIN_ACCEPT("님이 @ 회원님의 다이어리 참여 요청을 수락하였습니다.", "다이어리"),
     JOIN_DELETE_REQUEST("님과의 @ 다이어리가 삭제되었습니다.", "다이어리"),
     COMMENT_CREATE_REQUEST("님이 @ 게시물에 댓글을 남겼습니다.", "게시물 댓글"),
+    REPLY_COMMENT_CREATE_REQUEST("님이 @ 회원님의 댓글에 답글을 남겼습니다.", "게시물 댓글"),
     POST_JOIN_CREATE_REQUEST("님과의 @ 다이어리에 새로운 게시물이 생성되었습니다.", "게시물"),
     POST_JOIN_DELETE_REQUEST("님과의 @ 다이어리에 게시물이 삭제되었습니다.", "게시물"),
     COMMENT_MENTION_CREATE_REQUEST("님이 @ 게시물 댓글에 회원님을 언급하셨습니다..", "언급"),

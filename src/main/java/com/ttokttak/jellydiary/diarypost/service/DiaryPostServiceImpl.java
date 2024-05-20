@@ -217,6 +217,13 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         //게시물 softDelete
         diaryPostRepository.deleteById(diaryPostEntity.getPostId());
 
+        //다이어리 참여자들에게 알림 발송
+        List<DiaryUserEntity> dbDiaryUserEntities = diaryUserRepository.findAllByDiaryIdAndIsInvited(diaryProfileEntity, true);
+        for (DiaryUserEntity dbDiaryUserEntity : dbDiaryUserEntities) {
+            Long receiverId = dbDiaryUserEntity.getUserId().getUserId();
+            notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_JOIN_DELETE_REQUEST, NotificationType.POST_JOIN_DELETE_REQUEST.makeContent(userEntity.getUserName()), null);
+        }
+
         return ResponseDto.builder()
                 .statusCode(DELETE_POST_SUCCESS.getHttpStatus().value())
                 .message(DELETE_POST_SUCCESS.getDetail())

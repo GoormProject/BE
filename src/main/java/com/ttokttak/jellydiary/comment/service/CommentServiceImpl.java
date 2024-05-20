@@ -16,6 +16,8 @@ import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.like.dto.PostLikeMapper;
 import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -42,6 +44,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentTagRepository commentTagRepository;
     private final CommentMapper commentMapper;
     private final CommentTagMapper commentTagMapper;
+    private final NotificationServiceImpl notificationServiceImpl;
 
     @Transactional
     @Override
@@ -113,6 +116,17 @@ public class CommentServiceImpl implements CommentService {
 
         CommentCreateCommentInfoDto commentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(userEntity, commentEntity, commentUserTagInfoDtos);
         CommentCreateResponseDto commentCreateResponseDto = commentMapper.dtoToCommentCreateResponseDto(diaryPostEntity.getPostId(), commentCreateCommentInfoDto);
+
+        //게시물 생성자에게 알림 발송
+        Long receiverId = diaryPostEntity.getUser().getUserId();
+        notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.COMMENT_CREATE_REQUEST, NotificationType.COMMENT_CREATE_REQUEST.makeContent(userEntity.getUserName()), commentEntity.getCommentId());
+
+        //태그된 사용자에게 알림 발송
+        Set<CommentTagEntity> dbCommentTagEntities = commentTagRepository.findAllByComment(commentEntity);
+        for (CommentTagEntity dbCommentTagEntity : dbCommentTagEntities) {
+            Long tagReceiverId = dbCommentTagEntity.getUser().getUserId();
+            notificationServiceImpl.send(userEntity.getUserId(), tagReceiverId, NotificationType.COMMENT_MENTION_CREATE_REQUEST, NotificationType.COMMENT_MENTION_CREATE_REQUEST.makeContent(userEntity.getUserName()), commentEntity.getCommentId());
+        }
 
         return ResponseDto.builder()
                 .statusCode(CREATE_COMMENT_SUCCESS.getHttpStatus().value())
@@ -202,6 +216,16 @@ public class CommentServiceImpl implements CommentService {
         CommentCreateCommentInfoDto replyCommentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(userEntity, ReplyCommentEntity, commentUserTagInfoDtos);
         ReplyCommentCreateResponseDto replyCommentCreateResponseDto = commentMapper.dtoToReplyCommentCreateResponseDto(commentId, replyCommentCreateCommentInfoDto);
 
+        //댓글 생성자에게 알림 발송
+        Long receiverId = commentEntity.getUser().getUserId();
+        notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.REPLY_COMMENT_CREATE_REQUEST, NotificationType.REPLY_COMMENT_CREATE_REQUEST.makeContent(userEntity.getUserName()), commentEntity.getCommentId());
+
+        //태그된 사용자에게 알림 발송
+        Set<CommentTagEntity> dbCommentTagEntities = commentTagRepository.findAllByComment(commentEntity);
+        for (CommentTagEntity dbCommentTagEntity : dbCommentTagEntities) {
+            Long tagReceiverId = dbCommentTagEntity.getUser().getUserId();
+            notificationServiceImpl.send(userEntity.getUserId(), tagReceiverId, NotificationType.COMMENT_MENTION_CREATE_REQUEST, NotificationType.COMMENT_MENTION_CREATE_REQUEST.makeContent(userEntity.getUserName()), commentEntity.getCommentId());
+        }
 
         return ResponseDto.builder()
                 .statusCode(REPLY_CREATE_COMMENT_SUCCESS.getHttpStatus().value())
