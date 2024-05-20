@@ -77,10 +77,18 @@ public class NotificationServiceImpl implements NotificationService {
         return emitter;
     }
 
+    @Transactional
     @Override
     public ResponseDto<?> getListNotification(CustomOAuth2User customOAuth2User) {
         Long countNum = countUnReadNotifications(customOAuth2User.getUserId());
         List<NotificationEntity> notificationEntities = notificationRepository.findAllByUserId(customOAuth2User.getUserId());
+
+//        for (NotificationEntity notificationEntity : notificationEntities) {
+//            notificationEntity.read();
+//        }
+
+        notificationEntities
+                .forEach(NotificationEntity::read);
 
         List<NotificationResponseDto> notificationResponseDtos = new ArrayList<>();
         for (NotificationEntity notificationEntity : notificationEntities) {
@@ -88,8 +96,9 @@ public class NotificationServiceImpl implements NotificationService {
             notificationResponseDtos.add(notificationResponseDto);
         }
 
-        notificationEntities.stream()
-                .forEach(notification -> notification.read());
+
+
+
 
         NotificationGetListResponseDto notificationGetListResponseDto = notificationMapper.dtoToNotificationGetListResponseDto(countNum, notificationResponseDtos);
 
@@ -113,17 +122,6 @@ public class NotificationServiceImpl implements NotificationService {
         String eventId = strReceiverId + "_" + System.currentTimeMillis();
         Map<String, SseEmitter> emitters = sseRepository.findAllEmitterStartWithByUserId(strReceiverId);
 
-//        Long user = null;
-//        Long post = null;
-
-//        if(NotificationType.userContent().contains(notificationType)) {
-//            user = returnId;
-//        } else {
-//            post = returnId;
-//        }
-
-//        Long finalPost = post;
-//        Long finalUser = user;
         emitters.forEach(
                 (key, emitter) -> {
                     sseRepository.saveEventCache(key, notification);
