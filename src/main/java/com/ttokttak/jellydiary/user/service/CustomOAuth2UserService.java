@@ -1,5 +1,8 @@
 package com.ttokttak.jellydiary.user.service;
 
+import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
+import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
 import com.ttokttak.jellydiary.user.dto.UserOAuthDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.*;
 import com.ttokttak.jellydiary.user.entity.Authority;
@@ -18,24 +21,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static com.ttokttak.jellydiary.exception.message.ErrorMsg.NOTIFICATION_SETTINGS_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
     private final UserRepository userRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
 
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // loadUser 메소드를 호출하여 인증 서버로부터 액세스 토큰과 사용자 정보를 포함한 OAuth2User 객체를 얻음
         OAuth2User oAuth2User = super.loadUser(userRequest);
-//        String refreshToken = (String) userRequest.getAdditionalParameters().get("refresh_token");
 
         // OAuth2 Provider를 식별하기 위하여 registrationId를 획득
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
         OAuth2Response oAuth2Response;
-
         // Provider에 맞게 OAuth2Response 객체를 생성
         // => OAuth2Response interface를 이용해 Provider에 맞게 구현클래스를 만들어서 사용
         if (registrationId.equals("kakao")) {
@@ -57,7 +61,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
                 .orElseGet(() -> UserEntity.builder()
                         .oauthId(oauthId)
                         .providerType(oAuth2Response.getProvider())
-                        .providerToken(null)
                         .userName(userNameWithRandom(oAuth2Response))
                         .authority(Authority.USER)
                         .userState(UserStateEnum.ACTIVE)
@@ -65,6 +68,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
                         .build());
 
         UserEntity saveUserEntity = userRepository.save(userEntity);
+
+        if(userEntity != null && userEntity.getUserState() != UserStateEnum.ACTIVE) {
+            userEntity.updateUserState(UserStateEnum.ACTIVE, true);
+
+            NotificationSettingEntity notificationSettingEntity = notificationSettingRepository.findById(userEntity.getUserId())
+                    .orElseThrow(() -> new CustomException(NOTIFICATION_SETTINGS_NOT_FOUND));
+            notificationSettingEntity.notificationsSettingUpdate(true, true, true, true, true, true, true);
+        }
 
         // UserEntity를 UserOAuthDto로 변환
         UserOAuthDto userOAuthDto = UserMapper.INSTANCE.entityToUserOAuthDto(saveUserEntity);

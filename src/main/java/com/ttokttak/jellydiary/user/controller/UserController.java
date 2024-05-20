@@ -7,6 +7,8 @@ import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.service.UserService;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +50,11 @@ public class UserController {
     @PatchMapping("/profile/notifications")
     public ResponseEntity<ResponseDto<?>> updateUserNotificationSetting(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody @Valid UserNotificationSettingRequestDto userNotificationSettingRequestDto) {
         return ResponseEntity.ok(userService.updateUserNotificationSetting(customOAuth2User, userNotificationSettingRequestDto));
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "[회원 탈퇴] api")
+    @DeleteMapping("")
+    public ResponseEntity<ResponseDto<?>> deleteUser(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(userService.deleteUser(request, response, customOAuth2User));
     }
 }

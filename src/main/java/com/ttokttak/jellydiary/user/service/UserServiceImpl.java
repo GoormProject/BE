@@ -1,17 +1,26 @@
 package com.ttokttak.jellydiary.user.service;
 
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.jwt.JWTUtil;
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
 import com.ttokttak.jellydiary.user.dto.*;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
+import com.ttokttak.jellydiary.user.entity.RefreshTokenEntity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.entity.UserStateEnum;
 import com.ttokttak.jellydiary.user.mapper.UserMapper;
+import com.ttokttak.jellydiary.user.repository.RefreshTokenRepository;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
 import com.ttokttak.jellydiary.util.S3Uploader;
 import com.ttokttak.jellydiary.util.dto.ResponseDto;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final NotificationSettingRepository notificationSettingRepository;
     private final S3Uploader s3Uploader;
+    private final JWTUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public ResponseDto<?> getUserProflie(CustomOAuth2User customOAuth2User) {
@@ -151,6 +162,83 @@ public class UserServiceImpl implements UserService {
                 .statusCode(UPDATE_USER_NOTIFICATION_SETTING_SUCCESS.getHttpStatus().value())
                 .message(UPDATE_USER_NOTIFICATION_SETTING_SUCCESS.getDetail())
                 .data(userNotificationSettingResponseDto)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<?> deleteUser(HttpServletRequest request, HttpServletResponse response, CustomOAuth2User customOAuth2User) {
+        // Get refresh token from cookies
+        String refresh = null;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refresh")) {
+                refresh = cookie.getValue();
+                break;
+            }
+        }
+
+        // Refresh 토큰이 있는지 확인
+        if (refresh == null) {
+            throw new CustomException(REFRESH_TOKEN_NULL);
+        }
+
+        Long userId = jwtUtil.getUserId(refresh);
+        String category = jwtUtil.getCategory(refresh);
+        String refreshTokenEntityId = userId + ":" + refresh;
+
+        // Refresh 토큰이 만료되었는지 확인(Validate)
+        try {
+            jwtUtil.isExpired(refresh);
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(REFRESH_TOKEN_EXPIRED);
+        }
+
+        // Refresh 토큰의 category가 refresh인지 확인 (발급시 페이로드에 명시) (Verify)
+        if (!category.equals("refresh")) {
+            throw new CustomException(INVALID_REFRESH_TOKEN);
+        }
+
+        // 들어온 Refresh 토큰이 가장 최근에 발급된 토큰인지 확인
+        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findById(refreshTokenEntityId)
+                .orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
+
+        // 쿠키에서 추출한 Refresh 토큰값이 RefreshTokenEntity의 refreshToken값과 같은지 확인
+        if (!refreshTokenEntity.getRefreshToken().equals(refresh)) {
+            throw new CustomException(INVALID_REFRESH_TOKEN);
+        }
+
+        // 로그아웃 진행
+        // Refresh 토큰 DB에서 제거
+        refreshTokenRepository.deleteById(refreshTokenEntityId);
+
+        // 기존 Refresh 토큰의 쿠기 만료
+        ResponseCookie expiredRefreshTokenCookie = ResponseCookie.from("refresh", "")
+                .httpOnly(true)
+//                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, expiredRefreshTokenCookie.toString());
+
+        // 회원탈퇴 진행
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (userEntity.getUserState() != UserStateEnum.ACTIVE) {
+            throw new CustomException(USER_ACCOUNT_DISABLED);
+        }
+
+        userEntity.updateUserState(UserStateEnum.INACTIVE, false);
+
+        NotificationSettingEntity notificationSettingEntity = notificationSettingRepository.findById(userEntity.getUserId())
+                .orElseThrow(() -> new CustomException(NOTIFICATION_SETTINGS_NOT_FOUND));
+
+        notificationSettingEntity.notificationsSettingUpdate(false, false, false, false, false, false, false);
+
+        return ResponseDto.builder()
+                .statusCode(DELETE_USER_SUCCESS.getHttpStatus().value())
+                .message(DELETE_USER_SUCCESS.getDetail())
                 .build();
     }
 }
