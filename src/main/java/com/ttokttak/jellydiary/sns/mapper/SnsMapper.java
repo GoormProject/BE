@@ -22,6 +22,7 @@ public interface SnsMapper {
     @Mapping(target = "postId", source = "diaryPost.postId")
     @Mapping(target = "postImg", source = "diaryPostImg.imageLink")
     @Mapping(target = "diaryId", source = "diaryProfile.diaryId")
+    @Mapping(target = "diaryName", source = "diaryProfile.diaryName")
     @Mapping(target = "diaryProfileImage", source = "diaryProfile.diaryProfileImage")
     SnsGetListResponseDto entityToSnsGetListResponseDto(UserEntity user, DiaryPostEntity diaryPost, DiaryProfileEntity diaryProfile, DiaryPostImgEntity diaryPostImg, boolean isLike);
 
