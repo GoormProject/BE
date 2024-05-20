@@ -22,9 +22,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @Column
-    private String providerToken;
-
     @Column(nullable = false, unique = true)
     private String userName;
 
@@ -49,11 +46,10 @@ public class UserEntity {
     private NotificationSettingEntity notificationSettings;
 
     @Builder
-    public UserEntity(Long userId, String oauthId, ProviderType providerType, String providerToken, String userName, String userDesc, String profileImg, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
+    public UserEntity(Long userId, String oauthId, ProviderType providerType, String userName, String userDesc, String profileImg, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
         this.userId = userId;
         this.oauthId = oauthId;
         this.providerType = providerType;
-        this.providerToken = providerToken;
         this.userName = userName;
         this.userDesc = userDesc;
         this.profileImg = profileImg;
@@ -63,10 +59,9 @@ public class UserEntity {
     }
 
     @Builder
-    public UserEntity(String oauthId, ProviderType providerType, String providerToken, String userName, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
+    public UserEntity(String oauthId, ProviderType providerType, String userName, Authority authority, UserStateEnum userState, Boolean notificationSetting) {
         this.oauthId = oauthId;
         this.providerType = providerType;
-        this.providerToken = providerToken;
         this.userName = userName;
         this.authority = authority;
         this.userState = userState;
@@ -89,6 +84,11 @@ public class UserEntity {
     }
 
     public void userNotificationSettingUpdate(Boolean notificationSetting) {
+        this.notificationSetting = notificationSetting;
+    }
+
+    public void updateUserState(UserStateEnum userState, Boolean notificationSetting) {
+        this.userState = userState;
         this.notificationSetting = notificationSetting;
     }
 }
