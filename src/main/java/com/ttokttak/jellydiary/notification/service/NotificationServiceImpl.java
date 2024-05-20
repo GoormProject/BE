@@ -56,7 +56,6 @@ public class NotificationServiceImpl implements NotificationService {
         emitter.onCompletion(() -> {
             log.info("SSE 연결 Complete");
             sseRepository.deleteById(emitterId);
-//            onClientDisconnect(emitter, "Compeletion");
         });
         //시간이 만료된 경우 자동으로 레포지토리에서 삭제하고 클라이언트에서 재요청을 보낸다.
         emitter.onTimeout(() -> {
@@ -83,10 +82,6 @@ public class NotificationServiceImpl implements NotificationService {
         Long countNum = countUnReadNotifications(customOAuth2User.getUserId());
         List<NotificationEntity> notificationEntities = notificationRepository.findAllByUserId(customOAuth2User.getUserId());
 
-//        for (NotificationEntity notificationEntity : notificationEntities) {
-//            notificationEntity.read();
-//        }
-
         notificationEntities
                 .forEach(NotificationEntity::read);
 
@@ -95,10 +90,6 @@ public class NotificationServiceImpl implements NotificationService {
             NotificationResponseDto notificationResponseDto = notificationMapper.entityToNotificationResponseDto(notificationEntity, notificationEntity.getReturnId());
             notificationResponseDtos.add(notificationResponseDto);
         }
-
-
-
-
 
         NotificationGetListResponseDto notificationGetListResponseDto = notificationMapper.dtoToNotificationGetListResponseDto(countNum, notificationResponseDtos);
 
@@ -125,7 +116,6 @@ public class NotificationServiceImpl implements NotificationService {
         emitters.forEach(
                 (key, emitter) -> {
                     sseRepository.saveEventCache(key, notification);
-//                    sendNotification(emitter, eventId, key, new NotificationResponseDto(notification, NotificationType.getContentType(notification), notification.getContent(), notification.getReceiver().getUserId(), finalUser)
                     sendNotification(emitter, eventId, key, notificationMapper.entityToNotificationResponseDto(notification, returnId));
                 }
         );
