@@ -8,4 +8,6 @@ public interface NotificationService {
     SseEmitter subscribe(CustomOAuth2User customOAuth2User, String lastEventId);
 
     ResponseDto<?> getListNotification(CustomOAuth2User customOAuth2User);
+
+    ResponseDto<?> deleteNotification(Long userId, CustomOAuth2User customOAuth2User);
 }
