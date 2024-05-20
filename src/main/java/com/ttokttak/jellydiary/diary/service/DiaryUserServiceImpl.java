@@ -11,6 +11,8 @@ import com.ttokttak.jellydiary.diary.mapper.DiaryUserMapper;
 import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diary.repository.DiaryUserRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -40,6 +42,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
     private final DiaryUserMapper diaryUserMapper;
 
     private final ChatUserRepository chatUserRepository;
+
+    private final NotificationServiceImpl notificationServiceImpl;
 
     @Override
     public ResponseDto<?> getDiaryParticipantsList(Long diaryId) {
@@ -87,6 +91,10 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 }
                 throw new CustomException(DUPLICATE_DIARY_USER);
             }
+
+            Optional<DiaryUserEntity> diaryCreator = diaryUserRepository.findDiaryCreator(diaryProfileEntity);
+            diaryCreator.ifPresent(entity -> notificationServiceImpl.send(loginUserEntity.getUserId(), entity.getUserId().getUserId(), NotificationType.SUBSCRIBE_ACCEPT, NotificationType.SUBSCRIBE_ACCEPT.makeContent(loginUserEntity.getUserName()), diaryProfileEntity.getDiaryId()));
+
             diaryUserEntityBuilder.isInvited(null)
                     .diaryRole(DiaryUserRoleEnum.SUBSCRIBE);
         }else{ //초대 버튼 클릭
@@ -102,7 +110,9 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                 if(!invitedUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.SUBSCRIBE)){
                     throw new CustomException(DUPLICATE_DIARY_USER);
                 }else{
+                    notificationServiceImpl.send(loginUserEntity.getUserId(), invitedUserEntity.getUserId(), NotificationType.JOIN_REQUEST, NotificationType.JOIN_REQUEST.makeContent(loginUserEntity.getUserName()), diaryProfileEntity.getDiaryId());
                     invitedUserInDiary.isInvitedUpdate(false);
+
                     return ResponseDto.builder()
                             .statusCode(CREATE_DIARY_USER_SUCCESS.getHttpStatus().value())
                             .message(CREATE_DIARY_USER_SUCCESS.getDetail())
@@ -110,6 +120,8 @@ public class DiaryUserServiceImpl implements DiaryUserService{
                             .build();
                 }
             }
+            notificationServiceImpl.send(loginUserEntity.getUserId(), invitedUserEntity.getUserId(), NotificationType.JOIN_REQUEST, NotificationType.JOIN_REQUEST.makeContent(loginUserEntity.getUserName()), diaryProfileEntity.getDiaryId());
+
             diaryUserEntityBuilder.isInvited(false)
                     .diaryRole(DiaryUserRoleEnum.READ);
         }
@@ -184,6 +196,9 @@ public class DiaryUserServiceImpl implements DiaryUserService{
         diaryUserEntity.isInvitedUpdate(true);
         diaryUserEntity.diaryUserRoleUpdate(DiaryUserRoleEnum.READ);
 
+        Optional<DiaryUserEntity> diaryCreator = diaryUserRepository.findDiaryCreator(diaryProfileEntity);
+        diaryCreator.ifPresent(entity -> notificationServiceImpl.send(loginUserEntity.getUserId(), entity.getUserId().getUserId(), NotificationType.JOIN_ACCEPT, NotificationType.JOIN_ACCEPT.makeContent(loginUserEntity.getUserName()), diaryProfileEntity.getDiaryId()));
+
         Optional<ChatUserEntity> chatUserEntityOpt = chatUserRepository.findByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity);
         if(chatUserEntityOpt.isEmpty()){
             ChatUserEntity chatUserEntity = ChatUserEntity.builder()
@@ -214,19 +229,28 @@ public class DiaryUserServiceImpl implements DiaryUserService{
 
         UserEntity loginUserEntity = userRepository.findById(customOAuth2User.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
+                .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
+
         if(diaryUserEntityToDelete.getUserId().getUserId().equals(loginUserEntity.getUserId())){
             if(diaryUserEntityToDelete.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR))
                 throw new CustomException(DIARY_CREATOR_CANNOT_BE_DELETED);
         }else{
-            DiaryUserEntity loginUserInDiary = diaryUserRepository.findByDiaryIdAndUserId(diaryProfileEntity, loginUserEntity)
-                    .orElseThrow(() -> new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR));
             if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR))
                 throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
         }
 
-        if(diaryUserEntityToDelete.getIsInvited()){
-            Optional<ChatUserEntity> chatUserEntityOpt = chatUserRepository.findByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity);
-            chatUserEntityOpt.ifPresent(chatUserRepository::delete);
+        if(diaryUserEntityToDelete.getIsInvited() != null){
+            if(diaryUserEntityToDelete.getIsInvited()){
+                Optional<ChatUserEntity> chatUserEntityOpt = chatUserRepository.findByChatRoomIdAndUserId(diaryProfileEntity.getChatRoomId(), loginUserEntity);
+                chatUserEntityOpt.ifPresent(chatUserRepository::delete);
+            }else{
+                if(!loginUserInDiary.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
+                    Optional<DiaryUserEntity> diaryCreator = diaryUserRepository.findDiaryCreator(diaryProfileEntity);
+                    diaryCreator.ifPresent(entity -> notificationServiceImpl.send(loginUserEntity.getUserId(), entity.getUserId().getUserId(), NotificationType.JOIN_REJECT, NotificationType.JOIN_REJECT.makeContent(loginUserEntity.getUserName()), diaryProfileEntity.getDiaryId()));
+                }
+            }
         }
 
         diaryUserRepository.delete(diaryUserEntityToDelete);

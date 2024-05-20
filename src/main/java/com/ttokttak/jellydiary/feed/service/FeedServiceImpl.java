@@ -13,6 +13,10 @@ import com.ttokttak.jellydiary.feed.mapper.FeedMapper;
 import com.ttokttak.jellydiary.follow.entity.FollowCompositeKey;
 import com.ttokttak.jellydiary.follow.entity.FollowEntity;
 import com.ttokttak.jellydiary.follow.repository.FollowRepository;
+import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
@@ -42,6 +47,10 @@ public class FeedServiceImpl implements FeedService {
     private final DiaryPostRepository diaryPostRepository;
 
     private final DiaryPostImgRepository diaryPostImgRepository;
+
+    private final NotificationServiceImpl notificationServiceImpl;
+
+    private final NotificationSettingRepository notificationSettingRepository;
 
     @Override
     @Transactional
@@ -80,6 +89,18 @@ public class FeedServiceImpl implements FeedService {
 
         if(loginUserEntity.getUserId().equals(targetUserId)){
             throw new CustomException(CANNOT_FOLLOW_SELF);
+        }
+
+        boolean existsByFollowRequestAndFollowResponse = followRepository.existsByFollowRequestAndFollowResponse(loginUserEntity.getUserId(), targetUserId);
+        if(existsByFollowRequestAndFollowResponse){
+            throw new CustomException(ALREADY_FOLLOWED_USER);
+        }
+
+        Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(targetUserEntity);
+        if (notificationSettingEntity.isPresent()) {
+            if (targetUserEntity.getNotificationSetting() && notificationSettingEntity.get().getNewFollower()) {
+                notificationServiceImpl.send(loginUserEntity.getUserId(), targetUserId, NotificationType.FOLLOW_REQUEST, NotificationType.FOLLOW_REQUEST.makeContent(loginUserEntity.getUserName()), loginUserEntity.getUserId());
+            }
         }
 
         FollowEntity followEntity = FollowEntity.builder()

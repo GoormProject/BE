@@ -13,6 +13,8 @@ import com.ttokttak.jellydiary.diary.mapper.DiaryProfileMapper;
 import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diary.repository.DiaryUserRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -48,6 +50,8 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
     private final ChatUserRepository chatUserRepository;
 
     private final S3Uploader s3Uploader;
+
+    private final NotificationServiceImpl notificationServiceImpl;
 
     @Transactional
     @Override
@@ -168,6 +172,11 @@ public class DiaryProfileServiceImpl implements DiaryProfileService{
 
         if(!byDiaryIdAndUserId.getDiaryRole().equals(DiaryUserRoleEnum.CREATOR)){
             throw new CustomException(YOU_ARE_NOT_A_DIARY_CREATOR);
+        }
+
+        List<DiaryUserEntity> allDiaryUsersExceptCreator = diaryUserRepository.findAllDiaryUsersExceptCreator(diaryProfileEntity);
+        for(DiaryUserEntity user : allDiaryUsersExceptCreator){
+            notificationServiceImpl.send(userEntity.getUserId(), user.getUserId().getUserId(), NotificationType.JOIN_DELETE_REQUEST, NotificationType.JOIN_DELETE_REQUEST.makeContent(diaryProfileEntity.getDiaryName()), null);
         }
 
         diaryProfileRepository.delete(diaryProfileEntity);
