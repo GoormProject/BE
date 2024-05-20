@@ -71,7 +71,7 @@ public class UserEntity {
     // 유저 생성 이후 호출되는 콜백 메서드
     @PostPersist
     private void initializeNotificationSettings() {
-        this.notificationSettings = new NotificationSettingEntity(this, true, true, true, true, true, true, true);
+        this.notificationSettings = new NotificationSettingEntity(this, true, true, true, true, true, true, true, true);
     }
     
     public void uploadProfileImg(String profileImg) {

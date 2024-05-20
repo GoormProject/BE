@@ -49,4 +49,8 @@ public class NotificationEntity extends BaseTimeEntity {
         this.senderId = senderId;
         this.receiver = receiver;
     }
+
+    public void read() {
+        this.isRead = true;
+    }
 }

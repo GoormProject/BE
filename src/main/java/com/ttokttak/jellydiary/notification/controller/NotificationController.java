@@ -2,6 +2,7 @@ package com.ttokttak.jellydiary.notification.controller;
 
 import com.ttokttak.jellydiary.notification.service.NotificationService;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
+import com.ttokttak.jellydiary.util.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,12 @@ public class NotificationController {
     public ResponseEntity<SseEmitter> subscribe(@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
                                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
         return ResponseEntity.ok(notificationService.subscribe(customOAuth2User, lastEventId));
+    }
+
+    @Operation(summary = "SSE 세션 연결", description = "[SSE 세션 연결] api")
+    @GetMapping("/notification")
+    public ResponseEntity<ResponseDto<?>> getListNotification(@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        return ResponseEntity.ok(notificationService.getListNotification(customOAuth2User));
     }
 
 

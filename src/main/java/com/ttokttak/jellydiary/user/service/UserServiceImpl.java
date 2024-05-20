@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(NOTIFICATION_SETTINGS_NOT_FOUND));
 
         userEntity.userNotificationSettingUpdate(userNotificationSettingRequestDto.getNotificationSetting());
-        notificationSettingEntity.notificationsSettingUpdate(userNotificationSettingRequestDto.getPostLike(), userNotificationSettingRequestDto.getPostComment(), userNotificationSettingRequestDto.getPost(), userNotificationSettingRequestDto.getDiary(), userNotificationSettingRequestDto.getCommentTag(), userNotificationSettingRequestDto.getNewFollower(), userNotificationSettingRequestDto.getDm());
+        notificationSettingEntity.notificationsSettingUpdate(userNotificationSettingRequestDto.getSubscribe(), userNotificationSettingRequestDto.getPostLike(), userNotificationSettingRequestDto.getPostComment(), userNotificationSettingRequestDto.getPost(), userNotificationSettingRequestDto.getDiary(), userNotificationSettingRequestDto.getCommentTag(), userNotificationSettingRequestDto.getNewFollower(), userNotificationSettingRequestDto.getDm());
 
         UserNotificationSettingResponseDto userNotificationSettingResponseDto = UserMapper.INSTANCE.entitiytoUserNotificationSettingResponseDto(userEntity, notificationSettingEntity);
 
