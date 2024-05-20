@@ -24,4 +24,11 @@ public interface DiaryUserRepository extends JpaRepository<DiaryUserEntity, Long
 
     List<DiaryUserEntity> findAllByDiaryIdAndIsInvited(DiaryProfileEntity diaryProfile, Boolean isInvited);
 
+    @Query("SELECT d FROM DiaryUserEntity d WHERE d.diaryId = :diaryId AND d.diaryRole = 'CREATOR'")
+    Optional<DiaryUserEntity> findDiaryCreator(@Param("diaryId") DiaryProfileEntity diaryId);
+
+    @Query("SELECT DISTINCT d FROM DiaryUserEntity d WHERE d.diaryId = :diaryId AND (d.diaryRole != 'CREATOR' AND (d.isInvited IS NULL OR d.isInvited = true))")
+    List<DiaryUserEntity> findAllDiaryUsersExceptCreator(@Param("diaryId") DiaryProfileEntity diaryProfile);
+
+
 }
