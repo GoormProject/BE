@@ -27,4 +27,6 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.subscribe(customOAuth2User, lastEventId));
     }
 
+
+
 }

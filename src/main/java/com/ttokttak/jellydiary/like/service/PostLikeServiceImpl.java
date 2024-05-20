@@ -10,6 +10,8 @@ import com.ttokttak.jellydiary.like.dto.PostLikeMapper;
 import com.ttokttak.jellydiary.like.entity.PostLikeCompositeKey;
 import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
 import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -31,6 +33,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     private final DiaryPostRepository diaryPostRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostLikeMapper postLikeMapper;
+    private final NotificationServiceImpl notificationServiceImpl;
 
     @Transactional
     @Override
@@ -54,6 +57,10 @@ public class PostLikeServiceImpl implements PostLikeService {
         PostLikeEntity postLikeEntity = postLikeMapper.compositeKeyAndUserAndPostToPostLikeEntity(postLikeCompositeKey, userEntity, diaryPostEntity);
 
         postLikeRepository.save(postLikeEntity);
+
+        //게시물 생성자에게 알림 발송
+        Long receiverId = diaryPostEntity.getUser().getUserId();
+        notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_LIKE_REQUEST, NotificationType.POST_LIKE_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
 
         return ResponseDto.builder()
                 .statusCode(CREATE_LIKE_POST_SUCCESS.getHttpStatus().value())
