@@ -234,7 +234,7 @@ public class UserServiceImpl implements UserService {
         NotificationSettingEntity notificationSettingEntity = notificationSettingRepository.findById(userEntity.getUserId())
                 .orElseThrow(() -> new CustomException(NOTIFICATION_SETTINGS_NOT_FOUND));
 
-        notificationSettingEntity.notificationsSettingUpdate(false, false, false, false, false, false, false);
+        notificationSettingEntity.notificationsSettingUpdate(false, false, false, false, false, false, false, false);
 
         return ResponseDto.builder()
                 .statusCode(DELETE_USER_SUCCESS.getHttpStatus().value())
