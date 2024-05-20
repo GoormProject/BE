@@ -74,7 +74,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
 
             NotificationSettingEntity notificationSettingEntity = notificationSettingRepository.findById(userEntity.getUserId())
                     .orElseThrow(() -> new CustomException(NOTIFICATION_SETTINGS_NOT_FOUND));
-            notificationSettingEntity.notificationsSettingUpdate(true, true, true, true, true, true, true);
+            notificationSettingEntity.notificationsSettingUpdate(true, true, true, true, true, true, true, true);
         }
 
         // UserEntity를 UserOAuthDto로 변환
