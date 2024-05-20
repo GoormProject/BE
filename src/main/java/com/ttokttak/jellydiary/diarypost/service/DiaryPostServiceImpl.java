@@ -16,7 +16,9 @@ import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
 import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
+import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
 import com.ttokttak.jellydiary.notification.service.NotificationService;
 import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
@@ -51,6 +53,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final DiaryPostMapper diaryPostMapper;
+    private final NotificationSettingRepository notificationSettingRepository;
     private final DiaryPostImgMapper diaryPostImgMapper;
     private final S3Uploader s3Uploader;
     private final NotificationServiceImpl notificationServiceImpl;
@@ -95,6 +98,12 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         //다이어리 참여자들에게 알림 발송
         List<DiaryUserEntity> dbDiaryUserEntities = diaryUserRepository.findAllByDiaryIdAndIsInvited(diaryProfileEntity, true);
         for (DiaryUserEntity dbDiaryUserEntity : dbDiaryUserEntities) {
+            Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(dbDiaryUserEntity.getUserId());
+            if (notificationSettingEntity.isPresent()) {
+                if (!dbDiaryUserEntity.getUserId().getNotificationSetting() || !notificationSettingEntity.get().getPost()) {
+                    continue;
+                }
+            }
             Long receiverId = dbDiaryUserEntity.getUserId().getUserId();
             notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_JOIN_CREATE_REQUEST, NotificationType.JOIN_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
         }
@@ -220,6 +229,12 @@ public class DiaryPostServiceImpl implements DiaryPostService {
         //다이어리 참여자들에게 알림 발송
         List<DiaryUserEntity> dbDiaryUserEntities = diaryUserRepository.findAllByDiaryIdAndIsInvited(diaryProfileEntity, true);
         for (DiaryUserEntity dbDiaryUserEntity : dbDiaryUserEntities) {
+            Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(dbDiaryUserEntity.getUserId());
+            if (notificationSettingEntity.isPresent()) {
+                if (!dbDiaryUserEntity.getUserId().getNotificationSetting() || !notificationSettingEntity.get().getPost()) {
+                    continue;
+                }
+            }
             Long receiverId = dbDiaryUserEntity.getUserId().getUserId();
             notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_JOIN_DELETE_REQUEST, NotificationType.POST_JOIN_DELETE_REQUEST.makeContent(userEntity.getUserName()), null);
         }

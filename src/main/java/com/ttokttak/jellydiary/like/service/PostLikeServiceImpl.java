@@ -10,7 +10,9 @@ import com.ttokttak.jellydiary.like.dto.PostLikeMapper;
 import com.ttokttak.jellydiary.like.entity.PostLikeCompositeKey;
 import com.ttokttak.jellydiary.like.entity.PostLikeEntity;
 import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
+import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
 import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
@@ -32,6 +34,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     private final DiaryProfileRepository diaryProfileRepository;
     private final DiaryPostRepository diaryPostRepository;
     private final PostLikeRepository postLikeRepository;
+    private final NotificationSettingRepository notificationSettingRepository;
     private final PostLikeMapper postLikeMapper;
     private final NotificationServiceImpl notificationServiceImpl;
 
@@ -59,8 +62,13 @@ public class PostLikeServiceImpl implements PostLikeService {
         postLikeRepository.save(postLikeEntity);
 
         //게시물 생성자에게 알림 발송
-        Long receiverId = diaryPostEntity.getUser().getUserId();
-        notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_LIKE_REQUEST, NotificationType.POST_LIKE_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
+        Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(diaryPostEntity.getUser());
+        if (notificationSettingEntity.isPresent()) {
+            if (diaryPostEntity.getUser().getNotificationSetting() && notificationSettingEntity.get().getPostLike()) {
+                Long receiverId = diaryPostEntity.getUser().getUserId();
+                notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_LIKE_REQUEST, NotificationType.POST_LIKE_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
+            }
+        }
 
         return ResponseDto.builder()
                 .statusCode(CREATE_LIKE_POST_SUCCESS.getHttpStatus().value())

@@ -24,6 +24,9 @@ public class NotificationSettingEntity {
     private UserEntity user;
 
     @Column(nullable = false)
+    private Boolean subscribe;
+
+    @Column(nullable = false)
     private Boolean postLike;
 
     @Column(nullable = false)
@@ -45,8 +48,9 @@ public class NotificationSettingEntity {
     private Boolean dm;
 
     @Builder
-    public NotificationSettingEntity(UserEntity user, Boolean postLike, Boolean postComment, Boolean post, Boolean diary, Boolean commentTag, Boolean newFollower, Boolean dm) {
+    public NotificationSettingEntity(UserEntity user, Boolean subscribe, Boolean postLike, Boolean postComment, Boolean post, Boolean diary, Boolean commentTag, Boolean newFollower, Boolean dm) {
         this.user = user;
+        this.subscribe = subscribe;
         this.postLike = postLike;
         this.postComment = postComment;
         this.post = post;
@@ -56,7 +60,8 @@ public class NotificationSettingEntity {
         this.dm = dm;
     }
 
-    public void notificationsSettingUpdate(Boolean postLike, Boolean postComment, Boolean post, Boolean diary, Boolean commentTag, Boolean newFollower, Boolean dm) {
+    public void notificationsSettingUpdate(Boolean subscribe, Boolean postLike, Boolean postComment, Boolean post, Boolean diary, Boolean commentTag, Boolean newFollower, Boolean dm) {
+        this.subscribe = subscribe;
         this.postLike = postLike;
         this.postComment = postComment;
         this.post = post;

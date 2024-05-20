@@ -2,6 +2,8 @@ package com.ttokttak.jellydiary.notification.service;
 
 import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
+import com.ttokttak.jellydiary.notification.dto.NotificationGetListResponseDto;
+import com.ttokttak.jellydiary.notification.dto.NotificationResponseDto;
 import com.ttokttak.jellydiary.notification.entity.NotificationEntity;
 import com.ttokttak.jellydiary.notification.entity.NotificationType;
 import com.ttokttak.jellydiary.notification.mapper.NotificationMapper;
@@ -24,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.UNAUTHORIZED_MEMBER;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.NOTIFICATION_LIST_SUCCESS;
 
 @Slf4j
 @Service
@@ -73,6 +76,35 @@ public class NotificationServiceImpl implements NotificationService {
 
         return emitter;
     }
+
+    @Override
+    public ResponseDto<?> getListNotification(CustomOAuth2User customOAuth2User) {
+        Long countNum = countUnReadNotifications(customOAuth2User.getUserId());
+        List<NotificationEntity> notificationEntities = notificationRepository.findAllByUserId(customOAuth2User.getUserId());
+
+        List<NotificationResponseDto> notificationResponseDtos = new ArrayList<>();
+        for (NotificationEntity notificationEntity : notificationEntities) {
+            NotificationResponseDto notificationResponseDto = notificationMapper.entityToNotificationResponseDto(notificationEntity, notificationEntity.getReturnId());
+            notificationResponseDtos.add(notificationResponseDto);
+        }
+
+        notificationEntities.stream()
+                .forEach(notification -> notification.read());
+
+        NotificationGetListResponseDto notificationGetListResponseDto = notificationMapper.dtoToNotificationGetListResponseDto(countNum, notificationResponseDtos);
+
+        return ResponseDto.builder()
+                .statusCode(NOTIFICATION_LIST_SUCCESS.getHttpStatus().value())
+                .message(NOTIFICATION_LIST_SUCCESS.getDetail())
+                .data(notificationGetListResponseDto)
+                .build();
+    }
+
+    //읽지 않은 알림 갯수 Count
+    public Long countUnReadNotifications(Long userId) {
+        return notificationRepository.countUnReadNotifications(userId);
+    }
+
 
     public void send(Long senderId, Long receiverId, NotificationType notificationType, String content, Long returnId) {
         NotificationEntity notification = notificationRepository.save(createNotification(senderId, receiverId, notificationType, content, returnId));
