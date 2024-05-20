@@ -22,7 +22,7 @@ public enum ErrorMsg {
     THE_COMMNET_YOU_REQUESTED_IS_A_REPLY(BAD_REQUEST, "요청하신 댓글은 답글입니다. 답글에는 답글 리스트가 없으므로 다시 요청해주세요."),
     CANNOT_CHAT_WITH_SELF(BAD_REQUEST, "자기 자신과의 채팅은 불가능합니다."),
     IMG_IS_NULL(BAD_REQUEST, "이미지가 null입니다."),
-//    INVALID_SEARCH_TERM(BAD_REQUEST, "검색어가 유효하지 않습니다."),
+    INVALID_USER(BAD_REQUEST, "유효하지 않는 사용자입니다."),
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "인증된 사용자가 아닙니다."),
     NOT_LOGGED_ID(UNAUTHORIZED, "로그인이 되어있지 않습니다."),

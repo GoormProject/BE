@@ -59,6 +59,7 @@ public enum SuccessMsg {
     SEARCH_USER_SUCCESS(OK, "사용자 검색 성공"),
     GET_SNS_LIST_SUCCESS(OK, "sns 게시물 리스트 조회 성공"),
     NOTIFICATION_LIST_SUCCESS(OK, "알림 리스트 조회 성공"),
+    NOTIFICATION_DELETE_SUCCESS(OK, "알림 삭제 완료"),
 
 
     /* 201 CREATED : 생성 */

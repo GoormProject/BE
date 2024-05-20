@@ -2,6 +2,7 @@ package com.ttokttak.jellydiary.notification.service;
 
 import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
+import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.notification.dto.NotificationGetListResponseDto;
 import com.ttokttak.jellydiary.notification.dto.NotificationResponseDto;
 import com.ttokttak.jellydiary.notification.entity.NotificationEntity;
@@ -25,8 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.ttokttak.jellydiary.exception.message.ErrorMsg.INVALID_USER;
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.UNAUTHORIZED_MEMBER;
+import static com.ttokttak.jellydiary.exception.message.SuccessMsg.NOTIFICATION_DELETE_SUCCESS;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.NOTIFICATION_LIST_SUCCESS;
+import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_REQUEST;
 
 @Slf4j
 @Service
@@ -97,6 +101,23 @@ public class NotificationServiceImpl implements NotificationService {
                 .statusCode(NOTIFICATION_LIST_SUCCESS.getHttpStatus().value())
                 .message(NOTIFICATION_LIST_SUCCESS.getDetail())
                 .data(notificationGetListResponseDto)
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public ResponseDto<?> deleteNotification(Long userId, CustomOAuth2User customOAuth2User) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId()).orElseThrow(
+                () -> new CustomException(UNAUTHORIZED_MEMBER)
+        );
+        if(!Objects.equals(userEntity.getUserId(), userId)){
+            throw new CustomException(INVALID_USER);
+        }
+        List<NotificationEntity> notifications = notificationRepository.findAllByUserId(userId);
+        notificationRepository.deleteAll(notifications);
+        return ResponseDto.builder()
+                .statusCode(NOTIFICATION_DELETE_SUCCESS.getHttpStatus().value())
+                .message(NOTIFICATION_DELETE_SUCCESS.getDetail())
                 .build();
     }
 
