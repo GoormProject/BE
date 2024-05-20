@@ -105,7 +105,7 @@ public class DiaryPostServiceImpl implements DiaryPostService {
                 }
             }
             Long receiverId = dbDiaryUserEntity.getUserId().getUserId();
-            notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_JOIN_CREATE_REQUEST, NotificationType.JOIN_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
+            notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.POST_JOIN_CREATE_REQUEST, NotificationType.POST_JOIN_CREATE_REQUEST.makeContent(userEntity.getUserName()), diaryPostEntity.getPostId());
         }
         return ResponseDto.builder()
                 .statusCode(CREATE_POST_SUCCESS.getHttpStatus().value())
