@@ -87,7 +87,7 @@ public class JWTUtil {
 
     public ResponseCookie createCookie(String key, String value) {
         ResponseCookie responseCookie = ResponseCookie.from(key, value)
-                .maxAge(24 * 60 * 60) // 24시간
+                .maxAge(7 * 24 * 60 * 60) // 7일
 //                .secure(true) // https 통신을 진행할 경우 활성화
                 .path("/") // 쿠키가 적용될 범위
                 .httpOnly(true) // 클라이언트단에서 자바스크립트로 해당 쿠키에 접근하지 못하도록 막음
