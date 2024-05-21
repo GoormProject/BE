@@ -2,13 +2,10 @@ package com.ttokttak.jellydiary.chat.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
-@Setter
 @Getter
-@Builder
 public class ChatMessageListResponseDto {
 
     private List<ChatMessageResponseDto> chatMessageList;
@@ -19,4 +16,11 @@ public class ChatMessageListResponseDto {
 
     private int page;
 
+    @Builder
+    public ChatMessageListResponseDto(List<ChatMessageResponseDto> chatMessageList, boolean hasPrevious, boolean hasNext, int page) {
+        this.chatMessageList = chatMessageList;
+        this.hasPrevious = hasPrevious;
+        this.hasNext = hasNext;
+        this.page = page;
+    }
 }
