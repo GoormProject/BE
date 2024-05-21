@@ -1,25 +1,16 @@
 package com.ttokttak.jellydiary.diarypost.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.BooleanPath;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
-import com.ttokttak.jellydiary.diary.entity.DiaryUserEntity;
 import com.ttokttak.jellydiary.diary.entity.DiaryUserRoleEnum;
-import com.ttokttak.jellydiary.diary.repository.DiaryUserRepository;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
-import com.ttokttak.jellydiary.user.entity.QUserEntity;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ttokttak.jellydiary.diary.entity.QDiaryProfileEntity.diaryProfileEntity;
 import static com.ttokttak.jellydiary.diary.entity.QDiaryUserEntity.diaryUserEntity;

@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.user.service;
 
-import com.ttokttak.jellydiary.diary.dto.DiaryProfileUpdateRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserNameCheckRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserNotificationSettingRequestDto;
 import com.ttokttak.jellydiary.user.dto.UserProfileUpdateRequestDto;

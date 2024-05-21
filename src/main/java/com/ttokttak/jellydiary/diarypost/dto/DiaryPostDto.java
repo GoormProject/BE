@@ -3,7 +3,6 @@ package com.ttokttak.jellydiary.diarypost.dto;
 import lombok.Getter;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 public class DiaryPostDto {

@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.diarypost.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

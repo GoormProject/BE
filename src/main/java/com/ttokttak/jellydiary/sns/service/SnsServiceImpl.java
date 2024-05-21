@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.sns.service;
 
-import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostImgEntity;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostImgRepository;
