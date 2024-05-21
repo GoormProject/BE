@@ -82,7 +82,7 @@ public class RefreshTokenService {
         // 기존 Refresh 토큰의 쿠기 만료
         ResponseCookie expiredRefreshTokenCookie = ResponseCookie.from("refresh", "")
                 .httpOnly(true)
-//                .secure(true)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
                 .build();
