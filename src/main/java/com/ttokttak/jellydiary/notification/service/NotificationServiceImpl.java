@@ -1,7 +1,5 @@
 package com.ttokttak.jellydiary.notification.service;
 
-import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
-import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.notification.dto.NotificationGetListResponseDto;
 import com.ttokttak.jellydiary.notification.dto.NotificationResponseDto;
@@ -30,15 +28,12 @@ import static com.ttokttak.jellydiary.exception.message.ErrorMsg.INVALID_USER;
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.UNAUTHORIZED_MEMBER;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.NOTIFICATION_DELETE_SUCCESS;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.NOTIFICATION_LIST_SUCCESS;
-import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_REQUEST;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
     private final UserRepository userRepository;
-    private final DiaryProfileRepository diaryProfileRepository;
-    private final DiaryPostRepository diaryPostRepository;
     private final NotificationMapper notificationMapper;
 
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 20;

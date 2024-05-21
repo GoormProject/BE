@@ -14,8 +14,6 @@ import com.ttokttak.jellydiary.diary.repository.DiaryUserRepository;
 import com.ttokttak.jellydiary.diarypost.entity.DiaryPostEntity;
 import com.ttokttak.jellydiary.diarypost.repository.DiaryPostRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
-import com.ttokttak.jellydiary.like.dto.PostLikeMapper;
-import com.ttokttak.jellydiary.like.repository.PostLikeRepository;
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.entity.NotificationType;
 import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
@@ -30,11 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.*;
-import static com.ttokttak.jellydiary.notification.entity.QNotificationSettingEntity.notificationSettingEntity;
 
 @Service
 @RequiredArgsConstructor

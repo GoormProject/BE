@@ -1,8 +1,5 @@
 package com.ttokttak.jellydiary.notification.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum NotificationType {
     SUBSCRIBE_ACCEPT("님이 @ 구독하기 시작하였습니다.", "구독"),
     POST_LIKE_REQUEST("님이 @ 게시물을 좋아합니다.", "게시물 좋아요"),
@@ -30,39 +27,7 @@ public enum NotificationType {
         return "'" + title + "'" + content;
     }
 
-//    public static List<NotificationType> userContent() {
-//        List<NotificationType> notificationTypes = new ArrayList<>();
-//        notificationTypes.add(FRIEND_ACCEPT);
-//        notificationTypes.add(SUBSCRIBE_ACCEPT);
-//        notificationTypes.add(FRIEND_REQUEST);
-//        return notificationTypes;
-//    }
-
-    public static String contentType(NotificationType notificationType) {
-        if (notificationType.equals(SUBSCRIBE_ACCEPT)) {
-            return "구독";
-        } else if (notificationType.equals(POST_LIKE_REQUEST)) {
-            return "게시물 좋아요";
-        } else if (notificationType.equals(COMMENT_CREATE_REQUEST)) {
-            return "게시물 댓글";
-        } else if (notificationType.equals(COMMENT_MENTION_CREATE_REQUEST)) {
-            return "언급";
-        } else if (notificationType.equals(FOLLOW_REQUEST)) {
-            return "새로운 팔로워";
-        } else if (notificationType.equals(DM_MESSAGE_REQUEST)) {
-            return "메시지(DM)";
-        } else if (notificationType.equals(POST_JOIN_CREATE_REQUEST) || notificationType.equals(POST_JOIN_DELETE_REQUEST)) {
-            return "게시물";
-        } else {
-            return "다이어리";
-        }
-    }
-
-
-
     public static String getContentType(NotificationEntity notification) {
         return notification.getNotificationType().contentType;
     }
-
-
 }

@@ -1,9 +1,6 @@
 package com.ttokttak.jellydiary.notification.entity;
 
-import com.ttokttak.jellydiary.user.entity.Authority;
-import com.ttokttak.jellydiary.user.entity.ProviderType;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
-import com.ttokttak.jellydiary.user.entity.UserStateEnum;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

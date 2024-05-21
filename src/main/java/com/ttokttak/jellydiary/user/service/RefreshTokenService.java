@@ -13,14 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
 import static com.ttokttak.jellydiary.exception.message.SuccessMsg.TOKEN_REISSUED_SUCCESS;
-import static com.ttokttak.jellydiary.exception.message.SuccessMsg.UPDATE_USER_PROFILE_SUCCESS;
-
 
 @Service
 @RequiredArgsConstructor

@@ -1,7 +1,6 @@
 package com.ttokttak.jellydiary.diarypost.entity;
 
 import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
-import com.ttokttak.jellydiary.diarypost.dto.DiaryPostCreateRequestDto;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.util.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -10,10 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter

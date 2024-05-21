@@ -1,7 +1,6 @@
 package com.ttokttak.jellydiary.jwt;
 
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;

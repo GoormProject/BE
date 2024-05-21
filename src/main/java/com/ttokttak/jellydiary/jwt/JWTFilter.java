@@ -2,11 +2,9 @@ package com.ttokttak.jellydiary.jwt;
 
 import com.ttokttak.jellydiary.user.dto.UserOAuthDto;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
-import com.ttokttak.jellydiary.user.entity.Authority;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.ACCESS_TOKEN_EXPIRED;
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.INVALID_ACCESS_TOKEN;

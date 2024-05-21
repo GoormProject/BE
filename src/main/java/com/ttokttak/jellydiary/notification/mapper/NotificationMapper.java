@@ -1,6 +1,5 @@
 package com.ttokttak.jellydiary.notification.mapper;
 
-import com.ttokttak.jellydiary.diarypost.mapper.DiaryPostImgMapper;
 import com.ttokttak.jellydiary.notification.dto.NotificationGetListResponseDto;
 import com.ttokttak.jellydiary.notification.dto.NotificationResponseDto;
 import com.ttokttak.jellydiary.notification.entity.NotificationEntity;
@@ -9,8 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Mapper(componentModel = "spring", imports = { NotificationType.class})
