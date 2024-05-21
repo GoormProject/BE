@@ -105,7 +105,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDto<?> checkUserName(CustomOAuth2User customOAuth2User, UserNameCheckRequestDto userNameCheckRequestDto) {
-        if (userRepository.existsByUserName(userNameCheckRequestDto.getUserName())) {
+        UserEntity userEntity = userRepository.findById(customOAuth2User.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (userEntity.getUserState() != UserStateEnum.ACTIVE) {
+            throw new CustomException(USER_ACCOUNT_DISABLED);
+        }
+        
+        boolean isDuplicateUserName = userRepository.existsByUserName(userNameCheckRequestDto.getUserName());
+        if (isDuplicateUserName && !userNameCheckRequestDto.getUserName().equals(userEntity.getUserName())) {
             throw new CustomException(DUPLICATE_USER_NAME);
         }
 
