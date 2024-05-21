@@ -2,7 +2,6 @@ package com.ttokttak.jellydiary.comment.entity;
 
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

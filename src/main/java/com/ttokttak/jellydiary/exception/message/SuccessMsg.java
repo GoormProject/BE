@@ -35,8 +35,6 @@ public enum SuccessMsg {
     UPDATE_USER_NOTIFICATION_SETTING_SUCCESS(OK, "알림 수신 설정 완료"),
     USER_NAME_CHECK_SUCCESS(OK,"사용 가능한 이름입니다."),
 
-//    SEARCH_USER_SUCCESS(OK, "유저 검색 성공"),
-//    CHAT_HISTORY_SUCCESS(OK,"채팅 기록 조회 완료"),
 
     UPDATE_DIARY_PROFILE_SUCCESS(OK, "다이어리 프로필 수정 완료"),
     UPDATE_DIARY_PROFILE_IMAGE_SUCCESS(OK, "다이어리 프로필 이미지 수정 완료"),
@@ -45,9 +43,7 @@ public enum SuccessMsg {
 
     DELETE_DIARY_USER_SUCCESS(OK, "다이어리 유저 삭제 완료"),
     DELETE_DIARY_PROFILE_SUCCESS(OK, "다이어리 프로필 삭제 완료"),
-//    UPDATE_PROJECT_SUCCESS(OK, "프로젝트 수정 완료"),
-//    DELETE_PROJECT_SUCCESS(OK, "프로젝트 삭제 완료"),
-//    SEARCH_PROJECT_SUCCESS(OK, "내 프로젝트 목록 검색 완료");
+
 
     UPDATE_POST_SUCCESS(OK, "게시물 수정 완료"),
     DELETE_POST_SUCCESS(OK, "게시물 삭제 완료"),
@@ -71,11 +67,6 @@ public enum SuccessMsg {
     DELETE_COMMENT_SUCCESS(OK, "댓글 삭제 완료"),
     GET_LIST_POST_COMMENT(OK, "게시물 댓글 리스트 조회 완료"),
     GET_LIST_POST_REPLY_COMMENT(OK, "타겟 댓글의 답글 리스트 조회 완료");
-
-//    CREATE_TEAM_SUCCESS(CREATED, "팀 생성 완료"),
-//    CREATE_PROJECT_SUCCESS(CREATED, "프로젝트 생성 완료"),
-//    CREATE_FILE_SUCCESS(CREATED, "파일 생성 완료"),
-//    CREATE_FOLDER_SUCCESS(CREATED, "폴더 생성 완료");
 
 
     private final HttpStatus httpStatus;

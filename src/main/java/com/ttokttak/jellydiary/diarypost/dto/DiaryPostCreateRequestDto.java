@@ -2,9 +2,6 @@ package com.ttokttak.jellydiary.diarypost.dto;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 public class DiaryPostCreateRequestDto {
     private String postDate;

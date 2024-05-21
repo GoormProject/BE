@@ -1,6 +1,7 @@
 package com.ttokttak.jellydiary.diary.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
