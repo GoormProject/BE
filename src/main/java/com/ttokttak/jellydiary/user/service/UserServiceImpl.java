@@ -125,7 +125,8 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(USER_ACCOUNT_DISABLED);
         }
 
-        if (userRepository.existsByUserName(userProfileUpdateRequestDto.getUserName())) {
+        boolean isDuplicateUserName = userRepository.existsByUserName(userProfileUpdateRequestDto.getUserName());
+        if (isDuplicateUserName && !userProfileUpdateRequestDto.getUserName().equals(userEntity.getUserName())) {
             throw new CustomException(DUPLICATE_USER_NAME);
         }
 
