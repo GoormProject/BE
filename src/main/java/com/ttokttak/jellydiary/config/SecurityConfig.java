@@ -42,7 +42,7 @@ public class SecurityConfig {
                 public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                     CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://apic.app", "https://jellydiary.life"));
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://apic.app", "https://jellydiary.life", "https://api.jellydiary.life"));
                     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
