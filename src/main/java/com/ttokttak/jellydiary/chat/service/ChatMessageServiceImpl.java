@@ -11,6 +11,10 @@ import com.ttokttak.jellydiary.chat.repository.ChatMessageRepository;
 import com.ttokttak.jellydiary.chat.repository.ChatRoomRepository;
 import com.ttokttak.jellydiary.chat.repository.ChatUserRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
+import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
+import com.ttokttak.jellydiary.notification.entity.NotificationType;
+import com.ttokttak.jellydiary.notification.repository.NotificationSettingRepository;
+import com.ttokttak.jellydiary.notification.service.NotificationServiceImpl;
 import com.ttokttak.jellydiary.user.dto.oauth2.CustomOAuth2User;
 import com.ttokttak.jellydiary.user.entity.UserEntity;
 import com.ttokttak.jellydiary.user.repository.UserRepository;
@@ -22,6 +26,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ttokttak.jellydiary.exception.message.ErrorMsg.*;
@@ -42,6 +47,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     private final ChatMessageMapper chatMessageMapper;
 
+    private final NotificationSettingRepository notificationSettingRepository;
+
+    private final NotificationServiceImpl notificationServiceImpl;
+
     @Override
     @Transactional
     public ChatMessageResponseDto createIncompleteChatMessage(Long chatRoomId, ChatMessageRequestDto chatMessageRequestDto ) {
@@ -60,6 +69,21 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .userId(loginUserEntity)
                 .build();
         ChatMessageEntity savedChatMessageEntity = chatMessageRepository.save(chatMessageEntity);
+
+        List<UserEntity> userListByChatRoomId = chatUserRepository.findUsersByChatRoomId(chatRoomId);
+        for(UserEntity user : userListByChatRoomId){
+            if(user.equals(loginUserEntity))
+                continue;
+
+            Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(user);
+            if (notificationSettingEntity.isPresent()) {
+                if (user.getNotificationSetting() && notificationSettingEntity.get().getDm()) {
+                    notificationServiceImpl.send(loginUserEntity.getUserId(), user.getUserId(), NotificationType.DM_MESSAGE_REQUEST, NotificationType.DM_MESSAGE_REQUEST.makeContent(loginUserEntity.getUserName()), chatRoomId);
+                }
+            }
+        }
+
+
 
         return chatMessageMapper.entityToChatMessageResponseDto(savedChatMessageEntity);
     }
