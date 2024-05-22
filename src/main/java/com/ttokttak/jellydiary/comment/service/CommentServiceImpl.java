@@ -119,7 +119,7 @@ public class CommentServiceImpl implements CommentService {
 
         //게시물 생성자에게 알림 발송
         Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(diaryPostEntity.getUser());
-        if (notificationSettingEntity.isPresent()) {
+        if (notificationSettingEntity.isPresent() && diaryPostEntity.getUser() != userEntity) {
             if (diaryPostEntity.getUser().getNotificationSetting() && notificationSettingEntity.get().getPostComment()) {
                 Long receiverId = diaryPostEntity.getUser().getUserId();
                 notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.COMMENT_CREATE_REQUEST, NotificationType.COMMENT_CREATE_REQUEST.makeContent(userEntity.getUserName()), commentEntity.getCommentId());
@@ -188,8 +188,8 @@ public class CommentServiceImpl implements CommentService {
         }
 
         //CommentEntity 생성 후 저장
-        CommentEntity ReplyCommentEntity = commentMapper.replyCommentCreateRequestToEntity(commentCreateRequestDto, userEntity, diaryPostEntity, commentEntity);
-        commentRepository.save(ReplyCommentEntity);
+        CommentEntity replyCommentEntity = commentMapper.replyCommentCreateRequestToEntity(commentCreateRequestDto, userEntity, diaryPostEntity, commentEntity);
+        commentRepository.save(replyCommentEntity);
 
         Set<CommentUserTagInfoDto> commentUserTagInfoDtos = new HashSet<>();
         //CommentTag entity 생성 후 저장
@@ -216,20 +216,20 @@ public class CommentServiceImpl implements CommentService {
                 }
             }
 
-            CommentTagCompositeKey commentTagCompositeKey = commentTagMapper.userAndCommentToCommentTagCompositeKey(tagUserEntity.getUserId(), ReplyCommentEntity.getCommentId());
-            CommentTagEntity commentTagEntity = commentTagMapper.commentCreateRequestToEntity(commentTagCompositeKey, tagUserEntity, ReplyCommentEntity);
+            CommentTagCompositeKey commentTagCompositeKey = commentTagMapper.userAndCommentToCommentTagCompositeKey(tagUserEntity.getUserId(), replyCommentEntity.getCommentId());
+            CommentTagEntity commentTagEntity = commentTagMapper.commentCreateRequestToEntity(commentTagCompositeKey, tagUserEntity, replyCommentEntity);
             commentTagRepository.save(commentTagEntity);
 
             CommentUserTagInfoDto commentUserTagInfoDto = commentTagMapper.entityToCommentUserInfoDto(tagUserEntity);
             commentUserTagInfoDtos.add(commentUserTagInfoDto);
         }
 
-        CommentCreateCommentInfoDto replyCommentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(userEntity, ReplyCommentEntity, commentUserTagInfoDtos);
+        CommentCreateCommentInfoDto replyCommentCreateCommentInfoDto = commentMapper.entityAndDtoToCommentInfoDto(userEntity, replyCommentEntity, commentUserTagInfoDtos);
         ReplyCommentCreateResponseDto replyCommentCreateResponseDto = commentMapper.dtoToReplyCommentCreateResponseDto(commentId, replyCommentCreateCommentInfoDto);
 
         //댓글 생성자에게 알림 발송
-        Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(commentEntity.getUser());
-        if (notificationSettingEntity.isPresent()) {
+        Optional<NotificationSettingEntity> notificationSettingEntity = notificationSettingRepository.findByUser(replyCommentEntity.getUser());
+        if (notificationSettingEntity.isPresent() && commentEntity.getUser() != userEntity) {
             if (commentEntity.getUser().getNotificationSetting() && notificationSettingEntity.get().getPostComment()) {
                 Long receiverId = commentEntity.getUser().getUserId();
                 notificationServiceImpl.send(userEntity.getUserId(), receiverId, NotificationType.REPLY_COMMENT_CREATE_REQUEST, NotificationType.REPLY_COMMENT_CREATE_REQUEST.makeContent(userEntity.getUserName()), commentEntity.getCommentId());
@@ -237,7 +237,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         //태그된 사용자에게 알림 발송
-        Set<CommentTagEntity> dbCommentTagEntities = commentTagRepository.findAllByComment(commentEntity);
+        Set<CommentTagEntity> dbCommentTagEntities = commentTagRepository.findAllByComment(replyCommentEntity);
         for (CommentTagEntity dbCommentTagEntity : dbCommentTagEntities) {
             Optional<NotificationSettingEntity> notificationSettingEntityTagUser = notificationSettingRepository.findByUser(dbCommentTagEntity.getUser());
             if (notificationSettingEntityTagUser.isPresent()) {
