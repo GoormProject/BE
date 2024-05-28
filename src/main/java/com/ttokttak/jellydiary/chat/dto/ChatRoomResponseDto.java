@@ -24,4 +24,8 @@ public class ChatRoomResponseDto {
 
     private Long diaryId;
 
+    private String chatRoomType;
+
+    private boolean isDiaryDeleted;
+
 }

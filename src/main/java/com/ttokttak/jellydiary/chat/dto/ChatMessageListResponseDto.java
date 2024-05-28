@@ -16,11 +16,17 @@ public class ChatMessageListResponseDto {
 
     private int page;
 
+    private Boolean isDiaryDeleted;
+
     @Builder
     public ChatMessageListResponseDto(List<ChatMessageResponseDto> chatMessageList, boolean hasPrevious, boolean hasNext, int page) {
         this.chatMessageList = chatMessageList;
         this.hasPrevious = hasPrevious;
         this.hasNext = hasNext;
         this.page = page;
+    }
+
+    public void isDiaryDeleted(Boolean isDiaryDeleted) {
+        this.isDiaryDeleted = isDiaryDeleted;
     }
 }
