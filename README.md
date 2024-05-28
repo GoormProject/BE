@@ -54,7 +54,6 @@
   <img src="https://img.shields.io/badge/webSocket-90E59A?style=for-the-badge&logo=webSocket&logoColor=white">
   <img src="https://img.shields.io/badge/STOMP-EB508D?style=for-the-badge&logo=STOMP&logoColor=white">
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
-  <img src="https://img.shields.io/badge/CODEDEPLOY-181717?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/GithubActions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"/>
   <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white"/>
   <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
@@ -167,8 +166,9 @@ Page보다는 무한스크롤에 적합한 Slice를 사용하였으며, QueryDsl
 
 ### ◻ CI/CD
 
-> 코드 수정 시, 빌드/배포의 반복과 빠른 반영이 어려워 배포자동화를 결정하였습니다.
-CI는 빠른 적용과 편의성을 위해 Github Actions를 사용하였으며 Docker를 사용하였습니다.
+> 코드 수정 시, 빌드/배포의 반복과 빠른 반영이 어려워 배포자동화를 결정하였습니다.  
+Pull Request가 생성될 때, 코드가 정상적으로 컴파일되고, 필요한 모든 의존성이 제대로 설정되었음을 확인합니다.  
+main 브랜치에 푸시될 때, 빌드된 JAR 파일을 기반으로 Docker 이미지를 생성한 후, 빌드된 Docker 이미지를 DockerHub에 푸시하여, EC2 인스턴스에 미리 작성된 Docker Compose를 사용해 최신 이미지를 풀 받아 배포합니다.  
 
 
 ### ◻ JWT + SpringSecurity
