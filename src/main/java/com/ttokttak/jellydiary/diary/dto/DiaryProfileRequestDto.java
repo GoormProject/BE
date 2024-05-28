@@ -12,7 +12,7 @@ public class DiaryProfileRequestDto {
 
       @NotBlank(message = "다이어리 이름은 필수 입력 값입니다.")
       @Size(min = 2, max = 15, message = "다이어리 이름은 2자에서 15자 사이여야 합니다.")
-      @Pattern(regexp = "^[a-zA-Z0-9가-힣_.]+$",
+      @Pattern(regexp = "^[a-zA-Z0-9가-힣_.\\s]+$",
               message = "다이어리 이름은 영어, 한글, 숫자, '_', '.'만 사용할 수 있습니다.")
       private String diaryName;
 

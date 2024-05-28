@@ -10,6 +10,8 @@ import com.ttokttak.jellydiary.chat.mapper.ChatMessageMapper;
 import com.ttokttak.jellydiary.chat.repository.ChatMessageRepository;
 import com.ttokttak.jellydiary.chat.repository.ChatRoomRepository;
 import com.ttokttak.jellydiary.chat.repository.ChatUserRepository;
+import com.ttokttak.jellydiary.diary.entity.DiaryProfileEntity;
+import com.ttokttak.jellydiary.diary.repository.DiaryProfileRepository;
 import com.ttokttak.jellydiary.exception.CustomException;
 import com.ttokttak.jellydiary.notification.entity.NotificationSettingEntity;
 import com.ttokttak.jellydiary.notification.entity.NotificationType;
@@ -50,6 +52,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final NotificationSettingRepository notificationSettingRepository;
 
     private final NotificationServiceImpl notificationServiceImpl;
+
+    private final DiaryProfileRepository diaryProfileRepository;
 
     @Override
     @Transactional
@@ -133,6 +137,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .hasNext(chatMessageEntityPage.hasNext())
                 .page(chatMessageEntityPage.getNumber())
                 .build();
+
+        String[] splitRoomName = chatRoomEntity.getChatRoomName().split("_");
+        if(splitRoomName[0].equals("group")){
+            DiaryProfileEntity diaryProfileEntity = diaryProfileRepository.findById(Long.parseLong(splitRoomName[1]))
+                    .orElseThrow(() -> new CustomException(DIARY_NOT_FOUND));
+
+            chatMessageListResponseDto.isDiaryDeleted(diaryProfileEntity.getIsDiaryDeleted());
+        }
 
         return ResponseDto.builder()
                 .statusCode(SEARCH_CHAT_MESSAGES_SUCCEEDED.getHttpStatus().value())
