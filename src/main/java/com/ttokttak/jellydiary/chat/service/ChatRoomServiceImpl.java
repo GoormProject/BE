@@ -154,7 +154,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
                 chatRoomResponseDtoBuilder.chatRoomName(diaryProfileEntity.getDiaryName())
                         .chatRoomProfileImg(diaryProfileEntity.getDiaryProfileImage())
-                        .diaryId(diaryProfileEntity.getDiaryId());
+                        .diaryId(diaryProfileEntity.getDiaryId())
+                        .chatRoomType(String.valueOf(ChatRoomTypeEnum.GROUP))
+                        .isDiaryDeleted(diaryProfileEntity.getIsDiaryDeleted());
             }else{
                 Long recipientId = (Long.parseLong(splitRoomName[1]) == loginUserEntity.getUserId()) ? Long.parseLong(splitRoomName[2]) : Long.parseLong(splitRoomName[1]);
                 UserEntity recipientUserEntity = userRepository.findById(recipientId)
@@ -162,7 +164,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
                 chatRoomResponseDtoBuilder.chatRoomName(recipientUserEntity.getUserName())
                         .chatRoomProfileImg(recipientUserEntity.getProfileImg())
-                        .userId(recipientUserEntity.getUserId());
+                        .userId(recipientUserEntity.getUserId())
+                        .chatRoomType(String.valueOf(ChatRoomTypeEnum.PRIVATE));
             }
 
             ChatRoomResponseDto chatRoomResponseDto = chatRoomResponseDtoBuilder.build();
