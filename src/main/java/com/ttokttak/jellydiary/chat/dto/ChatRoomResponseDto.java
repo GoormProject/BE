@@ -28,4 +28,6 @@ public class ChatRoomResponseDto {
 
     private boolean isDiaryDeleted;
 
+    private Long chatUserCount;
+
 }
