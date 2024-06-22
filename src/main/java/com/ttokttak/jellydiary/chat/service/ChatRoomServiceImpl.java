@@ -145,7 +145,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             chatRoomResponseDtoBuilder.chatRoomId(chatRoomEntity.getChatRoomId())
                     .chatMessagePreview(messagePreview)
-                    .createdAt(createdAt);
+                    .createdAt(createdAt)
+                    .chatUserCount(chatUserRepository.countByChatRoomId(chatRoomEntity.getChatRoomId()));
 
             String[] splitRoomName = chatRoomEntity.getChatRoomName().split("_");
             if(splitRoomName[0].equals("group")){
