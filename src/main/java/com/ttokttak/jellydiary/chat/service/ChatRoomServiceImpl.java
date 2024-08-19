@@ -116,9 +116,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
 
         if(chatRoomEntity.getChatRoomName().startsWith("group_")){
-            return "/topic/group/";
+            //return "/topic/group/";
+            return "topic.group.";
         }else{
-            return "/queue/private/";
+            //return "/queue/private/";
+            return "queue.private.";
         }
     }
 
